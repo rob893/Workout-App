@@ -50,6 +50,8 @@ namespace WorkoutApp.API
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IWorkoutRepository, WorkoutRepository>();
 
+            services.AddTransient<Seed>();
+
             //Adds authentication [Authorize] attribute following the passed in scheme. Issuer signing key is checked against all requests.
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
@@ -64,7 +66,7 @@ namespace WorkoutApp.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
         {
             if (env.IsDevelopment())
             {
@@ -77,6 +79,7 @@ namespace WorkoutApp.API
             }
 
             //app.UseHttpsRedirection();
+            //seeder.SeedWorkoutPlans();
             app.UseCors(header => header.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseMvc();

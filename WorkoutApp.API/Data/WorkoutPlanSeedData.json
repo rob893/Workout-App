@@ -1,0 +1,120 @@
+[
+    {
+        "User": {
+            "Username": "Lola",
+            "Password": "password",
+            "FirstName": "Lola",
+            "LastName": "Smith",
+            "EmailAddress": "lsmith@gmail.com",
+            "Created": "2017-08-02"
+        },
+        "Workouts": [
+            {
+                "Date": "2019-05-11",
+                "ExerciseGroups": [
+                    {
+                        "Exercise": {
+                            "Name": "Bicep Curls",
+                            "Description": "Curl the weight up.",
+                            "Muscle": {
+                                "Id": 1,
+                                "Name": "Biceps",
+                                "MuscleGroup": {
+                                    "Id": 1,
+                                    "Name": "Arms"
+                                }
+                            }
+                        },
+                        "Sets": 3,
+                        "Repetitions": 12
+                    },
+                    {
+                        "Exercise": {
+                            "Name": "Pull Ups",
+                            "Description": "Pull your body above the bar.",
+                            "Muscle": {
+                                "Id": 2,
+                                "Name": "Lats",
+                                "MuscleGroup": {
+                                    "Id": 2,
+                                    "Name": "Back"
+                                }
+                            }
+                        },
+                        "Sets": 3,
+                        "Repetitions": 12
+                    },
+                    {
+                        "Exercise": {
+                            "Name": "Hammer Curls",
+                            "Description": "Curl the weight up.",
+                            "Muscle": {
+                                "Id": 1,
+                                "Name": "Biceps",
+                                "MuscleGroup": {
+                                    "Id": 1,
+                                    "Name": "Arms"
+                                }
+                            }
+                        },
+                        "Sets": 3,
+                        "Repetitions": 12
+                    }
+                ]
+            },
+            {
+                "Date": "2019-05-12",
+                "ExerciseGroups": [
+                    {
+                        "Exercise": {
+                            "Name": "Bench Press",
+                            "Description": "Push the bar up.",
+                            "Muscle": {
+                                "Id": 3,
+                                "Name": "Pecs",
+                                "MuscleGroup": {
+                                    "Id": 3,
+                                    "Name": "Chest"
+                                }
+                            }
+                        },
+                        "Sets": 3,
+                        "Repetitions": 12
+                    },
+                    {
+                        "Exercise": {
+                            "Name": "Chest Flys",
+                            "Description": "Fly the weight.",
+                            "Muscle": {
+                                "Id": 3,
+                                "Name": "Pecs",
+                                "MuscleGroup": {
+                                    "Id": 3,
+                                    "Name": "Chest"
+                                }
+                            }
+                        },
+                        "Sets": 3,
+                        "Repetitions": 12
+                    },
+                    {
+                        "Exercise": {
+                            "Name": "Incline Bench Press",
+                            "Description": "Press the wiehgt up inclined.",
+                            "Muscle": {
+                                "Id": 3,
+                                "Name": "Pecs",
+                                "MuscleGroup": {
+                                    "Id": 3,
+                                    "Name": "Chest"
+                                }
+                            }
+                        },
+                        "Sets": 3,
+                        "Repetitions": 12
+                    }
+                ]
+            }
+        ]
+    }
+]

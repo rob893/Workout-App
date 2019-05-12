@@ -11,5 +11,6 @@ namespace WorkoutApp.API.Data
          Task<bool> SaveAll();
          Task<List<User>> GetUsers();
          Task<User> GetUser(int id);
+         Task<List<WorkoutPlan>> GetWorkoutPlansForUser(int userId);
     }
 }

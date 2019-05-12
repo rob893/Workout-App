@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WorkoutApp.API.Models;
@@ -35,6 +36,16 @@ namespace WorkoutApp.API.Data
         public async Task<List<User>> GetUsers()
         {
             return await context.Users.ToListAsync();
+        }
+
+        public async Task<List<WorkoutPlan>> GetWorkoutPlansForUser(int userId)
+        {
+            return await context.WorkoutPlans.Include(p => p.User).Include(p => p.Workouts)
+                .ThenInclude(w => w.ExerciseGroups)
+                .ThenInclude(eg => eg.Exercise)
+                .ThenInclude(e => e.Muscle)
+                .ThenInclude(m => m.MuscleGroup)
+                .Where(p => p.User.Id == userId).ToListAsync();
         }
 
         public async Task<bool> SaveAll()
