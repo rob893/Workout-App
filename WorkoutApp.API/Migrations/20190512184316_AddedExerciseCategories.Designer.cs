@@ -2,50 +2,29 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutApp.API.Data;
 
 namespace WorkoutApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20190512184316_AddedExerciseCategories")]
+    partial class AddedExerciseCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("WorkoutApp.API.Models.Equipment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Equipment");
-                });
-
-            modelBuilder.Entity("WorkoutApp.API.Models.EquipmentExercise", b =>
-                {
-                    b.Property<int>("ExerciseId");
-
-                    b.Property<int>("EquipmentId");
-
-                    b.HasKey("ExerciseId", "EquipmentId");
-
-                    b.HasIndex("EquipmentId");
-
-                    b.ToTable("EquipmentExercise");
-                });
-
             modelBuilder.Entity("WorkoutApp.API.Models.Exercise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
 
                     b.Property<string>("Name");
 
@@ -67,7 +46,7 @@ namespace WorkoutApp.API.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
+                    b.Property<int>("Name");
 
                     b.HasKey("Id");
 
@@ -92,7 +71,7 @@ namespace WorkoutApp.API.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ExerciseId");
+                    b.Property<int?>("ExerciseId");
 
                     b.Property<int>("Repetitions");
 
@@ -107,19 +86,6 @@ namespace WorkoutApp.API.Migrations
                     b.HasIndex("WorkoutId");
 
                     b.ToTable("ExerciseGroups");
-                });
-
-            modelBuilder.Entity("WorkoutApp.API.Models.ExerciseStep", b =>
-                {
-                    b.Property<int>("ExerciseId");
-
-                    b.Property<int>("ExerciseStepNumber");
-
-                    b.Property<string>("Description");
-
-                    b.HasKey("ExerciseId", "ExerciseStepNumber");
-
-                    b.ToTable("ExerciseStep");
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.Muscle", b =>
@@ -179,26 +145,13 @@ namespace WorkoutApp.API.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("UserId");
+                    b.Property<int?>("UserId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("WorkoutPlans");
-                });
-
-            modelBuilder.Entity("WorkoutApp.API.Models.EquipmentExercise", b =>
-                {
-                    b.HasOne("WorkoutApp.API.Models.Equipment", "Equipment")
-                        .WithMany("Exercises")
-                        .HasForeignKey("EquipmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("WorkoutApp.API.Models.Exercise", "Exercise")
-                        .WithMany("Equipment")
-                        .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.Exercise", b =>
@@ -229,20 +182,11 @@ namespace WorkoutApp.API.Migrations
                 {
                     b.HasOne("WorkoutApp.API.Models.Exercise", "Exercise")
                         .WithMany()
-                        .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ExerciseId");
 
                     b.HasOne("WorkoutApp.API.Models.Workout")
                         .WithMany("ExerciseGroups")
                         .HasForeignKey("WorkoutId");
-                });
-
-            modelBuilder.Entity("WorkoutApp.API.Models.ExerciseStep", b =>
-                {
-                    b.HasOne("WorkoutApp.API.Models.Exercise", "Exercise")
-                        .WithMany("ExerciseSteps")
-                        .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.Workout", b =>
@@ -256,8 +200,7 @@ namespace WorkoutApp.API.Migrations
                 {
                     b.HasOne("WorkoutApp.API.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

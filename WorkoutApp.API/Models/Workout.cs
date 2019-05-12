@@ -7,6 +7,6 @@ namespace WorkoutApp.API.Models
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public ICollection<ExerciseGroup> ExerciseGroups { get; set; }
+        public List<ExerciseGroup> ExerciseGroups { get; set; }
     }
 }

@@ -43,8 +43,7 @@ namespace WorkoutApp.API.Data
             return await context.WorkoutPlans.Include(p => p.User).Include(p => p.Workouts)
                 .ThenInclude(w => w.ExerciseGroups)
                 .ThenInclude(eg => eg.Exercise)
-                .ThenInclude(e => e.Muscle)
-                .ThenInclude(m => m.MuscleGroup)
+                .ThenInclude(e => e.PrimaryMuscle)
                 .Where(p => p.User.Id == userId).ToListAsync();
         }
 

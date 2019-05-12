@@ -1,0 +1,274 @@
+[
+    {
+        "Id": 1,
+        "Name": "Bicep Curl",
+        "PrimaryMuscle": {
+            "Id": 12,
+            "Name": "Biceps"
+        },
+        "ExerciseSteps": [
+            {
+                "ExerciseStepNumber": 1,
+                "Description": "Stand with feet hip distance apart arms fully extended with a slight bend in elbow."
+            },
+            {
+                "ExerciseStepNumber": 2,
+                "Description": "Bring weights in towards shoulders to complete bicep curl, lower slowly back to start."
+            }
+        ],
+        "Equipment": [
+            {
+                "EquipmentId": 3,
+                "ExerciseId": 1
+            }
+        ],
+        "ExerciseCategorys": [
+            {
+                "ExerciseCategoryId": 5,
+                "ExerciseId": 1
+            }
+        ]
+    },
+    {
+        "Id": 2,
+        "Name": "Bench Press",
+        "PrimaryMuscle": {
+            "Id": 10,
+            "Name": "Pectoralis"
+        },
+        "SecondaryMuscle": {
+            "Id": 13,
+            "Name": "Triceps"
+        },
+        "ExerciseSteps": [
+            {
+                "ExerciseStepNumber": 1,
+                "Description": "Lie on the bench with your eyes under the bar."
+            },
+            {
+                "ExerciseStepNumber": 2,
+                "Description": "Grab the bar with a medium grip-width (thumbs around the bar!)"
+            },
+            {
+                "ExerciseStepNumber": 3,
+                "Description": "Unrack the bar by straightening your arms."
+            },
+            {
+                "ExerciseStepNumber": 4,
+                "Description": "Lower the bar to your mid-chest."
+            },
+            {
+                "ExerciseStepNumber": 5,
+                "Description": "Press the bar back up until your arms are straight."
+            }
+        ],
+        "Equipment": [
+            {
+                "EquipmentId": 1,
+                "ExerciseId": 2
+            },
+            {
+                "EquipmentId": 2,
+                "ExerciseId": 2
+            },
+            {
+                "EquipmentId": 9,
+                "ExerciseId": 2
+            }
+        ],
+        "ExerciseCategorys": [
+            {
+                "ExerciseCategoryId": 3,
+                "ExerciseId": 2
+            },
+            {
+                "ExerciseCategoryId": 4,
+                "ExerciseId": 2
+            },
+            {
+                "ExerciseCategoryId": 5,
+                "ExerciseId": 2
+            }
+        ]
+    },
+    {
+        "Id": 3,
+        "Name": "Chest Fly",
+        "PrimaryMuscle": {
+            "Id": 10,
+            "Name": "Pectoralis"
+        },
+        "SecondaryMuscle": {
+            "Id": 11,
+            "Name": "Deltoid"
+        },
+        "ExerciseSteps": [
+            {
+                "ExerciseStepNumber": 1,
+                "Description": "Lie on back with knees bent and feet on floor and hold dumbbells straight up over chest."
+            },
+            {
+                "ExerciseStepNumber": 2,
+                "Description": "With a slight bend in the elbow, slowly open arms wide out to the side. Squeeze your chest as you bring the weights back together at the top. Repeat for desired number of reps."
+            }
+        ],
+        "Equipment": [
+            {
+                "EquipmentId": 3,
+                "ExerciseId": 3
+            }
+        ],
+        "ExerciseCategorys": [
+            {
+                "ExerciseCategoryId": 3,
+                "ExerciseId": 3
+            },
+            {
+                "ExerciseCategoryId": 4,
+                "ExerciseId": 3
+            }
+        ]
+    },
+    {
+        "Id": 4,
+        "Name": "Deadlift",
+        "PrimaryMuscle": {
+            "Id": 2,
+            "Name": "Hamstrings"
+        },
+        "SecondaryMuscle": {
+            "Id": 4,
+            "Name": "Gluteus"
+        },
+        "ExerciseSteps": [
+            {
+                "ExerciseStepNumber": 1,
+                "Description": "Stand with your mid-foot under the barbell."
+            },
+            {
+                "ExerciseStepNumber": 2,
+                "Description": "Bend over and grab the bar with a shoulder-width grip."
+            },
+            {
+                "ExerciseStepNumber": 3,
+                "Description": "Bend your knees until your shins touch the bar."
+            },
+            {
+                "ExerciseStepNumber": 4,
+                "Description": "Lift your chest up and straighten your lower back."
+            },
+            {
+                "ExerciseStepNumber": 5,
+                "Description": "Take a big breath, hold it, and stand up with the weight."
+            }
+        ],
+        "Equipment": [
+            {
+                "EquipmentId": 1,
+                "ExerciseId": 4
+            },
+            {
+                "EquipmentId": 2,
+                "ExerciseId": 4
+            }
+        ],
+        "ExerciseCategorys": [
+            {
+                "ExerciseCategoryId": 1,
+                "ExerciseId": 4
+            },
+            {
+                "ExerciseCategoryId": 8,
+                "ExerciseId": 4
+            }
+        ]
+    },
+    {
+        "Id": 5,
+        "Name": "Squat",
+        "PrimaryMuscle": {
+            "Id": 1,
+            "Name": "Quadriceps"
+        },
+        "SecondaryMuscle": {
+            "Id": 4,
+            "Name": "Gluteus"
+        },
+        "ExerciseSteps": [
+            {
+                "ExerciseStepNumber": 1,
+                "Description": "Begin with the barbell supported on top of the traps. The chest should be up and the head facing forward. Adopt a hip-width stance with the feet turned out as needed."
+            },
+            {
+                "ExerciseStepNumber": 2,
+                "Description": "Descend by flexing the knees, refraining from moving the hips back as much as possible. This requires that the knees travel forward. Ensure that they stay align with the feet. The goal is to keep the torso as upright as possible."
+            },
+            {
+                "ExerciseStepNumber": 3,
+                "Description": "Continue all the way down, keeping the weight on the front of the heel. At the moment the upper legs contact the lower legs reverse the motion, driving the weight upward."
+            }
+        ],
+        "Equipment": [
+            {
+                "EquipmentId": 1,
+                "ExerciseId": 5
+            },
+            {
+                "EquipmentId": 2,
+                "ExerciseId": 5
+            },
+            {
+                "EquipmentId": 4,
+                "ExerciseId": 5
+            }
+        ],
+        "ExerciseCategorys": [
+            {
+                "ExerciseCategoryId": 1,
+                "ExerciseId": 5
+            },
+            {
+                "ExerciseCategoryId": 8,
+                "ExerciseId": 5
+            }
+        ]
+    },
+    {
+        "Id": 6,
+        "Name": "Standing Tricep Extension",
+        "PrimaryMuscle": {
+            "Id": 13,
+            "Name": "Triceps"
+        },
+        "ExerciseSteps": [
+            {
+                "ExerciseStepNumber": 1,
+                "Description": "To begin, stand up with a dumbbell held by both hands. Your feet should be about shoulder width apart from each other. Slowly use both hands to grab the dumbbell and lift it over your head until both arms are fully extended."
+            },
+            {
+                "ExerciseStepNumber": 2,
+                "Description": "The resistance should be resting in the palms of your hands with your thumbs around it. The palm of the hands should be facing up towards the ceiling. This will be your starting position."
+            },
+            {
+                "ExerciseStepNumber": 3,
+                "Description": "Keeping your upper arms close to your head with elbows in and perpendicular to the floor, lower the resistance in a semicircular motion behind your head until your forearms touch your biceps. Tip: The upper arms should remain stationary and only the forearms should move. Breathe in as you perform this step."
+            },
+            {
+                "ExerciseStepNumber": 4,
+                "Description": "Go back to the starting position by using the triceps to raise the dumbbell. Breathe out as you perform this step."
+            }
+        ],
+        "Equipment": [
+            {
+                "EquipmentId": 3,
+                "ExerciseId": 6
+            }
+        ],
+        "ExerciseCategorys": [
+            {
+                "ExerciseCategoryId": 5,
+                "ExerciseId": 6
+            }
+        ]
+    }
+]

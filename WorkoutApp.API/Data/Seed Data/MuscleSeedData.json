@@ -1,0 +1,54 @@
+[
+    {
+        "Id": 1,
+        "Name": "Quadriceps"
+    },
+    {
+        "Id": 2,
+        "Name": "Hamstrings"
+    },
+    {
+        "Id": 3,
+        "Name": "Calf"
+    },
+    {
+        "Id": 4,
+        "Name": "Gluteus"
+    },
+    {
+        "Id": 5,
+        "Name": "Erector Spinae"
+    },
+    {
+        "Id": 6,
+        "Name": "Latissimus Dorsi"
+    },
+    {
+        "Id": 7,
+        "Name": "Trapezius"
+    },
+    {
+        "Id": 8,
+        "Name": "Rectus Abdominis"
+    },
+    {
+        "Id": 9,
+        "Name": "Obliques"
+    },
+    {
+        "Id": 10,
+        "Name": "Pectoralis"
+    },
+    {
+        "Id": 11,
+        "Name": "Deltoid"
+    },
+    {
+        "Id": 12,
+        "Name": "Biceps"
+    },
+    {
+        "Id": 13,
+        "Name": "Triceps"
+    }
+]

@@ -1,0 +1,47 @@
+[
+    {
+        "Id": 1,
+        "Username": "Lola",
+        "Password": "password",
+        "FirstName": "Lola",
+        "LastName": "Smith",
+        "EmailAddress": "lsmith@gmail.com",
+        "Created": "2017-08-02"
+    },
+    {
+        "Id": 2,
+        "Username": "Roy",
+        "Password": "password",
+        "FirstName": "Roy",
+        "LastName": "Joy",
+        "EmailAddress": "rjoy@gmail.com",
+        "Created": "2018-08-02"
+    },
+    {
+        "Id": 3,
+        "Username": "Robert",
+        "Password": "password",
+        "FirstName": "Robert",
+        "LastName": "Herp",
+        "EmailAddress": "rherp@gmail.com",
+        "Created": "2019-08-02"
+    },
+    {
+        "Id": 4,
+        "Username": "Joe",
+        "Password": "password",
+        "FirstName": "Joe",
+        "LastName": "Schmoe",
+        "EmailAddress": "jschmoe@gmail.com",
+        "Created": "2011-08-02"
+    },
+    {
+        "Id": 5,
+        "Username": "Jack",
+        "Password": "password",
+        "FirstName": "Jack",
+        "LastName": "Lame",
+        "EmailAddress": "jlame@gmail.com",
+        "Created": "2012-08-02"
+    }
+]

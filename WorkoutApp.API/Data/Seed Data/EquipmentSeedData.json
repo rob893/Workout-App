@@ -1,0 +1,42 @@
+[
+    {
+        "Id": 1,
+        "Name": "Olympic Weight Set"
+    },
+    {
+        "Id": 2,
+        "Name": "Olympic Barbell"
+    },
+    {
+        "Id": 3,
+        "Name": "Dumbbell Set"
+    },
+    {
+        "Id": 4,
+        "Name": "Squat Rack"
+    },
+    {
+        "Id": 5,
+        "Name": "Leg Press Machine"
+    },
+    {
+        "Id": 6,
+        "Name": "Pull-Up Bar"
+    },
+    {
+        "Id": 7,
+        "Name": "Olympic Curl Bar"
+    },
+    {
+        "Id": 8,
+        "Name": "Ab Roller"
+    },
+    {
+        "Id": 9,
+        "Name": "Bench Press Weight Bench"
+    },
+    {
+        "Id": 10,
+        "Name": "Weight Bench"
+    }
+]

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutApp.API.Data;
 
 namespace WorkoutApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20190512214433_AddedEquipmentModel")]
+    partial class AddedEquipmentModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +69,7 @@ namespace WorkoutApp.API.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
+                    b.Property<int>("Name");
 
                     b.HasKey("Id");
 
@@ -111,15 +113,20 @@ namespace WorkoutApp.API.Migrations
 
             modelBuilder.Entity("WorkoutApp.API.Models.ExerciseStep", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
+
                     b.Property<int>("ExerciseId");
 
                     b.Property<int>("ExerciseStepNumber");
 
-                    b.Property<string>("Description");
+                    b.HasKey("Id");
 
-                    b.HasKey("ExerciseId", "ExerciseStepNumber");
+                    b.HasIndex("ExerciseId");
 
-                    b.ToTable("ExerciseStep");
+                    b.ToTable("ExerciseSteps");
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.Muscle", b =>
