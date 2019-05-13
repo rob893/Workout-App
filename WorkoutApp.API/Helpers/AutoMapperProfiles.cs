@@ -11,6 +11,7 @@ namespace WorkoutApp.API.Helpers
         {
             CreateMap<User, UserForReturnDto>();
             CreateMap<UserForRegisterDto, User>();
+            CreateMap<Equipment, EquipmentForReturnDto>();
         }
     }
 }

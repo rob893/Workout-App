@@ -79,7 +79,7 @@ namespace WorkoutApp.API
             }
 
             //app.UseHttpsRedirection();
-            seeder.SeedDatabase(true);
+            //seeder.SeedDatabase(true);
             app.UseCors(header => header.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseMvc();
