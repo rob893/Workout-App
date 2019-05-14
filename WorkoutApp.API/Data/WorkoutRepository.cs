@@ -49,9 +49,11 @@ namespace WorkoutApp.API.Data
                 .Where(p => p.User.Id == userId).ToListAsync();
         }
 
-        public async Task<List<ExerciseForReturnDto>> GetExercises(ExerciseQueryParams exParams)
+        public async Task<PagedList<ExerciseForReturnDto>> GetExercises(ExerciseQueryParams exParams)
         {
-            return await context.Exercises.Select(e => new ExerciseForReturnDto { Id = e.Id, Name = e.Name }).ToListAsync();
+            IQueryable<ExerciseForReturnDto> exercises = context.Exercises.Select(e => new ExerciseForReturnDto { Id = e.Id, Name = e.Name });
+
+            return await PagedList<ExerciseForReturnDto>.CreateAsync(exercises, exParams.PageNumber, exParams.PageSize);
         }
 
         public async Task<ExerciseForReturnDto> GetExercise(int exerciseId)
@@ -59,9 +61,21 @@ namespace WorkoutApp.API.Data
             return await context.Exercises.Select(e => new ExerciseForReturnDto { Id = e.Id, Name = e.Name }).FirstOrDefaultAsync(e => e.Id == exerciseId);
         }
 
-        public async Task<List<ExerciseForReturnDetailedDto>> GetExercisesDetailed(ExerciseQueryParams exParams)
+        public async Task<PagedList<ExerciseForReturnDetailedDto>> GetExercisesDetailed(ExerciseQueryParams exParams)
         {
-            IQueryable<ExerciseForReturnDetailedDto> exercises = context.Exercises
+            IQueryable<Exercise> exerciseQuery = context.Exercises;
+
+            if (exParams.ExerciseCategoryId.Count > 0)
+            {
+                exerciseQuery = exerciseQuery.Where(ex => ex.ExerciseCategorys.Any(ec => exParams.ExerciseCategoryId.Contains(ec.ExerciseCategoryId)));
+            }
+
+            if (exParams.EquipmentId.Count > 0)
+            {
+                exerciseQuery = exerciseQuery.Where(ex => ex.Equipment.Any(eq => exParams.EquipmentId.Contains(eq.EquipmentId)));
+            }
+
+            IQueryable<ExerciseForReturnDetailedDto> exercises = exerciseQuery
                 .Select( e => new ExerciseForReturnDetailedDto { 
                     Id = e.Id,
                     Name = e.Name,
@@ -80,14 +94,8 @@ namespace WorkoutApp.API.Data
                         Name = ec.ExerciseCategory.Name
                     }).ToList()
                 });
-            
-            if (exParams.ExerciseCategoryId != 0)
-            {
-                //List<ExerciseCategoryForReturnDto> categorys = await GetExerciseCategories();
-                //exercises = exercises.Where(ex => categorys.Contains);
-            }
 
-            return await exercises.ToListAsync();
+            return await PagedList<ExerciseForReturnDetailedDto>.CreateAsync(exercises, exParams.PageNumber, exParams.PageSize);
         }
 
         public async Task<ExerciseForReturnDetailedDto> GetExerciseDetailed(int exerciseId)
@@ -127,6 +135,24 @@ namespace WorkoutApp.API.Data
         public async Task<List<ExerciseCategoryForReturnDto>> GetExerciseCategories()
         {
             return await context.ExerciseCategorys.Select(ec => new ExerciseCategoryForReturnDto { Id = ec.Id, Name = ec.Name }).ToListAsync();
+        }
+
+        public async Task<PagedList<EquipmentForReturnDto>> GetExerciseEquipment(PaginationParams pgParams)
+        {
+            IQueryable<EquipmentForReturnDto> equipment = context.Equipment.Select(eq => new EquipmentForReturnDto {
+                Id = eq.Id,
+                Name = eq.Name
+            });
+
+            return await PagedList<EquipmentForReturnDto>.CreateAsync(equipment, pgParams.PageNumber, pgParams.PageSize);
+        }
+
+        public async Task<EquipmentForReturnDto> GetSingleExerciseEquipment(int id)
+        {
+            return await context.Equipment.Select(eq => new EquipmentForReturnDto {
+                Id = eq.Id,
+                Name = eq.Name
+            }).FirstOrDefaultAsync(eq => eq.Id == id);
         }
 
         public async Task<bool> SaveAll()

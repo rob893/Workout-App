@@ -28,7 +28,9 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetExercises([FromQuery] ExerciseQueryParams exParams)
         {
-            List<ExerciseForReturnDto> exercises = await repo.GetExercises(exParams);
+            PagedList<ExerciseForReturnDto> exercises = await repo.GetExercises(exParams);
+            
+            Response.AddPagination(exercises.CurrentPage, exercises.PageSize, exercises.TotalCount, exercises.TotalPages);
 
             return Ok(exercises);
         }
@@ -52,7 +54,9 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("detailed")]
         public async Task<IActionResult> GetExercisesDetailed([FromQuery] ExerciseQueryParams exParams)
         {
-            List<ExerciseForReturnDetailedDto> exercises = await repo.GetExercisesDetailed(exParams);
+            PagedList<ExerciseForReturnDetailedDto> exercises = await repo.GetExercisesDetailed(exParams);
+
+            Response.AddPagination(exercises.CurrentPage, exercises.PageSize, exercises.TotalCount, exercises.TotalPages);
 
             return Ok(exercises);
         }

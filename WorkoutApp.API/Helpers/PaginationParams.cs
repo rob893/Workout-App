@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-
 namespace WorkoutApp.API.Helpers
 {
-    public class ExerciseQueryParams
+    public class PaginationParams
     {
         private const int MaxPageSize = 50;
         public int PageNumber { get; set; } = 1;
@@ -13,8 +11,5 @@ namespace WorkoutApp.API.Helpers
             get { return pageSize; }
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
-
-        public List<int> ExerciseCategoryId { get; set; } = new List<int>();
-        public List<int> EquipmentId { get; set; } = new List<int>();
     }
 }

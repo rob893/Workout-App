@@ -8,6 +8,6 @@ namespace WorkoutApp.API.Models
         public int Id { get; set; }
         public User User { get; set; }
         public int UserId { get; set; }
-        public ICollection<Workout> Workouts { get; set; }
+        public List<Workout> Workouts { get; set; }
     }
 }
