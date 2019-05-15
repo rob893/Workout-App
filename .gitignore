@@ -2,4 +2,4 @@
 .vs/
 bin/
 obj/
-WorkoutApp.API/appsettings.json
+**/appsettings.json
