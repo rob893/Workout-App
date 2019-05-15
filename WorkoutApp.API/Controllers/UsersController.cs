@@ -9,6 +9,7 @@ using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WorkoutApp.API.Helpers.QueryParams;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -45,6 +46,38 @@ namespace WorkoutApp.API.Controllers
             UserForReturnDto userToReturn = mapper.Map<UserForReturnDto>(user);
 
             return Ok(userToReturn);
+        }
+
+        [HttpGet("{userId}/workoutPlan")]
+        public async Task<IActionResult> GetWorkoutPlansForUser(int userId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            List<WorkoutPlan> workoutPlans = await repo.GetWorkoutPlansForUser(userId);
+
+
+            return Ok(workoutPlans);
+        }
+
+        [HttpGet("{userId}/workouts")]
+        public async Task<IActionResult> GetWorkoutsForUser(int userId, [FromQuery] WorkoutParams woParams)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            woParams.UserId = userId;
+
+            PagedList<Workout> workouts = await repo.GetWorkouts(woParams);
+            Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
+
+            IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
+
+            return Ok(workoutsForReturn);
         }
     }
 }

@@ -22,14 +22,5 @@ namespace WorkoutApp.API.Controllers
             this.repo = repo; 
             this.mapper = mapper;   
         }
-
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetWorkoutPlansForUser(int userId)
-        {
-            List<WorkoutPlan> workoutPlans = await repo.GetWorkoutPlansForUser(userId);
-
-
-            return Ok(workoutPlans);
-        }
     }
 }

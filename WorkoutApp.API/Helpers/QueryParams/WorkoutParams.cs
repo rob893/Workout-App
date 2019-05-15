@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 
-namespace WorkoutApp.API.Helpers
+namespace WorkoutApp.API.Helpers.QueryParams
 {
-    public class ExerciseQueryParams
+    public class WorkoutParams
     {
         private const int MaxPageSize = 50;
         public int PageNumber { get; set; } = 1;
@@ -14,7 +15,8 @@ namespace WorkoutApp.API.Helpers
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
 
-        public List<int> ExerciseCategoryId { get; set; } = new List<int>();
-        public List<int> EquipmentId { get; set; } = new List<int>();
+        public int? UserId { get; set; }
+        public DateTime? MinDate { get; set; }
+        public DateTime? MaxDate { get; set; }
     }
 }

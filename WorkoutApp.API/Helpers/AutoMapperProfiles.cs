@@ -13,6 +13,7 @@ namespace WorkoutApp.API.Helpers
             CreateMap<UserForRegisterDto, User>();
             CreateMap<Equipment, EquipmentForReturnDto>().ReverseMap();
             CreateMap<Exercise, ExerciseForReturnDto>();
+            CreateMap<Workout, WorkoutForReturnDto>();
             CreateMap<Exercise, ExerciseForReturnDetailedDto>()
                 .ForMember(dto => dto.ExerciseSteps, opt =>
                     opt.MapFrom(ex => ex.ExerciseSteps.Select(es => new ExerciseStepForReturnDto {

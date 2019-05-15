@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace WorkoutApp.API.Helpers
+namespace WorkoutApp.API.Helpers.QueryParams
 {
-    public class EquipmentQueryParams
+    public class EquipmentParams
     {
         private const int MaxPageSize = 50;
         public int PageNumber { get; set; } = 1;

@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
+using WorkoutApp.API.Models;
 
-namespace WorkoutApp.API.Models
+namespace WorkoutApp.API.Dtos
 {
-    public class Workout
+    public class WorkoutForReturnDto
     {
         public int Id { get; set; }
         public int WorkoutPlanId { get; set; }
-        public WorkoutPlan WorkoutPlan { get; set; }
         public DateTime Date { get; set; }
-        public List<ExerciseGroup> ExerciseGroups { get; set; }
+        public List<ExerciseGroupForReturnDto> ExerciseGroups { get; set; }
     }
 }

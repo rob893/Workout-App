@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Data;
 using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
+using WorkoutApp.API.Helpers.QueryParams;
 using WorkoutApp.API.Models;
 
 namespace WorkoutApp.API.Controllers
@@ -26,7 +27,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetExercises([FromQuery] ExerciseQueryParams exParams)
+        public async Task<IActionResult> GetExercises([FromQuery] ExerciseParams exParams)
         {
             PagedList<Exercise> exercises = await repo.GetExercises(exParams);
             
@@ -58,7 +59,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("detailed")]
-        public async Task<IActionResult> GetExercisesDetailed([FromQuery] ExerciseQueryParams exParams)
+        public async Task<IActionResult> GetExercisesDetailed([FromQuery] ExerciseParams exParams)
         {
             PagedList<Exercise> exercises = await repo.GetExercises(exParams);
 
@@ -70,7 +71,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{exerciseId}/equipment")]
-        public async Task<IActionResult> GetEquipmentForExercise(int exerciseId, [FromQuery] EquipmentQueryParams eqParams)
+        public async Task<IActionResult> GetEquipmentForExercise(int exerciseId, [FromQuery] EquipmentParams eqParams)
         {
             eqParams.ExerciseIds.Add(exerciseId);
 

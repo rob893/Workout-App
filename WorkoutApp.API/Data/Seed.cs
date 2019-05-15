@@ -29,6 +29,7 @@ namespace WorkoutApp.API.Data
             SeedMuscles();
             SeedExerciseCategories();
             SeedExercises();
+            SeedWorkoutPlans();
         }
 
         private void ClearAllData()
@@ -149,18 +150,11 @@ namespace WorkoutApp.API.Data
                 return;
             }
 
-            string data = System.IO.File.ReadAllText("Data/WorkoutPlanSeedData.json");
+            string data = System.IO.File.ReadAllText("Data/Seed Data/WorkoutPlanSeedData.json");
             List<WorkoutPlan> plans = JsonConvert.DeserializeObject<List<WorkoutPlan>>(data);
 
             foreach (WorkoutPlan plan in plans)
             {
-                byte[] passwordHash, passwordSalt;
-                CreatePasswordHash("password", out passwordHash, out passwordSalt);
-
-                plan.User.PasswordHash = passwordHash;
-                plan.User.PasswordSalt = passwordSalt;
-                plan.User.Username = plan.User.Username.ToLower();
-
                 context.WorkoutPlans.Add(plan);
             }
 
