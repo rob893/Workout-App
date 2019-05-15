@@ -28,45 +28,59 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetExercises([FromQuery] ExerciseQueryParams exParams)
         {
-            PagedList<ExerciseForReturnDto> exercises = await repo.GetExercises(exParams);
+            PagedList<Exercise> exercises = await repo.GetExercises(exParams);
             
             Response.AddPagination(exercises.CurrentPage, exercises.PageSize, exercises.TotalCount, exercises.TotalPages);
 
-            return Ok(exercises);
+            IEnumerable<ExerciseForReturnDto> exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
+
+            return Ok(exercisesToReturn);
         }
 
         [HttpGet("{exerciseId}")]
         public async Task<IActionResult> GetExercise(int exerciseId)
         {
-            ExerciseForReturnDto exercise = await repo.GetExercise(exerciseId);
+            Exercise exercise = await repo.GetExercise(exerciseId);
 
-            return Ok(exercise);
+            ExerciseForReturnDto exToReturn = mapper.Map<ExerciseForReturnDto>(exercise);
+
+            return Ok(exToReturn);
         }
 
         [HttpGet("{exerciseId}/detailed")]
         public async Task<IActionResult> GetExerciseDetailed(int exerciseId)
         {
-            ExerciseForReturnDetailedDto exercise = await repo.GetExerciseDetailed(exerciseId);
+            Exercise exercise = await repo.GetExercise(exerciseId);
 
-            return Ok(exercise);
+            ExerciseForReturnDetailedDto exToReturn = mapper.Map<ExerciseForReturnDetailedDto>(exercise);
+
+            return Ok(exToReturn);
         }
 
         [HttpGet("detailed")]
         public async Task<IActionResult> GetExercisesDetailed([FromQuery] ExerciseQueryParams exParams)
         {
-            PagedList<ExerciseForReturnDetailedDto> exercises = await repo.GetExercisesDetailed(exParams);
+            PagedList<Exercise> exercises = await repo.GetExercises(exParams);
 
             Response.AddPagination(exercises.CurrentPage, exercises.PageSize, exercises.TotalCount, exercises.TotalPages);
 
-            return Ok(exercises);
+            IEnumerable<ExerciseForReturnDetailedDto> exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
+
+            return Ok(exercisesToReturn);
         }
 
         [HttpGet("{exerciseId}/equipment")]
-        public async Task<IActionResult> GetEquipmentForExercise(int exerciseId)
+        public async Task<IActionResult> GetEquipmentForExercise(int exerciseId, [FromQuery] EquipmentQueryParams eqParams)
         {
-            List<EquipmentForReturnDto> equipment = await repo.GetEquipmentForExercise(exerciseId);
+            eqParams.ExerciseIds.Add(exerciseId);
 
-            return Ok(equipment);
+            PagedList<Equipment> equipment = await repo.GetExerciseEquipment(eqParams);
+
+            Response.AddPagination(equipment.CurrentPage, equipment.PageSize, equipment.TotalCount, equipment.TotalPages);
+
+            IEnumerable<EquipmentForReturnDto> equipmentForReturn = mapper.Map<IEnumerable<EquipmentForReturnDto>>(equipment);
+
+            return Ok(equipmentForReturn);
         }
     }
 }

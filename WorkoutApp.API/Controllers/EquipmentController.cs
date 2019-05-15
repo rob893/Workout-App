@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -25,21 +26,25 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEquipment([FromQuery] PaginationParams pgParams)
+        public async Task<IActionResult> GetEquipment([FromQuery] EquipmentQueryParams eqParams)
         {
-            PagedList<EquipmentForReturnDto> equipment = await repo.GetExerciseEquipment(pgParams);
+            PagedList<Equipment> equipment = await repo.GetExerciseEquipment(eqParams);
             
             Response.AddPagination(equipment.CurrentPage, equipment.PageSize, equipment.TotalCount, equipment.TotalPages);
 
-            return Ok(equipment);
+            IEnumerable<EquipmentForReturnDto> equipmentToReturn = mapper.Map<IEnumerable<EquipmentForReturnDto>>(equipment);
+
+            return Ok(equipmentToReturn);
         }
 
         [HttpGet("{id}", Name = "GetSingleEquipment")]
         public async Task<IActionResult> GetSingleEquipment(int id)
         {
-            EquipmentForReturnDto equipment = await repo.GetSingleExerciseEquipment(id);
+            Equipment equipment = await repo.GetSingleExerciseEquipment(id);
+
+            EquipmentForReturnDto equipmentToReturn = mapper.Map<EquipmentForReturnDto>(equipment);
             
-            return Ok(equipment);
+            return Ok(equipmentToReturn);
         }
 
         [HttpPost]
@@ -62,14 +67,12 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSingleEquipment(int id)
         {
-            EquipmentForReturnDto equipmentDto = await repo.GetSingleExerciseEquipment(id);
+            Equipment equipment = await repo.GetSingleExerciseEquipment(id);
 
-            if (equipmentDto == null)
+            if (equipment == null)
             {
                 return NoContent();
             }
-
-            Equipment equipment = mapper.Map<Equipment>(equipmentDto);
 
             repo.Delete<Equipment>(equipment);
 

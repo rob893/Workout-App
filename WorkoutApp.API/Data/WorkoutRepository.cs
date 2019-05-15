@@ -49,110 +49,60 @@ namespace WorkoutApp.API.Data
                 .Where(p => p.User.Id == userId).ToListAsync();
         }
 
-        public async Task<PagedList<ExerciseForReturnDto>> GetExercises(ExerciseQueryParams exParams)
+        public async Task<PagedList<Exercise>> GetExercises(ExerciseQueryParams exParams)
         {
-            IQueryable<ExerciseForReturnDto> exercises = context.Exercises.Select(e => new ExerciseForReturnDto { Id = e.Id, Name = e.Name });
-
-            return await PagedList<ExerciseForReturnDto>.CreateAsync(exercises, exParams.PageNumber, exParams.PageSize);
-        }
-
-        public async Task<ExerciseForReturnDto> GetExercise(int exerciseId)
-        {
-            return await context.Exercises.Select(e => new ExerciseForReturnDto { Id = e.Id, Name = e.Name }).FirstOrDefaultAsync(e => e.Id == exerciseId);
-        }
-
-        public async Task<PagedList<ExerciseForReturnDetailedDto>> GetExercisesDetailed(ExerciseQueryParams exParams)
-        {
-            IQueryable<Exercise> exerciseQuery = context.Exercises;
+            IQueryable<Exercise> exercises = context.Exercises
+                .Include(ex => ex.PrimaryMuscle)
+                .Include(ex => ex.SecondaryMuscle)
+                .Include(ex => ex.ExerciseSteps)
+                .Include(ex => ex.Equipment).ThenInclude(eq => eq.Equipment)
+                .Include(ex => ex.ExerciseCategorys).ThenInclude(eq => eq.ExerciseCategory)
+                .OrderBy(ex => ex.Id);
 
             if (exParams.ExerciseCategoryId.Count > 0)
             {
-                exerciseQuery = exerciseQuery.Where(ex => ex.ExerciseCategorys.Any(ec => exParams.ExerciseCategoryId.Contains(ec.ExerciseCategoryId)));
+                exercises = exercises.Where(ex => ex.ExerciseCategorys.Any(ec => exParams.ExerciseCategoryId.Contains(ec.ExerciseCategoryId)));
             }
 
             if (exParams.EquipmentId.Count > 0)
             {
-                exerciseQuery = exerciseQuery.Where(ex => ex.Equipment.Any(eq => exParams.EquipmentId.Contains(eq.EquipmentId)));
+                exercises = exercises.Where(ex => ex.Equipment.Any(eq => exParams.EquipmentId.Contains(eq.EquipmentId)));
             }
 
-            IQueryable<ExerciseForReturnDetailedDto> exercises = exerciseQuery
-                .Select( e => new ExerciseForReturnDetailedDto { 
-                    Id = e.Id,
-                    Name = e.Name,
-                    PrimaryMuscle = e.PrimaryMuscle,
-                    SecondaryMuscle = e.SecondaryMuscle,
-                    ExerciseSteps = e.ExerciseSteps.Select(es => new ExerciseStepForReturnDto{
-                        ExerciseStepNumber = es.ExerciseStepNumber,
-                        Description = es.Description
-                    }).ToList(),
-                    Equipment = e.Equipment.Select(eq => new EquipmentForReturnDto { 
-                        Id = eq.EquipmentId, 
-                        Name = eq.Equipment.Name
-                    }).ToList(),
-                    ExerciseCategorys = e.ExerciseCategorys.Select(ec => new ExerciseCategoryForReturnDto { 
-                        Id = ec.ExerciseCategoryId,
-                        Name = ec.ExerciseCategory.Name
-                    }).ToList()
-                });
-
-            return await PagedList<ExerciseForReturnDetailedDto>.CreateAsync(exercises, exParams.PageNumber, exParams.PageSize);
+            return await PagedList<Exercise>.CreateAsync(exercises, exParams.PageNumber, exParams.PageSize);
         }
 
-        public async Task<ExerciseForReturnDetailedDto> GetExerciseDetailed(int exerciseId)
+        public async Task<Exercise> GetExercise(int exerciseId)
         {
-            ExerciseForReturnDetailedDto exercise = await context.Exercises
-                .Select( e => new ExerciseForReturnDetailedDto { 
-                    Id = e.Id,
-                    Name = e.Name,
-                    PrimaryMuscle = e.PrimaryMuscle,
-                    SecondaryMuscle = e.SecondaryMuscle,
-                    ExerciseSteps = e.ExerciseSteps.Select(es => new ExerciseStepForReturnDto{
-                        ExerciseStepNumber = es.ExerciseStepNumber,
-                        Description = es.Description
-                    }).ToList(),
-                    Equipment = e.Equipment.Select(eq => new EquipmentForReturnDto { 
-                        Id = eq.EquipmentId, 
-                        Name = eq.Equipment.Name
-                    }).ToList(),
-                    ExerciseCategorys = e.ExerciseCategorys.Select(ec => new ExerciseCategoryForReturnDto { 
-                        Id = ec.ExerciseCategoryId,
-                        Name = ec.ExerciseCategory.Name
-                    }).ToList()
-                }).FirstOrDefaultAsync(e => e.Id == exerciseId);
-
-            return exercise;
+            return await context.Exercises
+                .Include(ex => ex.PrimaryMuscle)
+                .Include(ex => ex.SecondaryMuscle)
+                .Include(ex => ex.ExerciseSteps)
+                .Include(ex => ex.Equipment).ThenInclude(eq => eq.Equipment)
+                .Include(ex => ex.ExerciseCategorys).ThenInclude(eq => eq.ExerciseCategory)
+                .FirstOrDefaultAsync(e => e.Id == exerciseId);
         }
 
-        public async Task<List<EquipmentForReturnDto>> GetEquipmentForExercise(int exerciseId)
+        public async Task<List<ExerciseCategory>> GetExerciseCategories()
         {
-            Exercise exercise = await context.Exercises.Include(e => e.Equipment).FirstOrDefaultAsync(e => e.Id == exerciseId);
-
-            IEnumerable<int> equipmentIds = exercise.Equipment.Select(i => i.EquipmentId);
-
-            return await context.Equipment.Where(eq => equipmentIds.Contains(eq.Id)).Select(eq => new EquipmentForReturnDto { Id = eq.Id, Name = eq.Name } ).ToListAsync();
+            return await context.ExerciseCategorys.ToListAsync();
         }
 
-        public async Task<List<ExerciseCategoryForReturnDto>> GetExerciseCategories()
+        public async Task<PagedList<Equipment>> GetExerciseEquipment(EquipmentQueryParams eqParams)
         {
-            return await context.ExerciseCategorys.Select(ec => new ExerciseCategoryForReturnDto { Id = ec.Id, Name = ec.Name }).ToListAsync();
+            IQueryable<Equipment> equipment = context.Equipment.OrderBy(eq => eq.Id);
+
+            if (eqParams.ExerciseIds.Count > 0)
+            {
+                equipment = equipment.Where(eq => eq.Exercises.Any(ex => eqParams.ExerciseIds.Contains(ex.ExerciseId)));
+            }
+
+            return await PagedList<Equipment>.CreateAsync(equipment, eqParams.PageNumber, eqParams.PageSize);
         }
 
-        public async Task<PagedList<EquipmentForReturnDto>> GetExerciseEquipment(PaginationParams pgParams)
+        public async Task<Equipment> GetSingleExerciseEquipment(int id)
         {
-            IQueryable<EquipmentForReturnDto> equipment = context.Equipment.Select(eq => new EquipmentForReturnDto {
-                Id = eq.Id,
-                Name = eq.Name
-            });
-
-            return await PagedList<EquipmentForReturnDto>.CreateAsync(equipment, pgParams.PageNumber, pgParams.PageSize);
-        }
-
-        public async Task<EquipmentForReturnDto> GetSingleExerciseEquipment(int id)
-        {
-            return await context.Equipment.Select(eq => new EquipmentForReturnDto {
-                Id = eq.Id,
-                Name = eq.Name
-            }).FirstOrDefaultAsync(eq => eq.Id == id);
+            return await context.Equipment.FirstOrDefaultAsync(eq => eq.Id == id);
         }
 
         public async Task<bool> SaveAll()
