@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -68,14 +69,14 @@ namespace WorkoutApp.API.Controllers
         [HttpPatch("{planId}/workout/{woId}")]
         public async Task<IActionResult> UpdateWorkout(int planId, int woId, WorkoutForUpdateDto workoutUpdate)
         {
-            Workout oldWorkout = await repo.GetWorkout(woId);
+            Workout workout = await repo.GetWorkout(woId);
 
-            if (oldWorkout == null)
+            if (workout == null)
             {
                 return NotFound();
             }
 
-            if (oldWorkout.WorkoutPlanId != planId)
+            if (workout.WorkoutPlanId != planId)
             {
                 return Unauthorized();
             }
@@ -92,11 +93,32 @@ namespace WorkoutApp.API.Controllers
                 return Unauthorized();
             }
 
-            mapper.Map(workoutUpdate, oldWorkout);
+            if (workoutUpdate.Date != null)
+            {
+                workout.Date = (DateTime)workoutUpdate.Date;
+            }
+
+            if (workoutUpdate.ExerciseGroupsToAdd != null)
+            {
+                foreach (ExerciseGroupForCreationDto exGroup in workoutUpdate.ExerciseGroupsToAdd)
+                {
+                    ExerciseGroup newGroup = mapper.Map<ExerciseGroup>(exGroup);
+                    newGroup.WorkoutId = woId;
+                    repo.Add<ExerciseGroup>(newGroup);
+                }
+            }
+
+            if (workoutUpdate.ExerciseGroupIdsToRemove != null)
+            {
+                HashSet<int> idsToRemove = new HashSet<int>(workoutUpdate.ExerciseGroupIdsToRemove);
+                workout.ExerciseGroups.RemoveAll(eg => idsToRemove.Contains(eg.Id));
+            }
 
             if (await repo.SaveAll())
             {
-                return Ok(oldWorkout);
+                Workout newWorkout = await repo.GetWorkout(woId);
+                WorkoutForReturnDto workoutToReturn = mapper.Map<WorkoutForReturnDto>(newWorkout);
+                return Ok(workoutToReturn);
             }
 
             return BadRequest("Could not update workout!");

@@ -143,7 +143,10 @@ namespace WorkoutApp.API.Data
 
         public async Task<Workout> GetWorkout(int id)
         {
-            return await context.Workouts.FirstOrDefaultAsync(wo => wo.Id == id);
+            return await context.Workouts
+                .Include(wo => wo.ExerciseGroups)
+                .ThenInclude(eg => eg.Exercise)
+                .FirstOrDefaultAsync(wo => wo.Id == id);
         }
     }
 }
