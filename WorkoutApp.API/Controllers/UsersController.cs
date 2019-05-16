@@ -48,6 +48,28 @@ namespace WorkoutApp.API.Controllers
             return Ok(userToReturn);
         }
 
+        [HttpPost("{userId}/workoutPlan")]
+        public async Task<IActionResult> CreateWorkoutPlanForUser(int userId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            WorkoutPlan newWorkoutPlan = new WorkoutPlan();
+
+            newWorkoutPlan.UserId = userId;
+
+            repo.Add<WorkoutPlan>(newWorkoutPlan);
+
+            if (await repo.SaveAll())
+            {
+                return CreatedAtRoute("GetWorkoutPlan", new { woPlanId = newWorkoutPlan.Id }, newWorkoutPlan);
+            }
+
+            return BadRequest("Could not create workout plan.");
+        }
+
         [HttpGet("{userId}/workoutPlan")]
         public async Task<IActionResult> GetWorkoutPlansForUser(int userId)
         {

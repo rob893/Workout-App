@@ -29,6 +29,11 @@ namespace WorkoutApp.API.Data
             context.Remove(entity);
         }
 
+        public async Task<bool> SaveAll()
+        {
+            return await context.SaveChangesAsync() > 0;
+        }
+
         public async Task<User> GetUser(int id)
         {
             User user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
@@ -48,6 +53,11 @@ namespace WorkoutApp.API.Data
                 .ThenInclude(wo => wo.ExerciseGroups)
                 .ThenInclude(eg => eg.Exercise)
                 .Where(wp => wp.UserId == userId).ToListAsync();
+        }
+
+        public async Task<WorkoutPlan> GetWorkoutPlan(int id)
+        {
+            return await context.WorkoutPlans.Where(wp => wp.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<PagedList<Exercise>> GetExercises(ExerciseParams exParams)
@@ -104,11 +114,6 @@ namespace WorkoutApp.API.Data
         public async Task<Equipment> GetSingleExerciseEquipment(int id)
         {
             return await context.Equipment.FirstOrDefaultAsync(eq => eq.Id == id);
-        }
-
-        public async Task<bool> SaveAll()
-        {
-            return await context.SaveChangesAsync() > 0;
         }
 
         public async Task<PagedList<Workout>> GetWorkouts(WorkoutParams woParams)

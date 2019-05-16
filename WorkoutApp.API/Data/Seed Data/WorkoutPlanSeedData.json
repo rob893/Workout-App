@@ -1,5 +1,6 @@
 [
     {
+        "Id": 1,
         "UserId": 3,
         "Workouts": [
             {
@@ -60,6 +61,7 @@
         ]
     },
     {
+        "Id": 2,
         "UserId": 1,
         "Workouts": [
             {

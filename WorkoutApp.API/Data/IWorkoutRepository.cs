@@ -17,6 +17,7 @@ namespace WorkoutApp.API.Data
         Task<User> GetUser(int id);
 
         //Task<PagedList<WorkoutPlan>> GetWorkoutPlans();
+        Task<WorkoutPlan> GetWorkoutPlan(int id);
         Task<List<WorkoutPlan>> GetWorkoutPlansForUser(int userId);
 
         Task<PagedList<Workout>> GetWorkouts(WorkoutParams woParams);

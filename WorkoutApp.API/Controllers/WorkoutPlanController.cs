@@ -22,5 +22,14 @@ namespace WorkoutApp.API.Controllers
             this.repo = repo; 
             this.mapper = mapper;   
         }
+
+        [HttpGet("{woPlanId}", Name = "GetWorkoutPlan")]
+        public async Task<IActionResult> GetWorkoutPlan(int woPlanId)
+        {
+            WorkoutPlan workoutPlan = await repo.GetWorkoutPlan(woPlanId);
+
+
+            return Ok(workoutPlan);
+        }
     }
 }
