@@ -64,7 +64,7 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAll())
             {
-                return CreatedAtRoute("GetWorkoutPlan", new { woPlanId = newWorkoutPlan.Id }, newWorkoutPlan);
+                return CreatedAtRoute("GetWorkoutPlan", new { id = newWorkoutPlan.Id }, newWorkoutPlan);
             }
 
             return BadRequest("Could not create workout plan.");

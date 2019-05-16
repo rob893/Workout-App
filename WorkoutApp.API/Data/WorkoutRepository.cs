@@ -57,7 +57,7 @@ namespace WorkoutApp.API.Data
 
         public async Task<WorkoutPlan> GetWorkoutPlan(int id)
         {
-            return await context.WorkoutPlans.Where(wp => wp.Id == id).FirstOrDefaultAsync();
+            return await context.WorkoutPlans.FirstOrDefaultAsync(wp => wp.Id == id);
         }
 
         public async Task<PagedList<Exercise>> GetExercises(ExerciseParams exParams)
@@ -139,6 +139,11 @@ namespace WorkoutApp.API.Data
             }
 
             return await PagedList<Workout>.CreateAsync(workout, woParams.PageNumber, woParams.PageSize);
+        }
+
+        public async Task<Workout> GetWorkout(int id)
+        {
+            return await context.Workouts.FirstOrDefaultAsync(wo => wo.Id == id);
         }
     }
 }
