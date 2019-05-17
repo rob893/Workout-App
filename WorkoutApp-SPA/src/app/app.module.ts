@@ -14,6 +14,11 @@ import { AlertifyService } from './_services/alertify.service';
 import { UserService } from './_services/user.service';
 import { AuthGuard } from './_guards/auth.guard';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
+import { NavComponent } from './nav/nav.component';
+import { HomeComponent } from './home/home.component';
+import { WorkoutPlanService } from './_services/workoutPlan.service';
+import { PlanOverviewComponent } from './PlanOverview/PlanOverview.component';
+import { PlanOverviewResolver } from './_resolvers/planOverview.resolver';
 
 export function tokenGetter() {
     return localStorage.getItem('token');
@@ -21,7 +26,10 @@ export function tokenGetter() {
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        NavComponent,
+        HomeComponent,
+        PlanOverviewComponent
     ],
     imports: [
         BrowserModule,
@@ -48,7 +56,9 @@ export function tokenGetter() {
         ErrorInterceptorProvider,
         AlertifyService,
         AuthGuard,
-        UserService
+        UserService,
+        WorkoutPlanService,
+        PlanOverviewResolver
     ],
     bootstrap: [AppComponent]
 })
