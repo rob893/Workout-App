@@ -1,5 +1,5 @@
 <div class="row mt-3 ml-3">
-    <div *ngFor="let workout of workoutPlan?.workouts" class="col-lg-2 col-md-3 col-sm-6">
-        <app-workout-card [workout]="workout"></app-workout-card>
+    <div *ngFor="let workoutDay of workoutDays" class="col-lg-2 col-md-3 col-sm-6">
+        <app-workout-card [workoutDay]="workoutDay"></app-workout-card>
     </div>
 </div>

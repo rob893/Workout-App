@@ -16,7 +16,7 @@ export const appRoutes: Routes = [
         canActivate: [AuthGuard],
         children: [
             {
-                path: 'users/:id/planOverview',
+                path: 'planOverview',
                 component: PlanOverviewComponent,
                 resolve: {workoutPlan: PlanOverviewResolver}
             }

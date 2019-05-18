@@ -4,19 +4,23 @@
         "UserId": 3,
         "Workouts": [
             {
+                "Id": 1,
                 "Date": "5/15/2019",
                 "ExerciseGroups": [
                     {
+                        "Id": 1,
                         "ExerciseId": 1,
                         "Sets": 3,
                         "Repetitions": 12
                     },
                     {
+                        "Id": 2,
                         "ExerciseId": 2,
                         "Sets": 3,
                         "Repetitions": 12
                     },
                     {
+                        "Id": 3,
                         "ExerciseId": 3,
                         "Sets": 3,
                         "Repetitions": 12
@@ -24,14 +28,17 @@
                 ]
             },
             {
-                "Date": "5/16/2019",
+                "Id": 2,
+                "Date": "5/16/2019 1pm",
                 "ExerciseGroups": [
                     {
+                        "Id": 4,
                         "ExerciseId": 4,
                         "Sets": 3,
                         "Repetitions": 12
                     },
                     {
+                        "Id": 5,
                         "ExerciseId": 5,
                         "Sets": 3,
                         "Repetitions": 12
@@ -39,19 +46,41 @@
                 ]
             },
             {
+                "Id": 3,
+                "Date": "5/16/2019 9am",
+                "ExerciseGroups": [
+                    {
+                        "Id": 6,
+                        "ExerciseId": 4,
+                        "Sets": 3,
+                        "Repetitions": 12
+                    },
+                    {
+                        "Id": 7,
+                        "ExerciseId": 5,
+                        "Sets": 3,
+                        "Repetitions": 12
+                    }
+                ]
+            },
+            {
+                "Id": 4,
                 "Date": "5/17/2019",
                 "ExerciseGroups": [
                     {
+                        "Id": 8,
                         "ExerciseId": 6,
                         "Sets": 3,
                         "Repetitions": 12
                     },
                     {
+                        "Id": 9,
                         "ExerciseId": 2,
                         "Sets": 3,
                         "Repetitions": 12
                     },
                     {
+                        "Id": 10,
                         "ExerciseId": 3,
                         "Sets": 3,
                         "Repetitions": 12
@@ -65,19 +94,23 @@
         "UserId": 1,
         "Workouts": [
             {
+                "Id": 5,
                 "Date": "5/15/2019",
                 "ExerciseGroups": [
                     {
+                        "Id": 11,
                         "ExerciseId": 1,
                         "Sets": 3,
                         "Repetitions": 12
                     },
                     {
+                        "Id": 12,
                         "ExerciseId": 6,
                         "Sets": 3,
                         "Repetitions": 12
                     },
                     {
+                        "Id": 13,
                         "ExerciseId": 4,
                         "Sets": 3,
                         "Repetitions": 12
@@ -85,19 +118,23 @@
                 ]
             },
             {
+                "Id": 6,
                 "Date": "5/16/2019",
                 "ExerciseGroups": [
                     {
+                        "Id": 14,
                         "ExerciseId": 1,
                         "Sets": 3,
                         "Repetitions": 12
                     },
                     {
+                        "Id": 15,
                         "ExerciseId": 2,
                         "Sets": 3,
                         "Repetitions": 12
                     },
                     {
+                        "Id": 16,
                         "ExerciseId": 3,
                         "Sets": 3,
                         "Repetitions": 12

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { WorkoutPlanService } from '../_services/workoutPlan.service';
-import { AuthService } from '../_services/auth.service';
-import { AlertifyService } from '../_services/alertify.service';
 import { WorkoutPlan } from '../_models/workoutPlan';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
+import { Moment } from 'moment';
+import { WorkoutDay } from '../_models/workoutDay';
+import { Workout } from '../_models/workout';
 
 @Component({
     selector: 'app-plan-overview',
@@ -12,23 +13,55 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class PlanOverviewComponent implements OnInit {
     public workoutPlan: WorkoutPlan;
-    
-    private woPlanService: WorkoutPlanService;
-    private authService: AuthService;
-    private alertify: AlertifyService;
+    public workoutDays: WorkoutDay[] = [];
+
     private route: ActivatedRoute;
+    private workoutMap: Map<string, Workout[]> = new Map<string, Workout[]>(); //formatted date string => array of workouts for that day
     
 
-    public constructor(woPlanService: WorkoutPlanService, authService: AuthService, alertify: AlertifyService, route: ActivatedRoute) { 
-        this.woPlanService = woPlanService;
-        this.authService = authService;
-        this.alertify = alertify;
+    public constructor(route: ActivatedRoute) { 
         this.route = route;
     }
 
-    public ngOnInit() {
+    public ngOnInit(): void {
         this.route.data.subscribe(data => {
             this.workoutPlan = data['workoutPlan'][0];
-        })
+        });
+
+        for (let workout of this.workoutPlan.workouts) {
+            let dateKey: string = moment(workout.date).format('MMMM Do YYYY');
+
+            if (this.workoutMap.has(dateKey)) {
+                this.workoutMap.get(dateKey).push(workout);
+            }
+            else {
+                this.workoutMap.set(dateKey, [workout]);
+            }
+        }
+        
+        const fromDate: Moment = moment().startOf('week');
+        const toDate: Moment = moment().endOf('week');
+        const dateIndex: Moment = moment(fromDate);
+
+        while (dateIndex.isSameOrBefore(toDate, 'day')) {
+            let dateKey: string = dateIndex.format('MMMM Do YYYY');
+
+            let workoutDay: WorkoutDay = {
+                dayName: dateIndex.format('dddd'),
+                formattedDate: dateIndex.format('MMMM Do YYYY')
+            };
+
+            if (this.workoutMap.has(dateKey)) {
+                let workoutsForDay: Workout[] = this.workoutMap.get(dateKey);
+                workoutDay.workouts = [];
+
+                for (let workout of workoutsForDay) {
+                    workoutDay.workouts.push(workout);
+                }
+            }
+
+            this.workoutDays.push(workoutDay);
+            dateIndex.add(1, 'd');
+        }
     }
 }

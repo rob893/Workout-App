@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Workout } from '../_models/workout';
+import { WorkoutDay } from '../_models/workoutDay';
 import * as moment from 'moment';
 
 @Component({
@@ -9,15 +9,18 @@ import * as moment from 'moment';
 })
 export class WorkoutCardComponent implements OnInit {
     @Input()
-    public workout: Workout;
-
-    public formattedDate: string;
+    public workoutDay: WorkoutDay;
 
 
-    constructor() { }
+    public constructor() { }
 
-    ngOnInit() {
-        this.formattedDate = moment(this.workout.date).format('MMMM Do YYYY');
+    public ngOnInit(): void { }
+
+    public getFormattedTimeForWorkout(workoutIndex: number): string {
+        if (!this.workoutDay.workouts || !this.workoutDay.workouts[workoutIndex]) {
+            return '';
+        }
+
+        return moment(this.workoutDay.workouts[workoutIndex].date).format('ha');
     }
-
 }
