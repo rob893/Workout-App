@@ -17,8 +17,10 @@ import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { WorkoutPlanService } from './_services/workoutPlan.service';
-import { PlanOverviewComponent } from './PlanOverview/PlanOverview.component';
 import { PlanOverviewResolver } from './_resolvers/planOverview.resolver';
+import { RegisterComponent } from './register/register.component';
+import { WorkoutCardComponent } from './workout-card/workout-card.component';
+import { PlanOverviewComponent } from './plan-overview/plan-overview.component';
 
 export function tokenGetter() {
     return localStorage.getItem('token');
@@ -29,7 +31,9 @@ export function tokenGetter() {
         AppComponent,
         NavComponent,
         HomeComponent,
-        PlanOverviewComponent
+        RegisterComponent,
+        PlanOverviewComponent,
+        WorkoutCardComponent
     ],
     imports: [
         BrowserModule,

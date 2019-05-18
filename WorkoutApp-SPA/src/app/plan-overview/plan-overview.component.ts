@@ -6,9 +6,9 @@ import { WorkoutPlan } from '../_models/workoutPlan';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-    selector: 'app-PlanOverview',
-    templateUrl: './PlanOverview.component.html',
-    styleUrls: ['./PlanOverview.component.css']
+    selector: 'app-plan-overview',
+    templateUrl: './plan-overview.component.html',
+    styleUrls: ['./plan-overview.component.css']
 })
 export class PlanOverviewComponent implements OnInit {
     public workoutPlan: WorkoutPlan;

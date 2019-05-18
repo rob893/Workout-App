@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './_guards/auth.guard';
 import { HomeComponent } from './home/home.component';
-import { PlanOverviewComponent } from './PlanOverview/PlanOverview.component';
+import { PlanOverviewComponent } from './plan-overview/plan-overview.component';
 import { PlanOverviewResolver } from './_resolvers/planOverview.resolver';
 
 
@@ -16,7 +16,7 @@ export const appRoutes: Routes = [
         canActivate: [AuthGuard],
         children: [
             {
-                path: 'planOverview',
+                path: 'users/:id/planOverview',
                 component: PlanOverviewComponent,
                 resolve: {workoutPlan: PlanOverviewResolver}
             }

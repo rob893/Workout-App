@@ -21,7 +21,7 @@ export class PlanOverviewResolver implements Resolve<WorkoutPlan> {
     }
     
     public resolve(route: ActivatedRouteSnapshot): Observable<WorkoutPlan> {
-        return this.woPlanService.getWorkoutPlansForUser(3).pipe(
+        return this.woPlanService.getWorkoutPlansForUser(route.params['id']).pipe(
             catchError(error => {
                 this.alertify.error(error);
                 this.router.navigate(['/home']);
