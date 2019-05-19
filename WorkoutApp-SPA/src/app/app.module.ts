@@ -21,6 +21,8 @@ import { PlanOverviewResolver } from './_resolvers/planOverview.resolver';
 import { RegisterComponent } from './register/register.component';
 import { WorkoutCardComponent } from './workout-card/workout-card.component';
 import { PlanOverviewComponent } from './plan-overview/plan-overview.component';
+import { WorkoutCalendarComponent } from './workout-calendar/workout-calendar.component';
+import { WorkoutDayComponent } from './workout-day/workout-day.component';
 
 export function tokenGetter() {
     return localStorage.getItem('token');
@@ -33,7 +35,9 @@ export function tokenGetter() {
         HomeComponent,
         RegisterComponent,
         PlanOverviewComponent,
-        WorkoutCardComponent
+        WorkoutCardComponent,
+        WorkoutCalendarComponent,
+        WorkoutDayComponent
     ],
     imports: [
         BrowserModule,

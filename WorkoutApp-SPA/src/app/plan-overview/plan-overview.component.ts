@@ -39,8 +39,8 @@ export class PlanOverviewComponent implements OnInit {
             }
         }
         
-        const fromDate: Moment = moment().startOf('week');
-        const toDate: Moment = moment().endOf('week');
+        const fromDate: Moment = moment().startOf('month');
+        const toDate: Moment = moment().endOf('month');
         const dateIndex: Moment = moment(fromDate);
 
         while (dateIndex.isSameOrBefore(toDate, 'day')) {
