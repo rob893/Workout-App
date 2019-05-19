@@ -14,6 +14,7 @@ import { Workout } from '../_models/workout';
 export class PlanOverviewComponent implements OnInit {
     public workoutPlan: WorkoutPlan;
     public workoutDays: WorkoutDay[] = [];
+    public monthName: string = '';
 
     private route: ActivatedRoute;
     private workoutMap: Map<string, Workout[]> = new Map<string, Workout[]>(); //formatted date string => array of workouts for that day
@@ -43,12 +44,15 @@ export class PlanOverviewComponent implements OnInit {
         const toDate: Moment = moment().endOf('month');
         const dateIndex: Moment = moment(fromDate);
 
+        this.monthName = dateIndex.format('MMMM');
+
         while (dateIndex.isSameOrBefore(toDate, 'day')) {
             let dateKey: string = dateIndex.format('MMMM Do YYYY');
 
             let workoutDay: WorkoutDay = {
                 dayName: dateIndex.format('dddd'),
-                formattedDate: dateIndex.format('MMMM Do YYYY')
+                formattedDate: dateIndex.format(),
+                dayOfMonth: dateIndex.format('D')
             };
 
             if (this.workoutMap.has(dateKey)) {

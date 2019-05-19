@@ -1,3 +1,4 @@
-<p>
-  {{ workoutDay?.formattedDate }}
-</p>
+<div style="height: 100%" (click)="clickedOn()" [ngStyle]="{'background-color': bgColor}">
+    {{ workoutDay?.dayOfMonth }}
+    <br><br><br>
+</div>

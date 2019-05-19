@@ -3,6 +3,7 @@ import { AuthGuard } from './_guards/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { PlanOverviewComponent } from './plan-overview/plan-overview.component';
 import { PlanOverviewResolver } from './_resolvers/planOverview.resolver';
+import { WorkoutDetailsComponent } from './workout-details/workout-details.component';
 
 
 export const appRoutes: Routes = [
@@ -18,6 +19,11 @@ export const appRoutes: Routes = [
             {
                 path: 'planOverview',
                 component: PlanOverviewComponent,
+                resolve: {workoutPlan: PlanOverviewResolver}
+            },
+            {
+                path: 'workoutDetails',
+                component: WorkoutDetailsComponent,
                 resolve: {workoutPlan: PlanOverviewResolver}
             }
         ]

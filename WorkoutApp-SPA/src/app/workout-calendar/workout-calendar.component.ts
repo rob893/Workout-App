@@ -9,6 +9,8 @@ import { WorkoutDay } from '../_models/workoutDay';
 export class WorkoutCalendarComponent implements OnInit {
     @Input()
     public workoutDaysForMonth: WorkoutDay[] = [];
+    @Input()
+    public monthName: string;
     public daysOfWeek: string[] = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     public dayMatrix: WorkoutDay[][] = [[],[],[],[],[]];
 

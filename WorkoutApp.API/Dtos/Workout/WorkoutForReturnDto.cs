@@ -8,6 +8,7 @@ namespace WorkoutApp.API.Dtos
     {
         public int Id { get; set; }
         public int WorkoutPlanId { get; set; }
+        public bool Complete { get; set; }
         public DateTime Date { get; set; }
         public List<ExerciseGroupForReturnDto> ExerciseGroups { get; set; }
     }
