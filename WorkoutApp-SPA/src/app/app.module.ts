@@ -24,6 +24,7 @@ import { PlanOverviewComponent } from './plan-overview/plan-overview.component';
 import { WorkoutCalendarComponent } from './workout-calendar/workout-calendar.component';
 import { WorkoutDayComponent } from './workout-day/workout-day.component';
 import { WorkoutDetailsComponent } from './workout-details/workout-details.component';
+import { WorkoutDetailsResolver } from './_resolvers/workout-details.resolver';
 
 export function tokenGetter() {
     return localStorage.getItem('token');
@@ -68,7 +69,8 @@ export function tokenGetter() {
         AuthGuard,
         UserService,
         WorkoutPlanService,
-        PlanOverviewResolver
+        PlanOverviewResolver,
+        WorkoutDetailsResolver
     ],
     bootstrap: [AppComponent]
 })

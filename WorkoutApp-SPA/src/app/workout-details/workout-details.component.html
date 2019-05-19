@@ -1,3 +1,17 @@
-<p>
-  workout-details works!
-</p>
+<div  class="container-fluid">
+    <div *ngIf="workouts.length > 0; else elseBlock">
+        <h3>{{ formattedDate }}</h3>
+        <div *ngFor="let workout of workouts">
+            <h5>{{ workout.date }}</h5>
+            <ul>
+                <li *ngFor="let exercise of workout.exerciseGroups">{{ exercise.exercise.name }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <ng-template #elseBlock>
+        <div>
+            <p>You have no workouts planned for today!</p>
+        </div>
+    </ng-template>
+</div>

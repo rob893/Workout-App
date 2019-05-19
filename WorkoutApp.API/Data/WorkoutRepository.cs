@@ -130,12 +130,12 @@ namespace WorkoutApp.API.Data
 
             if (woParams.MinDate != null)
             {
-                workout = workout.Where(wo => wo.Date >= woParams.MinDate);
+                workout = workout.Where(wo => wo.Date.Date >= woParams.MinDate.Value.Date);
             }
 
             if (woParams.MaxDate != null)
             {
-                workout = workout.Where(wo => wo.Date <= woParams.MaxDate);
+                workout = workout.Where(wo => wo.Date.Date <= woParams.MaxDate.Value.Date);
             }
 
             return await PagedList<Workout>.CreateAsync(workout, woParams.PageNumber, woParams.PageSize);
