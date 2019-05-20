@@ -1,0 +1,23 @@
+<div class="container-fluid">
+    <h3>{{ exercise.name }}</h3>
+    <h5>Steps:</h5>
+    <ol>
+        <li *ngFor="let step of exercise.exerciseSteps">{{ step.description }}</li>
+    </ol>
+    <h5>Equipment Needed:</h5>
+    <ul>
+        <li *ngFor="let equipment of exercise.equipment">{{ equipment.name }}</li>
+    </ul>
+    <h5>Primary Muscle:</h5>
+    <p>{{ exercise.primaryMuscle.name }}</p>
+
+    <div *ngIf="exercise.secondaryMuscle">
+        <h5>Secondary Muscle:</h5>
+        <p>{{ exercise.secondaryMuscle.name }}</p>
+    </div>
+
+    <h5>Categories:</h5>
+    <ul>
+        <li *ngFor="let category of exercise.exerciseCategorys">{{ category.name }}</li>
+    </ul>
+</div>

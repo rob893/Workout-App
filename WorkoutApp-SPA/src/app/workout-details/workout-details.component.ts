@@ -10,7 +10,8 @@ import * as moment from 'moment';
 })
 export class WorkoutDetailsComponent implements OnInit {
     public workouts: Workout[] = [];
-    public formattedDate: string;
+    public formattedDate: string = '';
+    public timeMap: Map<Workout, string> = new Map<Workout, string>();
 
     private route: ActivatedRoute;
 
@@ -26,6 +27,10 @@ export class WorkoutDetailsComponent implements OnInit {
         
         if (this.workouts.length > 0) {
             this.formattedDate = moment(this.workouts[0].date).format('MMMM Do YYYY');
+        }
+
+        for (let workout of this.workouts) {
+            this.timeMap.set(workout, moment(workout.date).format('ha'));
         }
     }
 }

@@ -5,6 +5,8 @@ import { PlanOverviewComponent } from './plan-overview/plan-overview.component';
 import { PlanOverviewResolver } from './_resolvers/planOverview.resolver';
 import { WorkoutDetailsComponent } from './workout-details/workout-details.component';
 import { WorkoutDetailsResolver } from './_resolvers/workout-details.resolver';
+import { ExerciseDetailsComponent } from './exercise-details/exercise-details.component';
+import { ExerciseDetailsResolver } from './_resolvers/exercise-details.resolver';
 
 
 export const appRoutes: Routes = [
@@ -26,6 +28,11 @@ export const appRoutes: Routes = [
                 path: 'workoutDetails',
                 component: WorkoutDetailsComponent,
                 resolve: {workouts: WorkoutDetailsResolver}
+            },
+            {
+                path: 'exercise/:id',
+                component: ExerciseDetailsComponent,
+                resolve: {exercise: ExerciseDetailsResolver}
             }
         ]
     },

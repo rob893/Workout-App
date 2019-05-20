@@ -16,7 +16,6 @@ import { AuthGuard } from './_guards/auth.guard';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
-import { WorkoutPlanService } from './_services/workoutPlan.service';
 import { PlanOverviewResolver } from './_resolvers/planOverview.resolver';
 import { RegisterComponent } from './register/register.component';
 import { WorkoutCardComponent } from './workout-card/workout-card.component';
@@ -25,6 +24,9 @@ import { WorkoutCalendarComponent } from './workout-calendar/workout-calendar.co
 import { WorkoutDayComponent } from './workout-day/workout-day.component';
 import { WorkoutDetailsComponent } from './workout-details/workout-details.component';
 import { WorkoutDetailsResolver } from './_resolvers/workout-details.resolver';
+import { ExerciseDetailsComponent } from './exercise-details/exercise-details.component';
+import { ExerciseService } from './_services/exercise.service';
+import { ExerciseDetailsResolver } from './_resolvers/exercise-details.resolver';
 
 export function tokenGetter() {
     return localStorage.getItem('token');
@@ -40,7 +42,8 @@ export function tokenGetter() {
         WorkoutCardComponent,
         WorkoutCalendarComponent,
         WorkoutDayComponent,
-        WorkoutDetailsComponent
+        WorkoutDetailsComponent,
+        ExerciseDetailsComponent
     ],
     imports: [
         BrowserModule,
@@ -68,7 +71,8 @@ export function tokenGetter() {
         AlertifyService,
         AuthGuard,
         UserService,
-        WorkoutPlanService,
+        ExerciseService,
+        ExerciseDetailsResolver,
         PlanOverviewResolver,
         WorkoutDetailsResolver
     ],

@@ -6,6 +6,7 @@
             {
                 "Id": 1,
                 "Date": "5/15/2019",
+                "Complete": true,
                 "ExerciseGroups": [
                     {
                         "Id": 1,

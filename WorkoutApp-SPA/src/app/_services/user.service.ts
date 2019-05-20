@@ -13,8 +13,7 @@ import { WorkoutParams } from '../_models/queryParams';
     providedIn: 'root'
 })
 export class UserService {
-    baseUrl: string = environment.apiUrl;
-
+    private baseUrl: string = environment.apiUrl;
     private http: HttpClient;
 
 
@@ -53,6 +52,10 @@ export class UserService {
 
     public updateUser(id: number, user: User): Observable<User> {
         return this.http.put<User>(this.baseUrl + 'users/' + id, user);
+    }
+
+    public getWorkoutPlansForUser(userId: number) {
+        return this.http.get(this.baseUrl + 'users/' + userId + '/workoutPlan');
     }
     
     public getWorkoutsForUser(userId: number, woParams: WorkoutParams): Observable<PaginatedResults<Workout[]>> {
