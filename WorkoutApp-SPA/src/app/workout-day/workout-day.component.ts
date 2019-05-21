@@ -12,6 +12,7 @@ export class WorkoutDayComponent implements OnInit {
     @Input()
     public workoutDay: WorkoutDay;
     public bgColor: string = 'white';
+    public textColor: string = 'black';
 
     private router: Router;
     
@@ -30,6 +31,7 @@ export class WorkoutDayComponent implements OnInit {
             }
 
             this.bgColor = workoutComplete ? '#4CAF50' : '#F44336';
+            this.textColor = this.workoutDay.workouts ? 'white' : 'black';
         }
     }
 

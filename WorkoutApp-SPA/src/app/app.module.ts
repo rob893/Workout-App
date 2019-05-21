@@ -27,6 +27,7 @@ import { WorkoutDetailsResolver } from './_resolvers/workout-details.resolver';
 import { ExerciseDetailsComponent } from './exercise-details/exercise-details.component';
 import { ExerciseService } from './_services/exercise.service';
 import { ExerciseDetailsResolver } from './_resolvers/exercise-details.resolver';
+import { WorkoutPlanService } from './_services/workout-plan.service';
 
 export function tokenGetter() {
     return localStorage.getItem('token');
@@ -72,6 +73,7 @@ export function tokenGetter() {
         AuthGuard,
         UserService,
         ExerciseService,
+        WorkoutPlanService,
         ExerciseDetailsResolver,
         PlanOverviewResolver,
         WorkoutDetailsResolver

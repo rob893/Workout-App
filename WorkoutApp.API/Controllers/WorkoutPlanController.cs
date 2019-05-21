@@ -114,6 +114,11 @@ namespace WorkoutApp.API.Controllers
                 workout.ExerciseGroups.RemoveAll(eg => idsToRemove.Contains(eg.Id));
             }
 
+            if (workoutUpdate.Complete != null && workoutUpdate.Complete != workout.Complete)
+            {
+                workout.Complete = workoutUpdate.Complete.Value;
+            }
+
             if (await repo.SaveAll())
             {
                 Workout newWorkout = await repo.GetWorkout(woId);
