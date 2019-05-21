@@ -102,7 +102,7 @@ namespace WorkoutApp.API.Data
         public async Task<PagedList<Equipment>> GetExerciseEquipment(EquipmentParams eqParams)
         {
             IQueryable<Equipment> equipment = context.Equipment.OrderBy(eq => eq.Id);
-
+            //asdf
             if (eqParams.ExerciseIds.Count > 0)
             {
                 equipment = equipment.Where(eq => eq.Exercises.Any(ex => eqParams.ExerciseIds.Contains(ex.ExerciseId)));
