@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Helpers.QueryParams;
+using WorkoutApp.API.Helpers.Specifications;
 using WorkoutApp.API.Models;
 
 namespace WorkoutApp.API.Data
@@ -28,5 +29,7 @@ namespace WorkoutApp.API.Data
 
         Task<PagedList<Equipment>> GetExerciseEquipment(EquipmentParams eqParams);
         Task<Equipment> GetSingleExerciseEquipment(int id);
+
+        Task<List<T>> Find<T>(Specification<T> spec) where T : class;
     }
 }

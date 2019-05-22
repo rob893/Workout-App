@@ -10,6 +10,7 @@ using WorkoutApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Helpers.QueryParams;
+using WorkoutApp.API.Helpers.Specifications;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -100,6 +101,14 @@ namespace WorkoutApp.API.Controllers
             IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
 
             return Ok(workoutsForReturn);
+        }
+
+        [HttpGet("test")]
+        public async Task<IActionResult> GetTest()
+        {
+            var result = await repo.Find<Exercise>(new TestSpec());
+
+            return Ok(result);
         }
     }
 }

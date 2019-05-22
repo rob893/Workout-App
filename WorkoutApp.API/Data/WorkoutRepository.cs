@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Helpers.QueryParams;
+using WorkoutApp.API.Helpers.Specifications;
 using WorkoutApp.API.Models;
 
 namespace WorkoutApp.API.Data
@@ -147,6 +148,13 @@ namespace WorkoutApp.API.Data
                 .Include(wo => wo.ExerciseGroups)
                 .ThenInclude(eg => eg.Exercise)
                 .FirstOrDefaultAsync(wo => wo.Id == id);
+        }
+
+        public async Task<List<T>> Find<T>(Specification<T> spec) where T : class
+        {
+            var result = spec.Includes.Aggregate(context.Set<T>().AsQueryable(), (current, include) => current.Include(include));
+            var result2 = spec.IncludeStrings.Aggregate(result, (current, include) => current.Include(include));
+            return await result2.Where(spec.ToExpression()).ToListAsync();
         }
     }
 }
