@@ -29,7 +29,6 @@ namespace WorkoutApp.API.Data
             SeedMuscles();
             SeedExerciseCategories();
             SeedExercises();
-            SeedWorkoutPlans();
         }
 
         private void ClearAllData()
@@ -40,7 +39,6 @@ namespace WorkoutApp.API.Data
             context.ExerciseGroups.RemoveRange(context.ExerciseGroups);
             context.Exercises.RemoveRange(context.Exercises.Include(ex => ex.Equipment).Include(ex => ex.ExerciseCategorys).Include(ex => ex.ExerciseSteps));
             context.ExerciseCategorys.RemoveRange(context.ExerciseCategorys.Include(ec => ec.Exercises));
-            context.WorkoutPlans.RemoveRange(context.WorkoutPlans);
             context.Users.RemoveRange(context.Users);
 
             context.SaveChanges();
@@ -138,24 +136,6 @@ namespace WorkoutApp.API.Data
             foreach (Exercise exercise in exercises)
             {
                 context.Exercises.Add(exercise);
-            }
-
-            context.SaveChanges();
-        }
-
-        private void SeedWorkoutPlans()
-        {
-            if (context.WorkoutPlans.Any())
-            {
-                return;
-            }
-
-            string data = System.IO.File.ReadAllText("Data/Seed Data/WorkoutPlanSeedData.json");
-            List<WorkoutPlan> plans = JsonConvert.DeserializeObject<List<WorkoutPlan>>(data);
-
-            foreach (WorkoutPlan plan in plans)
-            {
-                context.WorkoutPlans.Add(plan);
             }
 
             context.SaveChanges();

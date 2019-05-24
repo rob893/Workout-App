@@ -49,59 +49,23 @@ namespace WorkoutApp.API.Controllers
             return Ok(userToReturn);
         }
 
-        [HttpPost("{userId}/workoutPlan")]
-        public async Task<IActionResult> CreateWorkoutPlanForUser(int userId)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
+        // [HttpGet("{userId}/workouts")]
+        // public async Task<IActionResult> GetWorkoutsForUser(int userId, [FromQuery] WorkoutParams woParams)
+        // {
+        //     if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+        //     {
+        //         return Unauthorized();
+        //     }
 
-            WorkoutPlan newWorkoutPlan = new WorkoutPlan();
+        //     woParams.UserId = userId;
 
-            newWorkoutPlan.UserId = userId;
+        //     PagedList<Workout> workouts = await repo.GetWorkouts(woParams);
+        //     Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
 
-            repo.Add<WorkoutPlan>(newWorkoutPlan);
+        //     IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
 
-            if (await repo.SaveAll())
-            {
-                return CreatedAtRoute("GetWorkoutPlan", new { id = newWorkoutPlan.Id }, newWorkoutPlan);
-            }
-
-            return BadRequest("Could not create workout plan.");
-        }
-
-        [HttpGet("{userId}/workoutPlan")]
-        public async Task<IActionResult> GetWorkoutPlansForUser(int userId)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
-
-            List<WorkoutPlan> workoutPlans = await repo.GetWorkoutPlansForUser(userId);
-
-
-            return Ok(workoutPlans);
-        }
-
-        [HttpGet("{userId}/workouts")]
-        public async Task<IActionResult> GetWorkoutsForUser(int userId, [FromQuery] WorkoutParams woParams)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
-
-            woParams.UserId = userId;
-
-            PagedList<Workout> workouts = await repo.GetWorkouts(woParams);
-            Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
-
-            IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
-
-            return Ok(workoutsForReturn);
-        }
+        //     return Ok(workoutsForReturn);
+        // }
 
         [HttpGet("test")]
         public async Task<IActionResult> GetTest()

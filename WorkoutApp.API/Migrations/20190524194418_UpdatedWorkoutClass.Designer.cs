@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutApp.API.Data;
 
 namespace WorkoutApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20190524194418_UpdatedWorkoutClass")]
+    partial class UpdatedWorkoutClass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,13 +193,17 @@ namespace WorkoutApp.API.Migrations
 
                     b.Property<int>("CreatedByUserId");
 
-                    b.Property<DateTime>("CreatedOnDate");
+                    b.Property<DateTime>("CreatedOnDate")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(new DateTime(2019, 5, 24, 12, 44, 18, 649, DateTimeKind.Local).AddTicks(5159));
 
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("Label");
 
-                    b.Property<DateTime>("LastModifiedDate");
+                    b.Property<DateTime>("LastModifiedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(new DateTime(2019, 5, 24, 12, 44, 18, 651, DateTimeKind.Local).AddTicks(395));
 
                     b.Property<bool>("Shareable");
 

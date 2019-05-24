@@ -14,7 +14,7 @@ namespace WorkoutApp.API.Models
         public DateTime LastModifiedDate { get; set; }
         public bool Shareable { get; set; }
         public bool IsDeleted { get; set; }
-        public Workout CopiedFromId { get; set; }
+        public Workout WorkoutCopiedFrom { get; set; }
         public List<ExerciseGroup> ExerciseGroups { get; set; }
     }
 }
