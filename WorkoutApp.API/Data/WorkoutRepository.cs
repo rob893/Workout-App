@@ -111,6 +111,42 @@ namespace WorkoutApp.API.Data
                 .FirstOrDefaultAsync(wo => wo.Id == id);
         }
 
+        public async Task<PagedList<Workout>> GetWorkouts(WorkoutParams woParams)
+        {
+            IQueryable<Workout> workouts = context.Workouts.OrderBy(wo => wo.Id)
+                .Include(wo => wo.ExerciseGroups)
+                .ThenInclude(eg => eg.Exercise);
+
+            if (woParams.UserId != null)
+            {
+                workouts = workouts.Where(wo => wo.CreatedByUserId == woParams.UserId.Value || wo.CreatedByUserId == 1);
+            }
+            else
+            {
+                workouts = workouts.Where(wo => wo.CreatedByUserId == 1);
+            }
+
+            return await PagedList<Workout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
+        }
+
+        public async Task<ScheduledUserWorkout> GetScheduledUserWorkout(int id)
+        {
+            return await context.ScheduledUserWorkouts.Where(wo => wo.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkouts(SchUsrWoParams woParams)
+        {
+            IQueryable<ScheduledUserWorkout> workouts = context.ScheduledUserWorkouts.OrderBy(wo => wo.ScheduledDateTime)
+                .Include(wo => wo.Workout);
+
+            if (woParams.UserId != null)
+            {
+                workouts = workouts.Where(wo => wo.UserId == woParams.UserId.Value);
+            }
+
+            return await PagedList<ScheduledUserWorkout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
+        }
+
         public async Task<List<T>> Find<T>(Specification<T> spec) where T : class
         {
             var result = spec.Includes.Aggregate(context.Set<T>().AsQueryable(), (current, include) => current.Include(include));

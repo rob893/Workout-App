@@ -49,23 +49,41 @@ namespace WorkoutApp.API.Controllers
             return Ok(userToReturn);
         }
 
-        // [HttpGet("{userId}/workouts")]
-        // public async Task<IActionResult> GetWorkoutsForUser(int userId, [FromQuery] WorkoutParams woParams)
-        // {
-        //     if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-        //     {
-        //         return Unauthorized();
-        //     }
+        [HttpGet("{userId}/workouts")]
+        public async Task<IActionResult> GetWorkoutsForUser(int userId, [FromQuery] WorkoutParams woParams)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
 
-        //     woParams.UserId = userId;
+            woParams.UserId = userId;
 
-        //     PagedList<Workout> workouts = await repo.GetWorkouts(woParams);
-        //     Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
+            PagedList<Workout> workouts = await repo.GetWorkouts(woParams);
+            Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
 
-        //     IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
+            IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
 
-        //     return Ok(workoutsForReturn);
-        // }
+            return Ok(workoutsForReturn);
+        }
+
+        [HttpGet("{userId}/scheduledWorkouts")]
+        public async Task<IActionResult> GetScheduledWorkoutsForUser(int userId, [FromQuery] SchUsrWoParams woParams)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            woParams.UserId = userId;
+
+            PagedList<ScheduledUserWorkout> workouts = await repo.GetScheduledUserWorkouts(woParams);
+            Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
+
+            //IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
+
+            return Ok(workouts);//workoutsForReturn);
+        }
 
         [HttpGet("test")]
         public async Task<IActionResult> GetTest()

@@ -29,12 +29,15 @@ namespace WorkoutApp.API.Data
             SeedMuscles();
             SeedExerciseCategories();
             SeedExercises();
+            SeedWorkouts();
+            SeedScheduledWorkouts();
         }
 
         private void ClearAllData()
         {
             context.Muscles.RemoveRange(context.Muscles);
             context.Equipment.RemoveRange(context.Equipment.Include(e => e.Exercises));
+            context.ScheduledUserWorkouts.RemoveRange(context.ScheduledUserWorkouts);
             context.Workouts.RemoveRange(context.Workouts);
             context.ExerciseGroups.RemoveRange(context.ExerciseGroups);
             context.Exercises.RemoveRange(context.Exercises.Include(ex => ex.Equipment).Include(ex => ex.ExerciseCategorys).Include(ex => ex.ExerciseSteps));
@@ -133,10 +136,37 @@ namespace WorkoutApp.API.Data
             string data = System.IO.File.ReadAllText("Data/Seed Data/ExerciseSeedData.json");
             List<Exercise> exercises = JsonConvert.DeserializeObject<List<Exercise>>(data);
 
-            foreach (Exercise exercise in exercises)
+            exercises.ForEach(ex => context.Exercises.Add(ex));
+
+            context.SaveChanges();
+        }
+
+        private void SeedWorkouts()
+        {
+            if (context.Workouts.Any())
             {
-                context.Exercises.Add(exercise);
+                return;
             }
+
+            string data = System.IO.File.ReadAllText("Data/Seed Data/WorkoutSeedData.json");
+            List<Workout> workouts = JsonConvert.DeserializeObject<List<Workout>>(data);
+
+            workouts.ForEach(wo => context.Workouts.Add(wo));
+
+            context.SaveChanges();
+        }
+
+        private void SeedScheduledWorkouts()
+        {
+            if (context.ScheduledUserWorkouts.Any())
+            {
+                return;
+            }
+
+            string data = System.IO.File.ReadAllText("Data/Seed Data/ScheduledUserWorkoutsSeedData.json");
+            List<ScheduledUserWorkout> scheduledWorkouts = JsonConvert.DeserializeObject<List<ScheduledUserWorkout>>(data);
+
+            scheduledWorkouts.ForEach(sWo => context.ScheduledUserWorkouts.Add(sWo));
 
             context.SaveChanges();
         }
