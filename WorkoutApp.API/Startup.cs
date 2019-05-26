@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WorkoutApp.API.Data;
+using WorkoutApp.API.Data.Providers;
 using WorkoutApp.API.Helpers;
 
 namespace WorkoutApp.API
@@ -53,6 +54,7 @@ namespace WorkoutApp.API
             //Must add repos here so they can be injected. Interface => concrete implementation
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+            services.AddScoped<ExerciseProvider>();
 
             services.AddTransient<Seed>();
 

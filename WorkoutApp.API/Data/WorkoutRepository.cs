@@ -121,10 +121,6 @@ namespace WorkoutApp.API.Data
             {
                 workouts = workouts.Where(wo => wo.CreatedByUserId == woParams.UserId.Value || wo.CreatedByUserId == 1);
             }
-            else
-            {
-                workouts = workouts.Where(wo => wo.CreatedByUserId == 1);
-            }
 
             return await PagedList<Workout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
         }
