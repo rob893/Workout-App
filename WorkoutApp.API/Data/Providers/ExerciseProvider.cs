@@ -47,12 +47,24 @@ namespace WorkoutApp.API.Data.Providers
         {
             return await context.Exercises
                 .AsNoTracking()
-                .Include(ex => ex.PrimaryMuscle)
-                .Include(ex => ex.SecondaryMuscle)
-                .Include(ex => ex.ExerciseSteps)
-                .Include(ex => ex.Equipment).ThenInclude(eq => eq.Equipment)
-                .Include(ex => ex.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
-                .Select(ex => mapper.Map<ExerciseForReturnDetailedDto>(ex))
+                .Select(ex => new ExerciseForReturnDetailedDto {
+                    Id = ex.Id,
+                    Name = ex.Name,
+                    PrimaryMuscle = ex.PrimaryMuscle,
+                    SecondaryMuscle = ex.SecondaryMuscle,
+                    ExerciseSteps = ex.ExerciseSteps.Select(es => new ExerciseStepForReturnDto {
+                        ExerciseStepNumber = es.ExerciseStepNumber,
+                        Description = es.Description
+                    }).ToList(),
+                    Equipment = ex.Equipment.Select(eq => new EquipmentForReturnDto {
+                        Id = eq.EquipmentId,
+                        Name = eq.Equipment.Name
+                    }).ToList(),
+                    ExerciseCategorys = ex.ExerciseCategorys.Select(ec => new ExerciseCategoryForReturnDto {
+                        Id = ec.ExerciseCategory.Id,
+                        Name = ec.ExerciseCategory.Name
+                    }).ToList()
+                })
                 .ToListAsync();
         }
     }
