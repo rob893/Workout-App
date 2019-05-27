@@ -1,56 +1,56 @@
 [
     {
         "Id": 1,
-        "Username": "admin",
+        "UserName": "admin",
         "Password": "password",
         "FirstName": "admin",
         "LastName": "admin",
-        "EmailAddress": "admin@gmail.com",
+        "Email": "admin@gmail.com",
         "Created": "2017-08-02"
     },
     {
         "Id": 2,
-        "Username": "Roy",
+        "UserName": "Roy",
         "Password": "password",
         "FirstName": "Roy",
         "LastName": "Joy",
-        "EmailAddress": "rjoy@gmail.com",
+        "Email": "rjoy@gmail.com",
         "Created": "2018-08-02"
     },
     {
         "Id": 3,
-        "Username": "Robert",
+        "UserName": "Robert",
         "Password": "password",
         "FirstName": "Robert",
         "LastName": "Herp",
-        "EmailAddress": "rherp@gmail.com",
+        "Email": "rherp@gmail.com",
         "Created": "2019-08-02"
     },
     {
         "Id": 4,
-        "Username": "Joe",
+        "UserName": "Joe",
         "Password": "password",
         "FirstName": "Joe",
         "LastName": "Schmoe",
-        "EmailAddress": "jschmoe@gmail.com",
+        "Email": "jschmoe@gmail.com",
         "Created": "2011-08-02"
     },
     {
         "Id": 5,
-        "Username": "Jack",
+        "UserName": "Jack",
         "Password": "password",
         "FirstName": "Jack",
         "LastName": "Lame",
-        "EmailAddress": "jlame@gmail.com",
+        "Email": "jlame@gmail.com",
         "Created": "2012-08-02"
     },
     {
         "Id": 6,
-        "Username": "Lola",
+        "UserName": "Lola",
         "Password": "password",
         "FirstName": "Lola",
         "LastName": "Smith",
-        "EmailAddress": "lsmith@gmail.com",
+        "Email": "lsmith@gmail.com",
         "Created": "2017-08-02"
     }
 ]

@@ -14,7 +14,6 @@ using WorkoutApp.API.Helpers.Specifications;
 
 namespace WorkoutApp.API.Controllers
 {
-    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class WorkoutsController : ControllerBase

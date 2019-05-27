@@ -4,26 +4,32 @@ using Newtonsoft.Json;
 using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutApp.API.Data
 {
     public class Seed
     {
-        private DataContext context;
+        private readonly DataContext context;
+        private readonly UserManager<User> userManager;
+        private readonly RoleManager<Role> roleManager;
 
 
-        public Seed(DataContext context)
+        public Seed(DataContext context, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             this.context = context;
+            this.userManager = userManager;
+            this.roleManager = roleManager;
         }
 
-        public void SeedDatabase(bool overrideExistingData = false)
+        public void SeedDatabase(bool clearCurrentData = false)
         {
-            if (overrideExistingData)
+            if (clearCurrentData)
             {
                 ClearAllData();
             }
 
+            SeedRoles();
             SeedUsers();
             SeedEquipment();
             SeedMuscles();
@@ -43,13 +49,28 @@ namespace WorkoutApp.API.Data
             context.Exercises.RemoveRange(context.Exercises.Include(ex => ex.Equipment).Include(ex => ex.ExerciseCategorys).Include(ex => ex.ExerciseSteps));
             context.ExerciseCategorys.RemoveRange(context.ExerciseCategorys.Include(ec => ec.Exercises));
             context.Users.RemoveRange(context.Users);
+            context.Roles.RemoveRange(context.Roles);
 
             context.SaveChanges();
         }
 
+        private void SeedRoles()
+        {
+            List<Role> roles = new List<Role> 
+            {
+                new Role { Name = "Admin" },
+                new Role { Name = "User" }
+            };
+
+            foreach (Role role in roles)
+            {
+                roleManager.CreateAsync(role).Wait();
+            }
+        }
+
         private void SeedUsers()
         {
-            if (context.Users.Any())
+            if (userManager.Users.Any())
             {
                 return;
             }
@@ -59,17 +80,17 @@ namespace WorkoutApp.API.Data
 
             foreach (User user in users)
             {
-                byte[] passwordHash, passwordSalt;
-                CreatePasswordHash("password", out passwordHash, out passwordSalt);
+                userManager.CreateAsync(user, "password").Wait();
 
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
-                user.Username = user.Username.ToLower();
-
-                context.Users.Add(user);
+                if (user.UserName.ToUpper() == "ADMIN")
+                {
+                    userManager.AddToRoleAsync(user, "Admin").Wait();
+                }
+                else
+                {
+                    userManager.AddToRoleAsync(user, "User").Wait();
+                }
             }
-
-            context.SaveChanges();
         }
 
         private void SeedEquipment()
@@ -169,15 +190,6 @@ namespace WorkoutApp.API.Data
             scheduledWorkouts.ForEach(sWo => context.ScheduledUserWorkouts.Add(sWo));
 
             context.SaveChanges();
-        }
-
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
         }
     }
 }

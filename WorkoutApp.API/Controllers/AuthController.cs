@@ -10,21 +10,27 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 
 namespace WorkoutApp.API.Controllers
 {
+    [AllowAnonymous]
     [Route("[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthRepository repo;
+        private readonly UserManager<User> userManager;
+        private readonly SignInManager<User> signInManager;
         private readonly IConfiguration config;
         private readonly IMapper mapper;
 
 
-        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, IMapper mapper)
         {
-            this.repo = repo;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
             this.config = config;
             this.mapper = mapper;
         }
@@ -32,37 +38,57 @@ namespace WorkoutApp.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
         {
-            userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
-
-            if (await repo.UserExists(userForRegisterDto.Username))
-            {
-                return BadRequest("Username already exists");
-            }
-
             User userToCreate = mapper.Map<User>(userForRegisterDto);
 
-            User createdUser = await repo.Register(userToCreate, userForRegisterDto.Password);
+            var result = await userManager.CreateAsync(userToCreate, userForRegisterDto.Password);
 
-            UserForReturnDto userToReturn = mapper.Map<UserForReturnDto>(createdUser);
 
-            return CreatedAtRoute("GetUser", new {controller = "Users", id = createdUser.Id}, userToReturn);
+            UserForReturnDto userToReturn = mapper.Map<UserForReturnDto>(userToCreate);
+
+            if (result.Succeeded)
+            {
+                return CreatedAtRoute("GetUser", new {controller = "Users", id = userToCreate.Id}, userToReturn);
+            }
+
+            return BadRequest(result.Errors);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
         {
-            User userFromRepo = await repo.Login(userForLoginDto.Username.ToLower(), userForLoginDto.Password);
+            User user = await userManager.FindByNameAsync(userForLoginDto.Username);
 
-            if(userFromRepo == null)
+            var result = await signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
+
+            if (result.Succeeded)
             {
-                return Unauthorized();
+                UserForReturnDto userToReturn = mapper.Map<UserForReturnDto>(user);
+
+                string token = await GenerateJwtToken(user);
+
+                return Ok(new {
+                    token,
+                    userToReturn
+                });
             }
 
-            Claim[] claims = new Claim[] 
+            return Unauthorized();
+        }
+
+        private async Task<string> GenerateJwtToken(User user)
+        {
+            List<Claim> claims = new List<Claim> 
             {
-                new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                new Claim(ClaimTypes.Name, userFromRepo.Username)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.UserName),
             };
+
+            IList<string> roles = await userManager.GetRolesAsync(user);
+
+            foreach (string role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("AppSettings:Token").Value));
 
@@ -79,12 +105,7 @@ namespace WorkoutApp.API.Controllers
 
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
-            UserForReturnDto user = mapper.Map<UserForReturnDto>(userFromRepo);
-
-            return Ok(new {
-                token = tokenHandler.WriteToken(token),
-                user
-            });
+            return tokenHandler.WriteToken(token);
         }
     }   
 }
