@@ -69,13 +69,14 @@ namespace WorkoutApp.API.Controllers
         public async Task<IActionResult> GetExercisesDetailed([FromQuery] ExerciseParams exParams)
         {
             // PagedList<Exercise> exercises = await repo.GetExercises(exParams);
+            PagedList<ExerciseForReturnDetailedDto> exercises = await exerciseProvider.GetExercisesDetailed(exParams);
 
-            // Response.AddPagination(exercises.CurrentPage, exercises.PageSize, exercises.TotalCount, exercises.TotalPages);
+            Response.AddPagination(exercises.CurrentPage, exercises.PageSize, exercises.TotalCount, exercises.TotalPages);
 
             // IEnumerable<ExerciseForReturnDetailedDto> exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
-            List<ExerciseForReturnDetailedDto> exercisesToReturn = await exerciseProvider.GetExercisesDetailed();
+            //List<ExerciseForReturnDetailedDto> exercisesToReturn = await exerciseProvider.GetExercisesDetailed();
 
-            return Ok(exercisesToReturn);
+            return Ok(exercises);
         }
 
         [HttpGet("{exerciseId}/equipment")]

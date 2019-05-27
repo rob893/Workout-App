@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using WorkoutApp.API.Dtos;
+using WorkoutApp.API.Helpers;
+using WorkoutApp.API.Helpers.QueryParams;
 using WorkoutApp.API.Models;
 
 namespace WorkoutApp.API.Data.Providers
@@ -43,10 +45,23 @@ namespace WorkoutApp.API.Data.Providers
                 .ToListAsync();
         }
 
-        public async Task<List<ExerciseForReturnDetailedDto>> GetExercisesDetailed()
+        public async Task<PagedList<ExerciseForReturnDetailedDto>> GetExercisesDetailed(ExerciseParams exParams)
         {
-            return await context.Exercises
+            IQueryable<Exercise> exercises = context.Exercises
                 .AsNoTracking()
+                .OrderBy(ex => ex.Id);
+
+            if (exParams.ExerciseCategoryId.Count > 0)
+            {
+                exercises = exercises.Where(ex => ex.ExerciseCategorys.Any(ec => exParams.ExerciseCategoryId.Contains(ec.ExerciseCategoryId)));
+            }
+
+            if (exParams.EquipmentId.Count > 0)
+            {
+                exercises = exercises.Where(ex => ex.Equipment.Any(eq => exParams.EquipmentId.Contains(eq.EquipmentId)));
+            }
+
+            IQueryable<ExerciseForReturnDetailedDto> exercisesToReturn = exercises
                 .Select(ex => new ExerciseForReturnDetailedDto {
                     Id = ex.Id,
                     Name = ex.Name,
@@ -64,8 +79,9 @@ namespace WorkoutApp.API.Data.Providers
                         Id = ec.ExerciseCategory.Id,
                         Name = ec.ExerciseCategory.Name
                     }).ToList()
-                })
-                .ToListAsync();
+                });
+
+            return await PagedList<ExerciseForReturnDetailedDto>.CreateAsync(exercisesToReturn, exParams.PageNumber, exParams.PageSize);
         }
     }
 }
