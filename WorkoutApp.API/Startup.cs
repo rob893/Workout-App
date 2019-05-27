@@ -72,6 +72,12 @@ namespace WorkoutApp.API
                     };
                 });
             
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
+            });
+            
             services.AddMvc(options => 
                 {
                     //This allows for global authorization. No need to have [Authorize] attribute on controllers with this.

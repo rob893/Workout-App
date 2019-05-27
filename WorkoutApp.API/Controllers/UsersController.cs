@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Helpers.QueryParams;
 using WorkoutApp.API.Helpers.Specifications;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -20,12 +22,14 @@ namespace WorkoutApp.API.Controllers
     {
         private readonly IWorkoutRepository repo;
         private readonly IMapper mapper;
+        private readonly DataContext context;
 
 
-        public UsersController(IWorkoutRepository repo, IMapper mapper)
+        public UsersController(IWorkoutRepository repo, IMapper mapper, DataContext context)
         {
             this.repo = repo; 
-            this.mapper = mapper;   
+            this.mapper = mapper;
+            this.context = context;
         }
 
         [HttpGet]
@@ -37,6 +41,26 @@ namespace WorkoutApp.API.Controllers
 
             return Ok(usersToReturn);
         }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpGet("usersWithRoles")]
+        public async Task<IActionResult> GetUsersWithRoles() //cange this. Dont want context in controller
+        {   
+            var userList = await (from user in context.Users orderby user.UserName
+                                    select new 
+                                    {
+                                        Id = user.Id,
+                                        UserName = user.UserName,
+                                        Roles = (from userRole in user.UserRoles
+                                            join role in context.Roles
+                                            on userRole.RoleId
+                                            equals role.Id
+                                            select role.Name).ToList()
+                                    }).ToListAsync();
+            return Ok(userList);
+        }
+
+        //[HttpPost]
 
         [HttpGet("{id}", Name="GetUser")]
         public async Task<IActionResult> GetUser(int id)

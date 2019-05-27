@@ -85,6 +85,7 @@ namespace WorkoutApp.API.Data
                 if (user.UserName.ToUpper() == "ADMIN")
                 {
                     userManager.AddToRoleAsync(user, "Admin").Wait();
+                    userManager.AddToRoleAsync(user, "User").Wait();
                 }
                 else
                 {
