@@ -6,12 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +23,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WorkoutApp.API.Data;
+using WorkoutApp.API.Data.Providers;
 using WorkoutApp.API.Helpers;
+using WorkoutApp.API.Models;
 
 namespace WorkoutApp.API
 {
@@ -41,20 +46,19 @@ namespace WorkoutApp.API
                 UseMySql(Configuration.GetConnectionString("DefaultConnection"))
                     .ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.IncludeIgnoredWarning)));
             
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(opt => {
-                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                });
+            IdentityBuilder builder = services.AddIdentityCore<User>(opt => 
+            {
+                opt.Password.RequireDigit = false;
+                opt.Password.RequiredLength = 4;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+            });
 
-            
-            services.AddCors();
-            services.AddAutoMapper(typeof(Startup));
-
-            //Must add repos here so they can be injected. Interface => concrete implementation
-            services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<IWorkoutRepository, WorkoutRepository>();
-
-            services.AddTransient<Seed>();
+            builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
+            builder.AddEntityFrameworkStores<DataContext>();
+            builder.AddRoleValidator<RoleValidator<Role>>();
+            builder.AddRoleManager<RoleManager<Role>>();
+            builder.AddSignInManager<SignInManager<User>>();
 
             //Adds authentication [Authorize] attribute following the passed in scheme. Issuer signing key is checked against all requests.
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -67,6 +71,29 @@ namespace WorkoutApp.API
                         ValidateAudience = false
                     };
                 });
+            
+            services.AddMvc(options => 
+                {
+                    //This allows for global authorization. No need to have [Authorize] attribute on controllers with this.
+                    AuthorizationPolicy policy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(opt => {
+                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
+
+            
+            services.AddCors();
+            services.AddAutoMapper(typeof(Startup));
+
+            //Must add repos here so they can be injected. Interface => concrete implementation
+            services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+            services.AddScoped<ExerciseProvider>();
+
+            services.AddTransient<Seed>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,0 +1,104 @@
+[
+    {
+        "Id": 1,
+        "CreatedByUserId": 1,
+        "CreatedOnDate": "5/25/19",
+        "LastModifiedDate": "5/25/19",
+        "Label": "Chest Workout",
+        "ExerciseGroups": [
+            {
+                "Id": 1,
+                "ExerciseId": 6,
+                "Sets": 3,
+                "Repetitions": 12
+            },
+            {
+                "Id": 2,
+                "ExerciseId": 2,
+                "Sets": 3,
+                "Repetitions": 12
+            },
+            {
+                "Id": 3,
+                "ExerciseId": 3,
+                "Sets": 3,
+                "Repetitions": 12
+            }
+        ]
+    },
+    {
+        "Id": 2,
+        "CreatedByUserId": 1,
+        "CreatedOnDate": "5/25/19",
+        "LastModifiedDate": "5/25/19",
+        "Label": "Leg Workout",
+        "ExerciseGroups": [
+            {
+                "Id": 4,
+                "ExerciseId": 5,
+                "Sets": 3,
+                "Repetitions": 12
+            },
+            {
+                "Id": 5,
+                "ExerciseId": 4,
+                "Sets": 3,
+                "Repetitions": 12
+            }
+        ]
+    },
+    {
+        "Id": 3,
+        "CreatedByUserId": 1,
+        "CreatedOnDate": "5/25/19",
+        "LastModifiedDate": "5/25/19",
+        "Label": "Arm Workout",
+        "ExerciseGroups": [
+            {
+                "Id": 6,
+                "ExerciseId": 1,
+                "Sets": 3,
+                "Repetitions": 12
+            },
+            {
+                "Id": 7,
+                "ExerciseId": 6,
+                "Sets": 3,
+                "Repetitions": 12
+            }
+        ]
+    },
+    {
+        "Id": 4,
+        "CreatedByUserId": 3,
+        "CreatedOnDate": "5/25/19",
+        "LastModifiedDate": "5/25/19",
+        "Label": "Super Sweet Workout",
+        "ExerciseGroups": [
+            {
+                "Id": 8,
+                "ExerciseId": 1,
+                "Sets": 3,
+                "Repetitions": 12
+            },
+            {
+                "Id": 9,
+                "ExerciseId": 2,
+                "Sets": 3,
+                "Repetitions": 12
+            },
+            {
+                "Id": 10,
+                "ExerciseId": 3,
+                "Sets": 3,
+                "Repetitions": 12
+            },
+            {
+                "Id": 11,
+                "ExerciseId": 4,
+                "Sets": 3,
+                "Repetitions": 12
+            }
+        ]
+    }
+]

@@ -1,16 +1,16 @@
 using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutApp.API.Models
 {
-    public class User
+    public class User : IdentityUser<int>
     {
-        public int Id { get; set; }
-        public string Username { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string EmailAddress { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
         public DateTime Created { get; set; }
+        public List<Workout> CreatedWorkouts { get; set; }
+        public List<ScheduledUserWorkout> ScheduledUserWorkouts { get; set; }
+        public List<UserRole> UserRoles { get; set; }
     }
 }

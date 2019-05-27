@@ -7,12 +7,12 @@ namespace WorkoutApp.API.Dtos
 {
     public class WorkoutForCreationDto
     {
-    
-        public int WorkoutPlanId { get; set; }
-
         [Required]
-        public DateTime Date { get; set; }
-
+        public int CreatedByUserId { get; set; }
+        public bool Shareable { get; set; }
+        public string Color { get; set; }
+        [Required]
+        public string Label { get; set; }
         [Required]
         public List<ExerciseGroupForCreationDto> ExerciseGroups { get; set; }
     }

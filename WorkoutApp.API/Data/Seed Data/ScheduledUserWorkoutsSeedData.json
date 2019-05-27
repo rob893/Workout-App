@@ -1,0 +1,38 @@
+[
+    {
+        "Id": 1,
+        "UserId": 3,
+        "WorkoutId": 4,
+        "ScheduledDateTime": "5/25/19 9am"
+    },
+    {
+        "Id": 2,
+        "UserId": 3,
+        "WorkoutId": 1,
+        "ScheduledDateTime": "5/25/19 3pm"
+    },
+    {
+        "Id": 3,
+        "UserId": 3,
+        "WorkoutId": 2,
+        "ScheduledDateTime": "5/26/19 9am"
+    },
+    {
+        "Id": 4,
+        "UserId": 3,
+        "WorkoutId": 3,
+        "ScheduledDateTime": "5/27/19 9am"
+    },
+    {
+        "Id": 5,
+        "UserId": 2,
+        "WorkoutId": 4,
+        "ScheduledDateTime": "5/25/19 9am"
+    },
+    {
+        "Id": 6,
+        "UserId": 5,
+        "WorkoutId": 2,
+        "ScheduledDateTime": "5/28/19 9am"
+    }
+]

@@ -47,20 +47,6 @@ namespace WorkoutApp.API.Data
             return await context.Users.ToListAsync();
         }
 
-        public async Task<List<WorkoutPlan>> GetWorkoutPlansForUser(int userId)
-        {
-            return await context.WorkoutPlans
-                .Include(wp => wp.Workouts)
-                .ThenInclude(wo => wo.ExerciseGroups)
-                .ThenInclude(eg => eg.Exercise)
-                .Where(wp => wp.UserId == userId).ToListAsync();
-        }
-
-        public async Task<WorkoutPlan> GetWorkoutPlan(int id)
-        {
-            return await context.WorkoutPlans.FirstOrDefaultAsync(wp => wp.Id == id);
-        }
-
         public async Task<PagedList<Exercise>> GetExercises(ExerciseParams exParams)
         {
             IQueryable<Exercise> exercises = context.Exercises
@@ -117,37 +103,44 @@ namespace WorkoutApp.API.Data
             return await context.Equipment.FirstOrDefaultAsync(eq => eq.Id == id);
         }
 
-        public async Task<PagedList<Workout>> GetWorkouts(WorkoutParams woParams)
-        {
-            IQueryable<Workout> workout = context.Workouts
-                .Include(wo => wo.ExerciseGroups)
-                .ThenInclude(eg => eg.Exercise)
-                .OrderBy(wo => wo.Id);
-
-            if (woParams.UserId != null)
-            {
-                workout = workout.Where(wo => wo.WorkoutPlan.UserId == woParams.UserId);
-            }
-
-            if (woParams.MinDate != null)
-            {
-                workout = workout.Where(wo => wo.Date.Date >= woParams.MinDate.Value.Date);
-            }
-
-            if (woParams.MaxDate != null)
-            {
-                workout = workout.Where(wo => wo.Date.Date <= woParams.MaxDate.Value.Date);
-            }
-
-            return await PagedList<Workout>.CreateAsync(workout, woParams.PageNumber, woParams.PageSize);
-        }
-
         public async Task<Workout> GetWorkout(int id)
         {
             return await context.Workouts
                 .Include(wo => wo.ExerciseGroups)
                 .ThenInclude(eg => eg.Exercise)
                 .FirstOrDefaultAsync(wo => wo.Id == id);
+        }
+
+        public async Task<PagedList<Workout>> GetWorkouts(WorkoutParams woParams)
+        {
+            IQueryable<Workout> workouts = context.Workouts.OrderBy(wo => wo.Id)
+                .Include(wo => wo.ExerciseGroups)
+                .ThenInclude(eg => eg.Exercise);
+
+            if (woParams.UserId != null)
+            {
+                workouts = workouts.Where(wo => wo.CreatedByUserId == woParams.UserId.Value || wo.CreatedByUserId == 1);
+            }
+
+            return await PagedList<Workout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
+        }
+
+        public async Task<ScheduledUserWorkout> GetScheduledUserWorkout(int id)
+        {
+            return await context.ScheduledUserWorkouts.Where(wo => wo.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkouts(SchUsrWoParams woParams)
+        {
+            IQueryable<ScheduledUserWorkout> workouts = context.ScheduledUserWorkouts.OrderBy(wo => wo.ScheduledDateTime)
+                .Include(wo => wo.Workout);
+
+            if (woParams.UserId != null)
+            {
+                workouts = workouts.Where(wo => wo.UserId == woParams.UserId.Value);
+            }
+
+            return await PagedList<ScheduledUserWorkout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
         }
 
         public async Task<List<T>> Find<T>(Specification<T> spec) where T : class

@@ -4,51 +4,73 @@ using Newtonsoft.Json;
 using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutApp.API.Data
 {
     public class Seed
     {
-        private DataContext context;
+        private readonly DataContext context;
+        private readonly UserManager<User> userManager;
+        private readonly RoleManager<Role> roleManager;
 
 
-        public Seed(DataContext context)
+        public Seed(DataContext context, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             this.context = context;
+            this.userManager = userManager;
+            this.roleManager = roleManager;
         }
 
-        public void SeedDatabase(bool overrideExistingData = false)
+        public void SeedDatabase(bool clearCurrentData = false)
         {
-            if (overrideExistingData)
+            if (clearCurrentData)
             {
                 ClearAllData();
             }
 
+            SeedRoles();
             SeedUsers();
             SeedEquipment();
             SeedMuscles();
             SeedExerciseCategories();
             SeedExercises();
-            SeedWorkoutPlans();
+            SeedWorkouts();
+            SeedScheduledWorkouts();
         }
 
         private void ClearAllData()
         {
             context.Muscles.RemoveRange(context.Muscles);
             context.Equipment.RemoveRange(context.Equipment.Include(e => e.Exercises));
+            context.ScheduledUserWorkouts.RemoveRange(context.ScheduledUserWorkouts);
             context.Workouts.RemoveRange(context.Workouts);
             context.ExerciseGroups.RemoveRange(context.ExerciseGroups);
             context.Exercises.RemoveRange(context.Exercises.Include(ex => ex.Equipment).Include(ex => ex.ExerciseCategorys).Include(ex => ex.ExerciseSteps));
             context.ExerciseCategorys.RemoveRange(context.ExerciseCategorys.Include(ec => ec.Exercises));
-            context.WorkoutPlans.RemoveRange(context.WorkoutPlans);
             context.Users.RemoveRange(context.Users);
+            context.Roles.RemoveRange(context.Roles);
 
             context.SaveChanges();
         }
 
+        private void SeedRoles()
+        {
+            List<Role> roles = new List<Role> 
+            {
+                new Role { Name = "Admin" },
+                new Role { Name = "User" }
+            };
+
+            foreach (Role role in roles)
+            {
+                roleManager.CreateAsync(role).Wait();
+            }
+        }
+
         private void SeedUsers()
         {
-            if (context.Users.Any())
+            if (userManager.Users.Any())
             {
                 return;
             }
@@ -58,17 +80,17 @@ namespace WorkoutApp.API.Data
 
             foreach (User user in users)
             {
-                byte[] passwordHash, passwordSalt;
-                CreatePasswordHash("password", out passwordHash, out passwordSalt);
+                userManager.CreateAsync(user, "password").Wait();
 
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
-                user.Username = user.Username.ToLower();
-
-                context.Users.Add(user);
+                if (user.UserName.ToUpper() == "ADMIN")
+                {
+                    userManager.AddToRoleAsync(user, "Admin").Wait();
+                }
+                else
+                {
+                    userManager.AddToRoleAsync(user, "User").Wait();
+                }
             }
-
-            context.SaveChanges();
         }
 
         private void SeedEquipment()
@@ -135,39 +157,39 @@ namespace WorkoutApp.API.Data
             string data = System.IO.File.ReadAllText("Data/Seed Data/ExerciseSeedData.json");
             List<Exercise> exercises = JsonConvert.DeserializeObject<List<Exercise>>(data);
 
-            foreach (Exercise exercise in exercises)
-            {
-                context.Exercises.Add(exercise);
-            }
+            exercises.ForEach(ex => context.Exercises.Add(ex));
 
             context.SaveChanges();
         }
 
-        private void SeedWorkoutPlans()
+        private void SeedWorkouts()
         {
-            if (context.WorkoutPlans.Any())
+            if (context.Workouts.Any())
             {
                 return;
             }
 
-            string data = System.IO.File.ReadAllText("Data/Seed Data/WorkoutPlanSeedData.json");
-            List<WorkoutPlan> plans = JsonConvert.DeserializeObject<List<WorkoutPlan>>(data);
+            string data = System.IO.File.ReadAllText("Data/Seed Data/WorkoutSeedData.json");
+            List<Workout> workouts = JsonConvert.DeserializeObject<List<Workout>>(data);
 
-            foreach (WorkoutPlan plan in plans)
-            {
-                context.WorkoutPlans.Add(plan);
-            }
+            workouts.ForEach(wo => context.Workouts.Add(wo));
 
             context.SaveChanges();
         }
 
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        private void SeedScheduledWorkouts()
         {
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            if (context.ScheduledUserWorkouts.Any())
             {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return;
             }
+
+            string data = System.IO.File.ReadAllText("Data/Seed Data/ScheduledUserWorkoutsSeedData.json");
+            List<ScheduledUserWorkout> scheduledWorkouts = JsonConvert.DeserializeObject<List<ScheduledUserWorkout>>(data);
+
+            scheduledWorkouts.ForEach(sWo => context.ScheduledUserWorkouts.Add(sWo));
+
+            context.SaveChanges();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace WorkoutApp.API.Dtos
     public class UserForRegisterDto
     {
         [Required]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         [Required]
         [StringLength(10, MinimumLength = 4, ErrorMessage = "You must specify a password between 4 and 10 characters")]
@@ -19,7 +19,7 @@ namespace WorkoutApp.API.Dtos
         public string LastName { get; set; }
 
         [Required]
-        public string EmailAddress { get; set; }
+        public string Email { get; set; }
         
         public DateTime Created { get; set; }
 

@@ -14,7 +14,6 @@ using WorkoutApp.API.Helpers.Specifications;
 
 namespace WorkoutApp.API.Controllers
 {
-    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -49,42 +48,6 @@ namespace WorkoutApp.API.Controllers
             return Ok(userToReturn);
         }
 
-        [HttpPost("{userId}/workoutPlan")]
-        public async Task<IActionResult> CreateWorkoutPlanForUser(int userId)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
-
-            WorkoutPlan newWorkoutPlan = new WorkoutPlan();
-
-            newWorkoutPlan.UserId = userId;
-
-            repo.Add<WorkoutPlan>(newWorkoutPlan);
-
-            if (await repo.SaveAll())
-            {
-                return CreatedAtRoute("GetWorkoutPlan", new { id = newWorkoutPlan.Id }, newWorkoutPlan);
-            }
-
-            return BadRequest("Could not create workout plan.");
-        }
-
-        [HttpGet("{userId}/workoutPlan")]
-        public async Task<IActionResult> GetWorkoutPlansForUser(int userId)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
-
-            List<WorkoutPlan> workoutPlans = await repo.GetWorkoutPlansForUser(userId);
-
-
-            return Ok(workoutPlans);
-        }
-
         [HttpGet("{userId}/workouts")]
         public async Task<IActionResult> GetWorkoutsForUser(int userId, [FromQuery] WorkoutParams woParams)
         {
@@ -101,6 +64,24 @@ namespace WorkoutApp.API.Controllers
             IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
 
             return Ok(workoutsForReturn);
+        }
+
+        [HttpGet("{userId}/scheduledWorkouts")]
+        public async Task<IActionResult> GetScheduledWorkoutsForUser(int userId, [FromQuery] SchUsrWoParams woParams)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            woParams.UserId = userId;
+
+            PagedList<ScheduledUserWorkout> workouts = await repo.GetScheduledUserWorkouts(woParams);
+            Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
+
+            //IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
+
+            return Ok(workouts);//workoutsForReturn);
         }
 
         [HttpGet("test")]

@@ -17,12 +17,11 @@ namespace WorkoutApp.API.Data
         Task<List<User>> GetUsers();
         Task<User> GetUser(int id);
 
-        //Task<PagedList<WorkoutPlan>> GetWorkoutPlans();
-        Task<WorkoutPlan> GetWorkoutPlan(int id);
-        Task<List<WorkoutPlan>> GetWorkoutPlansForUser(int userId);
-
-        Task<PagedList<Workout>> GetWorkouts(WorkoutParams woParams);
         Task<Workout> GetWorkout(int id);
+        Task<PagedList<Workout>> GetWorkouts(WorkoutParams woParams);
+
+        Task<ScheduledUserWorkout> GetScheduledUserWorkout(int id);
+        Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkouts(SchUsrWoParams woParams);
 
         Task<PagedList<Exercise>> GetExercises(ExerciseParams exParams);
         Task<Exercise> GetExercise(int exerciseId);

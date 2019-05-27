@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WorkoutApp.API.Helpers.QueryParams
 {
-    public class WorkoutParams
+    public class SchUsrWoParams
     {
         private const int MaxPageSize = 50;
         public int PageNumber { get; set; } = 1;
@@ -16,5 +16,7 @@ namespace WorkoutApp.API.Helpers.QueryParams
         }
 
         public int? UserId { get; set; }
+        public DateTime? MinDate { get; set; }
+        public DateTime? MaxDate { get; set; }
     }
 }

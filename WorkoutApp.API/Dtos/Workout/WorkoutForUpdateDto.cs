@@ -7,8 +7,9 @@ namespace WorkoutApp.API.Dtos
 {
     public class WorkoutForUpdateDto
     {
-        public DateTime? Date { get; set; }
-        public bool? Complete { get; set; }
+        public string Label { get; set; }
+        public bool? Shareable { get; set; }
+        public string Color { get; set; }
         public List<ExerciseGroupForCreationDto> ExerciseGroupsToAdd { get; set; }
         public List<int> ExerciseGroupIdsToRemove { get; set; }
     }
