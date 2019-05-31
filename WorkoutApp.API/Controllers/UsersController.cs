@@ -13,6 +13,7 @@ using WorkoutApp.API.Helpers.QueryParams;
 using WorkoutApp.API.Helpers.Specifications;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -23,13 +24,15 @@ namespace WorkoutApp.API.Controllers
         private readonly IWorkoutRepository repo;
         private readonly IMapper mapper;
         private readonly DataContext context;
+        private readonly UserManager<User> userManager;
 
 
-        public UsersController(IWorkoutRepository repo, IMapper mapper, DataContext context)
+        public UsersController(IWorkoutRepository repo, IMapper mapper, DataContext context, UserManager<User> userManager)
         {
             this.repo = repo; 
             this.mapper = mapper;
             this.context = context;
+            this.userManager = userManager;
         }
 
         [HttpGet]
@@ -44,7 +47,7 @@ namespace WorkoutApp.API.Controllers
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("usersWithRoles")]
-        public async Task<IActionResult> GetUsersWithRoles() //cange this. Dont want context in controller
+        public async Task<IActionResult> GetUsersWithRoles() //Change this. Dont want context in controller
         {   
             var userList = await (from user in context.Users orderby user.UserName
                                     select new 
@@ -60,7 +63,33 @@ namespace WorkoutApp.API.Controllers
             return Ok(userList);
         }
 
-        //[HttpPost]
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPost("{id}/editRoles")]
+        public async Task<IActionResult> EditRoles(int id, [FromBody] RoleEditDto roleEditDto)
+        {
+            User user = await userManager.FindByIdAsync(id.ToString());
+
+            IList<string> userRoles = await userManager.GetRolesAsync(user);
+
+            string[] selectedRoles = roleEditDto.RoleNames;
+
+            selectedRoles = selectedRoles ?? new string[] {};
+            var result = await userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
+
+            if (!result.Succeeded)
+            {
+                return BadRequest("Failed to add to roles.");
+            }
+
+            result = await userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
+
+            if (!result.Succeeded)
+            {
+                return BadRequest("Failed to remove roles.");
+            }
+
+            return Ok(await userManager.GetRolesAsync(user));
+        }
 
         [HttpGet("{id}", Name="GetUser")]
         public async Task<IActionResult> GetUser(int id)
