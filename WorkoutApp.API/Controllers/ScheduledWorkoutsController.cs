@@ -26,5 +26,95 @@ namespace WorkoutApp.API.Controllers
             this.mapper = mapper;
             this.repo = repo;
         }
+
+        [HttpGet("{id}", Name = "GetScheduledWorkout")]
+        public async Task<IActionResult> GetScheduledWorkout(int id)
+        {
+            ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
+
+            if (workout == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(workout);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateScheduledWorkout([FromBody] ScheduledWoForCreationDto newWorkoutDto)
+        {
+            if (await repo.GetWorkout(newWorkoutDto.WorkoutId) == null)
+            {
+                return BadRequest("Invalid workout id!");
+            }
+
+            ScheduledUserWorkout newWorkout = mapper.Map<ScheduledUserWorkout>(newWorkoutDto);
+
+            newWorkout.UserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            repo.Add<ScheduledUserWorkout>(newWorkout);
+
+            if (await repo.SaveAll())
+            {
+                return CreatedAtRoute("GetScheduledWorkout", new { id = newWorkout.Id }, newWorkout);
+            }
+
+            return BadRequest("Could not save the new workout.");
+        }
+
+        [HttpPatch("{id}/startWorkout")]
+        public async Task<IActionResult> StartWorkout(int id)
+        {
+            ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
+
+            if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            if (workout.StartedDateTime != null)
+            {
+                return BadRequest("This workout has already been started!");
+            }
+
+            workout.StartedDateTime = DateTime.Now;
+
+            if (await repo.SaveAll())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Could not start workout.");
+        }
+
+        [HttpPatch("{id}/completeWorkout")]
+        public async Task<IActionResult> CompleteWorkout(int id)
+        {
+            ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
+
+            if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            if (workout.CompletedDateTime != null)
+            {
+                return BadRequest("This workout has already been completed!");
+            }
+
+            workout.CompletedDateTime = DateTime.Now;
+
+            if (workout.StartedDateTime == null)
+            {
+                workout.StartedDateTime = DateTime.Now;
+            }
+
+            if (await repo.SaveAll())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Could not complete workout.");
+        }
     }
 }

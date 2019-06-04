@@ -15,6 +15,7 @@ namespace WorkoutApp.API.Helpers
             CreateMap<Workout, WorkoutForReturnDto>();
             CreateMap<WorkoutForCreationDto, Workout>();
             CreateMap<WorkoutForUpdateDto, Workout>();
+            CreateMap<ScheduledWoForCreationDto, ScheduledUserWorkout>();
 
             CreateMap<Exercise, ExerciseForReturnDto>();
             CreateMap<Exercise, ExerciseForReturnDetailedDto>()
