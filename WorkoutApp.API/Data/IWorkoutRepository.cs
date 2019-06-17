@@ -23,6 +23,8 @@ namespace WorkoutApp.API.Data
         Task<ScheduledUserWorkout> GetScheduledUserWorkout(int id);
         Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkouts(SchUsrWoParams woParams);
 
+        Task<WorkoutInvitation> GetWorkoutInvitation(int id);
+
         Task<PagedList<Exercise>> GetExercises(ExerciseParams exParams);
         Task<Exercise> GetExercise(int exerciseId);
 

@@ -21,6 +21,7 @@ namespace WorkoutApp.API.Controllers
         private readonly IMapper mapper;
         private readonly IWorkoutRepository repo;
 
+        
         public ScheduledWorkoutsController(IMapper mapper, IWorkoutRepository repo)
         {
             this.mapper = mapper;

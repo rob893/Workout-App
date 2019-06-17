@@ -143,6 +143,11 @@ namespace WorkoutApp.API.Data
             return await PagedList<ScheduledUserWorkout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
         }
 
+        public async Task<WorkoutInvitation> GetWorkoutInvitation(int id)
+        {
+            return await context.WorkoutInvitations.Where(woInv => woInv.Id == id).FirstOrDefaultAsync();
+        }
+
         public async Task<List<T>> Find<T>(Specification<T> spec) where T : class
         {
             var result = spec.Includes.Aggregate(context.Set<T>().AsQueryable(), (current, include) => current.Include(include));

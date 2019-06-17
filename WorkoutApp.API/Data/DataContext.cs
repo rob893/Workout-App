@@ -17,6 +17,7 @@ namespace WorkoutApp.API.Data
         public DbSet<Muscle> Muscles { get; set; }
         public DbSet<Workout> Workouts { get; set; }
         public DbSet<ScheduledUserWorkout> ScheduledUserWorkouts { get; set; }
+        public DbSet<WorkoutInvitation> WorkoutInvitations { get; set; }
     
         public DataContext(DbContextOptions<DataContext> options) : base (options){}
 
