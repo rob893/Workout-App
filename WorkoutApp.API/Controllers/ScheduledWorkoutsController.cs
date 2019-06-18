@@ -35,7 +35,7 @@ namespace WorkoutApp.API.Controllers
 
             if (workout == null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Ok(workout);
@@ -63,10 +63,41 @@ namespace WorkoutApp.API.Controllers
             return BadRequest("Could not save the new workout.");
         }
 
+        [HttpPatch("{id}/addAdHocExercise")]
+        public async Task<IActionResult> AddAdHocExercise(int id, [FromBody] ExerciseGroupForCreationDto adHocExercise)
+        {
+            ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            ExerciseGroup newAdHocExercise = mapper.Map<ExerciseGroup>(adHocExercise);
+            workout.AdHocExercises.Add(newAdHocExercise);
+
+            if (await repo.SaveAll())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Could not add exercise.");
+        }
+
         [HttpPatch("{id}/startWorkout")]
         public async Task<IActionResult> StartWorkout(int id)
         {
             ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
 
             if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -92,6 +123,11 @@ namespace WorkoutApp.API.Controllers
         public async Task<IActionResult> CompleteWorkout(int id)
         {
             ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
 
             if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {

@@ -57,6 +57,45 @@ namespace WorkoutApp.API.Controllers
             return Ok(woInvs);
         }
 
+        [HttpPatch("{id}/accept")]
+        public async Task<IActionResult> AcceptPendingInvitation(int id)
+        {
+            WorkoutInvitation woInv = await repo.GetWorkoutInvitation(id);
+
+            if (woInv == null)
+            {
+                return NotFound();
+            }
+
+            if (woInv.InviteeId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            if (woInv.Accepted || woInv.Declined)
+            {
+                return BadRequest("This invitation has already been responeded to.");
+            }
+
+            woInv.Accepted = true;
+            woInv.Declined = false;
+            woInv.RespondedAtDateTime = DateTime.Now;
+
+            ScheduledUserWorkout schWo = await repo.GetScheduledUserWorkout(woInv.ScheduledUserWorkoutId);
+            schWo.ExtraSchUsrWoAttendees.Add(new ExtraSchUsrWoAttendee
+            {
+                ScheduledUserWorkoutId = schWo.Id,
+                UserId = woInv.InviteeId
+            });
+
+            if (await repo.SaveAll())
+            {
+                return Ok("Invitation Accepted!");
+            }
+
+            return BadRequest("Unable to accept invitation.");
+        }
+
         [HttpPatch("{id}/decline")]
         public async Task<IActionResult> DeclinePendingInvitation(int id)
         {
@@ -70,6 +109,11 @@ namespace WorkoutApp.API.Controllers
             if (woInv.InviteeId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
                 return Unauthorized();
+            }
+
+            if (woInv.Accepted || woInv.Declined)
+            {
+                return BadRequest("This invitation has already been responeded to.");
             }
 
             woInv.Accepted = false;

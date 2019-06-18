@@ -40,34 +40,56 @@ namespace WorkoutApp.API.Data
                     .IsRequired();
             });
 
+            modelBuilder.Entity<User>(user => 
+            {
+                user.HasMany(u => u.ReceivedInvitations)
+                    .WithOne(inv => inv.Invitee)
+                    .HasForeignKey(inv => inv.InviteeId);
+
+                user.HasMany(u => u.SentInvitations)
+                    .WithOne(inv => inv.Inviter)
+                    .HasForeignKey(inv => inv.InviterId);
+            });
+                
             modelBuilder.Entity<ExerciseStep>()
                 .HasKey(k => new { k.ExerciseId, k.ExerciseStepNumber });
             
-            modelBuilder.Entity<ExerciseCategoryExercise>()
-                .HasKey(k => new { k.ExerciseCategoryId, k.ExerciseId });
+            modelBuilder.Entity<ExtraSchUsrWoAttendee>(extraSchUsrWoAttendee => 
+            {
+                extraSchUsrWoAttendee.HasKey(k => new { k.UserId, k.ScheduledUserWorkoutId });
 
-            modelBuilder.Entity<ExerciseCategoryExercise>()
-                .HasOne(ece => ece.ExerciseCategory)
-                .WithMany(ec => ec.Exercises)
-                .HasForeignKey(ece => ece.ExerciseCategoryId);
+                extraSchUsrWoAttendee.HasOne(attendee => attendee.ScheduledUserWorkout)
+                    .WithMany(schUsrWo => schUsrWo.ExtraSchUsrWoAttendees)
+                    .HasForeignKey(attendee => attendee.ScheduledUserWorkoutId);
 
-            modelBuilder.Entity<ExerciseCategoryExercise>()
-                .HasOne(ece => ece.Exercise)
-                .WithMany(ex => ex.ExerciseCategorys)
-                .HasForeignKey(ece => ece.ExerciseId);
+                extraSchUsrWoAttendee.HasOne(attendee => attendee.User);
+            });
 
-            modelBuilder.Entity<EquipmentExercise>()
-                .HasKey(k => new { k.ExerciseId, k.EquipmentId });
+            modelBuilder.Entity<ExerciseCategoryExercise>(exCatEx => 
+            {
+                exCatEx.HasKey(k => new { k.ExerciseCategoryId, k.ExerciseId });
 
-            modelBuilder.Entity<EquipmentExercise>()
-                .HasOne(ee => ee.Exercise)
-                .WithMany(e => e.Equipment)
-                .HasForeignKey(ee => ee.ExerciseId);
+                exCatEx.HasOne(ece => ece.ExerciseCategory)
+                    .WithMany(ec => ec.Exercises)
+                    .HasForeignKey(ece => ece.ExerciseCategoryId);
 
-            modelBuilder.Entity<EquipmentExercise>()
-                .HasOne(ee => ee.Equipment)
-                .WithMany(eq => eq.Exercises)
-                .HasForeignKey(ee => ee.EquipmentId);
+                exCatEx.HasOne(ece => ece.Exercise)
+                    .WithMany(ex => ex.ExerciseCategorys)
+                    .HasForeignKey(ece => ece.ExerciseId);
+            });
+            
+            modelBuilder.Entity<EquipmentExercise>(eqEx => 
+            {
+                eqEx.HasKey(k => new { k.ExerciseId, k.EquipmentId });
+
+                eqEx.HasOne(ee => ee.Exercise)
+                    .WithMany(e => e.Equipment)
+                    .HasForeignKey(ee => ee.ExerciseId);
+
+                eqEx.HasOne(ee => ee.Equipment)
+                    .WithMany(eq => eq.Exercises)
+                    .HasForeignKey(ee => ee.EquipmentId);
+            });
         }
     }
 }

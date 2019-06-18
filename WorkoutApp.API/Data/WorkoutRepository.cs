@@ -127,13 +127,19 @@ namespace WorkoutApp.API.Data
 
         public async Task<ScheduledUserWorkout> GetScheduledUserWorkout(int id)
         {
-            return await context.ScheduledUserWorkouts.Where(wo => wo.Id == id).FirstOrDefaultAsync();
+            return await context.ScheduledUserWorkouts
+                .Include(wo => wo.Workout)
+                .Include(wo => wo.AdHocExercises)
+                .Include(wo => wo.ExtraSchUsrWoAttendees)
+                .FirstOrDefaultAsync(wo => wo.Id == id);
         }
 
         public async Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkouts(SchUsrWoParams woParams)
         {
             IQueryable<ScheduledUserWorkout> workouts = context.ScheduledUserWorkouts.OrderBy(wo => wo.ScheduledDateTime)
-                .Include(wo => wo.Workout);
+                .Include(wo => wo.Workout)
+                .Include(wo => wo.AdHocExercises)
+                .Include(wo => wo.ExtraSchUsrWoAttendees);
 
             if (woParams.UserId != null)
             {

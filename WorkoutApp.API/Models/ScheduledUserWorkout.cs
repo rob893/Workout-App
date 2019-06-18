@@ -10,10 +10,10 @@ namespace WorkoutApp.API.Models
         public int UserId { get; set; }
         public Workout Workout { get; set; }
         public int WorkoutId { get; set; }
-        public List<ExerciseGroup> AdHocExercises { get; set; }
         public DateTime? StartedDateTime { get; set; }
         public DateTime? CompletedDateTime { get; set; }
         public DateTime ScheduledDateTime { get; set; }
-        //public List<User> UsersSharedWith { get; set; } //perhaps invite another user to a scheduled workout? Think more
+        public List<ExerciseGroup> AdHocExercises { get; set; }
+        public List<ExtraSchUsrWoAttendee> ExtraSchUsrWoAttendees { get; set; }
     }
 }

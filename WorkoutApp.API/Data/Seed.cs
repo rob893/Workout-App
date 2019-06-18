@@ -43,6 +43,7 @@ namespace WorkoutApp.API.Data
         {
             context.Muscles.RemoveRange(context.Muscles);
             context.Equipment.RemoveRange(context.Equipment.Include(e => e.Exercises));
+            context.WorkoutInvitations.RemoveRange(context.WorkoutInvitations);
             context.ScheduledUserWorkouts.RemoveRange(context.ScheduledUserWorkouts);
             context.Workouts.RemoveRange(context.Workouts);
             context.ExerciseGroups.RemoveRange(context.ExerciseGroups);
