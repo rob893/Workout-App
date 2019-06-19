@@ -58,7 +58,7 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAll())
             {
-                return CreatedAtRoute("GetScheduledWorkout", new { id = newWorkout.Id }, newWorkout);
+                return CreatedAtAction(nameof(GetScheduledWorkout), new { id = newWorkout.Id }, newWorkout);
             }
 
             return BadRequest("Could not save the new workout.");

@@ -128,12 +128,12 @@ namespace WorkoutApp.API.Controllers
             return BadRequest("Unable to decline invitation.");
         }
 
-        [HttpPost("scheduledWorkout/{scheduledWorkoutId}/invitee/{inviteeId}")]
-        public async Task<IActionResult> SendWorkoutInvitation(int scheduledWorkoutId, int inviteeId)
+        [HttpPost()]
+        public async Task<IActionResult> CreateWorkoutInvitation([FromBody] WorkoutInvitation woInv)
         {
-            ScheduledUserWorkout scheduledWorkout = await repo.GetScheduledUserWorkout(scheduledWorkoutId);
+            ScheduledUserWorkout scheduledWorkout = await repo.GetScheduledUserWorkout(woInv.ScheduledUserWorkoutId);
             
-            if (await repo.GetUser(inviteeId) == null || scheduledWorkout == null)
+            if (await repo.GetUser(woInv.InviteeId) == null || scheduledWorkout == null)
             {
                 return NotFound();
             }
@@ -145,27 +145,27 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest("You cannot invite people to workouts that are not yours!");
             }
 
-            if (inviterId == inviteeId)
+            if (inviterId == woInv.InviteeId)
             {
                 return BadRequest("You cannot invite yourself!");
             }
 
-            if (await workoutInvitationProvider.GetWorkoutInvitation(inviteeId, inviterId, scheduledWorkoutId) != null)
+            if (await workoutInvitationProvider.GetWorkoutInvitation(woInv.InviteeId, inviterId, woInv.ScheduledUserWorkoutId) != null)
             {
                 return BadRequest("This person already has a pending invitation from you for this workout!");
             }
 
             WorkoutInvitation newInvitation = new WorkoutInvitation();
 
-            newInvitation.InviteeId = inviteeId;
+            newInvitation.InviteeId = woInv.InviteeId;
             newInvitation.InviterId = inviterId;
-            newInvitation.ScheduledUserWorkoutId = scheduledWorkoutId;
+            newInvitation.ScheduledUserWorkoutId = woInv.ScheduledUserWorkoutId;
 
             repo.Add<WorkoutInvitation>(newInvitation);
 
             if (await repo.SaveAll())
             {
-                return Ok("Invitation sent!");
+                return CreatedAtAction(nameof(GetWorkoutInvitation), new { id = newInvitation.Id }, newInvitation);
             }
 
             return BadRequest("Could not send invitation.");
