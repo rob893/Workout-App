@@ -58,7 +58,7 @@ namespace WorkoutApp.API.Controllers
             {
                 EquipmentForReturnDto eqReturn = mapper.Map<EquipmentForReturnDto>(equipment);
 
-                return CreatedAtRoute("GetSingleEquipment", new { id = equipment.Id }, eqReturn); 
+                return CreatedAtAction(nameof(GetSingleEquipment), new { id = equipment.Id }, eqReturn); 
             }
 
             return BadRequest("Could not create new equipment!");

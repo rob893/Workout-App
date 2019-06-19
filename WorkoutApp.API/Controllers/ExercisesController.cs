@@ -91,5 +91,25 @@ namespace WorkoutApp.API.Controllers
 
             return Ok(equipmentForReturn);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteExercise(int id)
+        {
+            Exercise exercise = await repo.GetExercise(id);
+
+            if (exercise == null)
+            {
+                return NotFound();
+            }
+
+            repo.Delete<Exercise>(exercise);
+
+            if (await repo.SaveAll())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Could not delete exercise.");
+        }
     }
 }

@@ -57,6 +57,36 @@ namespace WorkoutApp.API.Controllers
             return Ok(woInvs);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePendingInvitation(int id)
+        {
+            WorkoutInvitation woInv = await repo.GetWorkoutInvitation(id);
+
+            if (woInv == null) 
+            {
+                return NotFound();
+            }
+
+            if (woInv.InviteeId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            if (woInv.Accepted || woInv.Declined)
+            {
+                return BadRequest("Cannot delete an invitation that has already been responded to.");
+            }
+
+            repo.Delete<WorkoutInvitation>(woInv);
+
+            if (await repo.SaveAll())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Could not delete invitation.");
+        }
+
         [HttpPatch("{id}/accept")]
         public async Task<IActionResult> AcceptPendingInvitation(int id)
         {
@@ -90,7 +120,7 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAll())
             {
-                return Ok("Invitation Accepted!");
+                return Ok(woInv);
             }
 
             return BadRequest("Unable to accept invitation.");
@@ -122,14 +152,14 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAll())
             {
-                return Ok("Invitation Declined!");
+                return Ok(woInv);
             }
 
             return BadRequest("Unable to decline invitation.");
         }
 
-        [HttpPost()]
-        public async Task<IActionResult> CreateWorkoutInvitation([FromBody] WorkoutInvitation woInv)
+        [HttpPost]
+        public async Task<IActionResult> CreateWorkoutInvitation([FromBody] WorkoutInvitationForCreationDto woInv)
         {
             ScheduledUserWorkout scheduledWorkout = await repo.GetScheduledUserWorkout(woInv.ScheduledUserWorkoutId);
             
