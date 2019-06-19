@@ -30,6 +30,11 @@ namespace WorkoutApp.API.Data
             context.Remove(entity);
         }
 
+        public void DeleteRange<T>(IEnumerable<T> entities) where T : class
+        {
+            context.RemoveRange(entities);
+        }
+
         public async Task<bool> SaveAll()
         {
             return await context.SaveChangesAsync() > 0;

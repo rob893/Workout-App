@@ -12,6 +12,7 @@ namespace WorkoutApp.API.Data
     {
         void Add<T>(T entity) where T: class;
         void Delete<T>(T entity) where T: class;
+        void DeleteRange<T>(IEnumerable<T> entity) where T: class;
         Task<bool> SaveAll();
 
         Task<List<User>> GetUsers();

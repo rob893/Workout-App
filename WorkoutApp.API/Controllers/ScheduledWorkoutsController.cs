@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Helpers.QueryParams;
 using WorkoutApp.API.Helpers.Specifications;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -63,8 +64,8 @@ namespace WorkoutApp.API.Controllers
             return BadRequest("Could not save the new workout.");
         }
 
-        [HttpPatch("{id}/addAdHocExercise")]
-        public async Task<IActionResult> AddAdHocExercise(int id, [FromBody] ExerciseGroupForCreationDto adHocExercise)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSceduledWorkout(int id)
         {
             ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
 
@@ -78,15 +79,45 @@ namespace WorkoutApp.API.Controllers
                 return Unauthorized();
             }
 
-            ExerciseGroup newAdHocExercise = mapper.Map<ExerciseGroup>(adHocExercise);
-            workout.AdHocExercises.Add(newAdHocExercise);
+            repo.DeleteRange<ExerciseGroup>(workout.AdHocExercises);
+            repo.Delete<ScheduledUserWorkout>(workout);
 
             if (await repo.SaveAll())
             {
                 return Ok();
             }
 
-            return BadRequest("Could not add exercise.");
+            return BadRequest("Could not delete scheduled workout!");
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateScheduledWorkout(int id, [FromBody] JsonPatchDocument<ScheduledUserWorkout> patchDoc)
+        {
+            if (patchDoc == null)
+            {
+                return BadRequest();
+            }
+
+            ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            patchDoc.ApplyTo(workout);
+
+            if (await repo.SaveAll())
+            {
+                return Ok(workout);
+            }
+
+            return BadRequest("Could not apply changes.");
         }
 
         [HttpPatch("{id}/startWorkout")]
@@ -113,7 +144,7 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAll())
             {
-                return Ok();
+                return Ok(workout);
             }
 
             return BadRequest("Could not start workout.");
@@ -148,7 +179,7 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAll())
             {
-                return Ok();
+                return Ok(workout);
             }
 
             return BadRequest("Could not complete workout.");
