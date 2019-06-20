@@ -31,25 +31,15 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetExercises([FromQuery] ExerciseParams exParams)
         {
-            // PagedList<Exercise> exercises = await repo.GetExercises(exParams);
-            
-            // Response.AddPagination(exercises.CurrentPage, exercises.PageSize, exercises.TotalCount, exercises.TotalPages);
-
-            // IEnumerable<ExerciseForReturnDto> exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
-
             List<ExerciseForReturnDto> exercisesToReturn = await exerciseProvider.GetExercises();
 
             return Ok(exercisesToReturn);
         }
 
-        [HttpGet("{exerciseId}")]
-        public async Task<IActionResult> GetExercise(int exerciseId)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetExercise(int id)
         {
-            //Exercise exercise = await repo.GetExercise(exerciseId);
-
-            //ExerciseForReturnDto exToReturn = mapper.Map<ExerciseForReturnDto>(exercise);
-
-            ExerciseForReturnDto exToReturn = await exerciseProvider.GetExercise(exerciseId);
+            ExerciseForReturnDto exToReturn = await exerciseProvider.GetExercise(id);
 
             return Ok(exToReturn);
         }
@@ -67,13 +57,9 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("detailed")]
         public async Task<IActionResult> GetExercisesDetailed([FromQuery] ExerciseParams exParams)
         {
-            // PagedList<Exercise> exercises = await repo.GetExercises(exParams);
             PagedList<ExerciseForReturnDetailedDto> exercises = await exerciseProvider.GetExercisesDetailed(exParams);
 
             Response.AddPagination(exercises.CurrentPage, exercises.PageSize, exercises.TotalCount, exercises.TotalPages);
-
-            // IEnumerable<ExerciseForReturnDetailedDto> exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
-            //List<ExerciseForReturnDetailedDto> exercisesToReturn = await exerciseProvider.GetExercisesDetailed();
 
             return Ok(exercises);
         }
@@ -90,6 +76,51 @@ namespace WorkoutApp.API.Controllers
             IEnumerable<EquipmentForReturnDto> equipmentForReturn = mapper.Map<IEnumerable<EquipmentForReturnDto>>(equipment);
 
             return Ok(equipmentForReturn);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateExercise([FromBody] ExerciseForCreationDto exercise)
+        {
+            Exercise newExercise = mapper.Map<Exercise>(exercise);
+
+            if (exercise.PrimaryMuscleId != null)
+            {
+                newExercise.PrimaryMuscle = await repo.GetMuscle(exercise.PrimaryMuscleId.Value);
+            }
+
+            if (exercise.SecondaryMuscleId != null)
+            {
+                newExercise.SecondaryMuscle = await repo.GetMuscle(exercise.SecondaryMuscleId.Value);
+            }
+
+            if (exercise.EquipmentIds != null)
+            {
+                newExercise.Equipment = new List<EquipmentExercise>();
+                exercise.EquipmentIds.ForEach(id => 
+                    newExercise.Equipment.Add(new EquipmentExercise {
+                        EquipmentId = id
+                    })
+                );
+            }
+
+            if (exercise.ExerciseCategoryIds != null)
+            {
+                newExercise.ExerciseCategorys = new List<ExerciseCategoryExercise>();
+                exercise.ExerciseCategoryIds.ForEach(id => 
+                    newExercise.ExerciseCategorys.Add(new ExerciseCategoryExercise {
+                        ExerciseCategoryId = id
+                    })
+                );
+            }
+            
+            repo.Add<Exercise>(newExercise);
+
+            if (await repo.SaveAll())
+            {
+                return CreatedAtAction(nameof(GetExercise), new { id = newExercise.Id }, newExercise);
+            }
+
+            return BadRequest("Could not create exercise.");
         }
 
         [HttpDelete("{id}")]

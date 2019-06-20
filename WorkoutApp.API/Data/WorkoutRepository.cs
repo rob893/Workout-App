@@ -156,7 +156,12 @@ namespace WorkoutApp.API.Data
 
         public async Task<WorkoutInvitation> GetWorkoutInvitation(int id)
         {
-            return await context.WorkoutInvitations.Where(woInv => woInv.Id == id).FirstOrDefaultAsync();
+            return await context.WorkoutInvitations.FirstOrDefaultAsync(woInv => woInv.Id == id);
+        }
+
+        public async Task<Muscle> GetMuscle(int id)
+        {
+            return await context.Muscles.FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<List<T>> Find<T>(Specification<T> spec) where T : class
