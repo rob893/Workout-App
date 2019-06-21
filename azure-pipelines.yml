@@ -14,3 +14,10 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   workingDirectory: WorkoutApp.API/
   displayName: 'dotnet build $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: False
