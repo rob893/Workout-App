@@ -19,8 +19,8 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
-    publishWebProjects: true
-    workingDirectory: 'WorkoutApp.API/'
+    publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    workingDirectory: 'WorkoutApp.API/'
 
 - task: PublishBuildArtifacts@1
