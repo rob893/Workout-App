@@ -56,7 +56,6 @@ namespace WorkoutApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
         {
-            return Ok("Fuck you");
             User user = await userManager.FindByNameAsync(userForLoginDto.Username);
 
             var result = await signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
