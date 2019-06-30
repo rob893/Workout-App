@@ -40,7 +40,7 @@ steps:
   inputs:
     command: 'custom'
     workingDir: 'WorkoutApp-SPA/'
-    customCommand: 'build -prod --base-href \"/WorkoutApp/\"'
+    customCommand: 'build -prod'
 
 - task: PublishBuildArtifacts@1
   inputs:
