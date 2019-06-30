@@ -56,19 +56,19 @@ namespace WorkoutApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
         {
-            User user = await userManager.FindByNameAsync(userForLoginDto.Username);
+            User userFromRepo = await userManager.FindByNameAsync(userForLoginDto.Username);
 
-            var result = await signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
+            var result = await signInManager.CheckPasswordSignInAsync(userFromRepo, userForLoginDto.Password, false);
 
             if (result.Succeeded)
             {
-                UserForReturnDto userToReturn = mapper.Map<UserForReturnDto>(user);
+                UserForReturnDto user = mapper.Map<UserForReturnDto>(userFromRepo);
 
-                string token = await GenerateJwtToken(user);
+                string token = await GenerateJwtToken(userFromRepo);
 
                 return Ok(new {
                     token,
-                    userToReturn
+                    user
                 });
             }
 

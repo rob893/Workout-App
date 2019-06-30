@@ -12,14 +12,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let exerciseGroup of workout.exerciseGroups" [routerLink]="['/exercise/', exerciseGroup.exercise.id]">
+                    <tr *ngFor="let exerciseGroup of workout.workout.exerciseGroups" [routerLink]="['/exercise/', exerciseGroup.exercise.id]">
                         <td>{{ exerciseGroup.exercise.name }}</td>
                         <td>{{ exerciseGroup.sets }}</td>
                         <td>{{ exerciseGroup.repetitions }}</td>
                     </tr>
                 </tbody>
             </table>
-            <div class="mb-2" *ngIf="workout.complete ; else notComplete">
+            <div class="mb-2" *ngIf="workout.completedDateTime != null ; else notComplete">
                 <i class="fa fa-check" style="color: green"></i>
                 <span style="color: green">Complete!</span>
             </div>

@@ -2,11 +2,11 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './_guards/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { PlanOverviewComponent } from './plan-overview/plan-overview.component';
-import { PlanOverviewResolver } from './_resolvers/planOverview.resolver';
 import { WorkoutDetailsComponent } from './workout-details/workout-details.component';
 import { WorkoutDetailsResolver } from './_resolvers/workout-details.resolver';
 import { ExerciseDetailsComponent } from './exercise-details/exercise-details.component';
 import { ExerciseDetailsResolver } from './_resolvers/exercise-details.resolver';
+import { ScheduledWorkoutsResolver } from './_resolvers/scheduled-workouts.resolver';
 
 
 export const appRoutes: Routes = [
@@ -20,9 +20,9 @@ export const appRoutes: Routes = [
         canActivate: [AuthGuard],
         children: [
             {
-                path: 'planOverview',
+                path: 'scheduledWorkouts',
                 component: PlanOverviewComponent,
-                resolve: {workoutPlan: PlanOverviewResolver}
+                resolve: {scheduledWorkouts: ScheduledWorkoutsResolver}
             },
             {
                 path: 'workoutDetails',
