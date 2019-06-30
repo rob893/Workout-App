@@ -28,6 +28,7 @@ import { ExerciseDetailsComponent } from './exercise-details/exercise-details.co
 import { ExerciseService } from './_services/exercise.service';
 import { ExerciseDetailsResolver } from './_resolvers/exercise-details.resolver';
 import { WorkoutPlanService } from './_services/workout-plan.service';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 export function tokenGetter() {
     return localStorage.getItem('token');
@@ -67,6 +68,10 @@ export function tokenGetter() {
         })
     ],
     providers: [
+        {
+            provide: LocationStrategy,
+            useClass: HashLocationStrategy
+        },
         AuthService,
         ErrorInterceptorProvider,
         AlertifyService,
