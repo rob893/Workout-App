@@ -25,7 +25,7 @@ export class WorkoutDayComponent implements OnInit {
             let workoutComplete: boolean = true;
 
             for (let workout of this.workoutDay.workouts) {
-                if (!workout.complete) {
+                if (!workout.createdOnDate) {
                     workoutComplete = false;
                 }
             }
@@ -40,7 +40,7 @@ export class WorkoutDayComponent implements OnInit {
             return '';
         }
 
-        return moment(this.workoutDay.workouts[workoutIndex].date).format('ha');
+        return moment(this.workoutDay.workouts[workoutIndex].createdOnDate).format('ha');
     }
 
     public clickedOn(): void {
