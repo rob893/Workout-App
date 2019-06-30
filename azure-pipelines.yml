@@ -40,7 +40,7 @@ steps:
   inputs:
     command: 'custom'
     workingDir: 'WorkoutApp-SPA/'
-    customCommand: 'build -prod'
+    customCommand: 'run build -prod'
 
 - task: PublishBuildArtifacts@1
   inputs:
