@@ -26,3 +26,24 @@ steps:
     workingDirectory: 'WorkoutApp.API/'
 
 - task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/API'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: 'WorkoutApp-SPA/'
+  
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: 'WorkoutApp-SPA/'
+    customCommand: 'ng build -prod --base-href \"/WorkoutApp/\"'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/SPA'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
