@@ -40,7 +40,7 @@ steps:
   inputs:
     command: 'custom'
     workingDir: 'WorkoutApp-SPA/'
-    customCommand: 'npm build -prod --base-href \"/WorkoutApp/\"'
+    customCommand: 'build -prod --base-href \"/WorkoutApp/\"'
 
 - task: PublishBuildArtifacts@1
   inputs:
