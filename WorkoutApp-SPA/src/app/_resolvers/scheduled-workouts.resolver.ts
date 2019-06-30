@@ -1,14 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Resolve, Router, ActivatedRouteSnapshot } from '@angular/router';
-import { WorkoutPlan } from '../_models/workoutPlan';
 import { AlertifyService } from '../_services/alertify.service';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../_services/auth.service';
 import { UserService } from '../_services/user.service';
+import { ScheduledWorkout } from '../_models/scheduledWorkout';
 
 @Injectable()
-export class PlanOverviewResolver implements Resolve<WorkoutPlan> {
+export class ScheduledWorkoutsResolver implements Resolve<ScheduledWorkout[]> {
     
     private userService: UserService;
     private alertify: AlertifyService;
@@ -23,7 +23,7 @@ export class PlanOverviewResolver implements Resolve<WorkoutPlan> {
         this.authService = authService
     }
     
-    public resolve(route: ActivatedRouteSnapshot): Observable<WorkoutPlan> {
+    public resolve(route: ActivatedRouteSnapshot): Observable<ScheduledWorkout[]> {
         let currentUserId = this.authService.currentUser.id;
 
         return this.userService.getWorkoutPlansForUser(currentUserId).pipe(

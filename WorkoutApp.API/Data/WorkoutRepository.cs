@@ -142,13 +142,23 @@ namespace WorkoutApp.API.Data
         public async Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkouts(SchUsrWoParams woParams)
         {
             IQueryable<ScheduledUserWorkout> workouts = context.ScheduledUserWorkouts.OrderBy(wo => wo.ScheduledDateTime)
-                .Include(wo => wo.Workout)
+                .Include(wo => wo.Workout).ThenInclude(wo => wo.ExerciseGroups).ThenInclude(eg => eg.Exercise)
                 .Include(wo => wo.AdHocExercises)
                 .Include(wo => wo.ExtraSchUsrWoAttendees);
 
             if (woParams.UserId != null)
             {
                 workouts = workouts.Where(wo => wo.UserId == woParams.UserId.Value);
+            }
+
+            if (woParams.MinDate != null)
+            {
+                workouts = workouts.Where(wo => wo.ScheduledDateTime >= woParams.MinDate);
+            }
+
+            if (woParams.MaxDate != null)
+            {
+                workouts = workouts.Where(wo => wo.ScheduledDateTime <= woParams.MaxDate.Value.AddHours(23).AddMinutes(59));
             }
 
             return await PagedList<ScheduledUserWorkout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { WorkoutPlan } from '../_models/workoutPlan';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { Moment } from 'moment';
 import { WorkoutDay } from '../_models/workoutDay';
 import { Workout } from '../_models/workout';
+import { ScheduledWorkout } from '../_models/scheduledWorkout';
 
 @Component({
     selector: 'app-plan-overview',
@@ -12,7 +12,7 @@ import { Workout } from '../_models/workout';
     styleUrls: ['./plan-overview.component.css']
 })
 export class PlanOverviewComponent implements OnInit {
-    public workoutPlan: WorkoutPlan;
+    public scheduledWorkouts: ScheduledWorkout[] = [];
     public workoutDays: WorkoutDay[] = [];
     public monthName: string = '';
 
@@ -26,11 +26,13 @@ export class PlanOverviewComponent implements OnInit {
 
     public ngOnInit(): void {
         this.route.data.subscribe(data => {
-            this.workoutPlan = data['workoutPlan'][0];
+            this.scheduledWorkouts = data['scheduledWorkouts'];
         });
-
-        for (let workout of this.workoutPlan.workouts) {
-            let dateKey: string = moment(workout.date).format('MMMM Do YYYY');
+        
+        for (let scheduledWorkout of this.scheduledWorkouts) {
+            
+            let workout = scheduledWorkout.workout;
+            let dateKey: string = moment(scheduledWorkout.scheduledDateTime).format('MMMM Do YYYY');
 
             if (this.workoutMap.has(dateKey)) {
                 this.workoutMap.get(dateKey).push(workout);

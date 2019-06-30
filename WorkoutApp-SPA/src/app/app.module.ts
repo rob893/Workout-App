@@ -16,7 +16,7 @@ import { AuthGuard } from './_guards/auth.guard';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
-import { PlanOverviewResolver } from './_resolvers/planOverview.resolver';
+import { ScheduledWorkoutsResolver } from './_resolvers/scheduled-workouts.resolver';
 import { RegisterComponent } from './register/register.component';
 import { WorkoutCardComponent } from './workout-card/workout-card.component';
 import { PlanOverviewComponent } from './plan-overview/plan-overview.component';
@@ -75,7 +75,7 @@ export function tokenGetter() {
         ExerciseService,
         WorkoutPlanService,
         ExerciseDetailsResolver,
-        PlanOverviewResolver,
+        ScheduledWorkoutsResolver,
         WorkoutDetailsResolver
     ],
     bootstrap: [AppComponent]

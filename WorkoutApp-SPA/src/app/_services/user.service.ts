@@ -55,7 +55,7 @@ export class UserService {
     }
 
     public getWorkoutPlansForUser(userId: number) {
-        return this.http.get(this.baseUrl + 'users/' + userId + '/workoutPlan');
+        return this.http.get(this.baseUrl + 'users/' + userId + '/scheduledWorkouts');
     }
     
     public getWorkoutsForUser(userId: number, woParams: WorkoutParams): Observable<PaginatedResults<Workout[]>> {
@@ -76,7 +76,7 @@ export class UserService {
         }
 
 
-        return this.http.get<Workout[]>(this.baseUrl + 'users/' + userId + '/workouts', {observe: 'response', params}) .pipe( //pipe gets us access to the rxjs operators 
+        return this.http.get<Workout[]>(this.baseUrl + 'users/' + userId + '/scheduledWorkouts', {observe: 'response', params}) .pipe( //pipe gets us access to the rxjs operators 
             map(response => {
                 paginatedResult.results = response.body;
 

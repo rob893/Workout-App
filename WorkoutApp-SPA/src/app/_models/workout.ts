@@ -1,9 +1,16 @@
 import { ExerciseGroup } from './exerciseGroup';
+import { User } from './user';
 
 export interface Workout {
-    id: number,
-    workoutPlanId: number,
-    date: Date,
-    complete: boolean,
-    exerciseGroups: ExerciseGroup[]
+    color: string;
+    createdByUser: User;
+    createdByUserId: number;
+    createdOnDate: Date;
+    exerciseGroups: ExerciseGroup[];
+    id: number;
+    isDeleted: boolean;
+    label: string;
+    lastModifiedDate: Date;
+    shareable: boolean;
+    workoutCopiedFrom?: Workout;
 }
