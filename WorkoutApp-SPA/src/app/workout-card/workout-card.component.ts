@@ -21,6 +21,6 @@ export class WorkoutCardComponent implements OnInit {
             return '';
         }
 
-        return moment(this.workoutDay.workouts[workoutIndex].date).format('ha');
+        return moment(this.workoutDay.workouts[workoutIndex].createdOnDate).format('ha');
     }
 }
