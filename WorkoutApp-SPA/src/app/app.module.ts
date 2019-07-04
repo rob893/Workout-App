@@ -27,8 +27,8 @@ import { WorkoutDetailsResolver } from './_resolvers/workout-details.resolver';
 import { ExerciseDetailsComponent } from './exercise-details/exercise-details.component';
 import { ExerciseService } from './_services/exercise.service';
 import { ExerciseDetailsResolver } from './_resolvers/exercise-details.resolver';
-import { WorkoutPlanService } from './_services/workout-plan.service';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { ScheduledWorkoutService } from './_services/scheduled-workout.service';
 
 export function tokenGetter() {
     return localStorage.getItem('token');
@@ -78,7 +78,7 @@ export function tokenGetter() {
         AuthGuard,
         UserService,
         ExerciseService,
-        WorkoutPlanService,
+        ScheduledWorkoutService,
         ExerciseDetailsResolver,
         ScheduledWorkoutsResolver,
         WorkoutDetailsResolver

@@ -3,6 +3,7 @@ import { Workout } from '../_models/workout';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { ScheduledWorkout } from '../_models/scheduledWorkout';
+import { ScheduledWorkoutService } from '../_services/scheduled-workout.service';
 
 @Component({
     selector: 'app-workout-details',
@@ -15,10 +16,12 @@ export class WorkoutDetailsComponent implements OnInit {
     public timeMap: Map<ScheduledWorkout, string> = new Map<ScheduledWorkout, string>();
 
     private route: ActivatedRoute;
+    private schWoService: ScheduledWorkoutService;
 
 
-    public constructor(route: ActivatedRoute) { 
+    public constructor(route: ActivatedRoute, schWoService: ScheduledWorkoutService) { 
         this.route = route;
+        this.schWoService = schWoService;
     }
 
     public ngOnInit(): void {
@@ -33,5 +36,14 @@ export class WorkoutDetailsComponent implements OnInit {
         for (let workout of this.workouts) {
             this.timeMap.set(workout, moment(workout.scheduledDateTime).format('ha'));
         }
+    }
+
+    public startWorkout(id: number): void {
+        debugger;
+        this.schWoService.startScheduledWorkout(id).subscribe(() => {
+            alert('Workout started!');
+        }, error => {
+            alert(error);
+        });
     }
 }
