@@ -20,6 +20,6 @@ namespace WorkoutApp.API
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseUrls("http://localhost:5002");
+                .UseUrls("https://localhost:5003");
     }
 }

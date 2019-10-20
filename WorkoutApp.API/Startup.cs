@@ -22,6 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using WorkoutApp.API.Data;
 using WorkoutApp.API.Data.Providers;
 using WorkoutApp.API.Helpers;
@@ -91,6 +92,11 @@ namespace WorkoutApp.API
                     opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
+
             
             services.AddCors();
             services.AddAutoMapper(typeof(Startup));
@@ -126,10 +132,14 @@ namespace WorkoutApp.API
                     });
                 });
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                //app.UseHsts();
+                app.UseHsts();
             }
-
-            //app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+            app.UseHttpsRedirection();
             //seeder.SeedDatabase(true);
             app.UseCors(header => header.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();

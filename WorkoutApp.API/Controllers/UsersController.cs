@@ -36,7 +36,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<ActionResult<List<UserForReturnDto>>> GetUsers()
         {
             List<User> users = await repo.GetUsers();
 
