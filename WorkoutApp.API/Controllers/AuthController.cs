@@ -58,6 +58,11 @@ namespace WorkoutApp.API.Controllers
         {
             User userFromRepo = await userManager.FindByNameAsync(userForLoginDto.Username);
 
+            if (userFromRepo == null)
+            {
+                return Unauthorized();
+            }
+
             var result = await signInManager.CheckPasswordSignInAsync(userFromRepo, userForLoginDto.Password, false);
 
             if (result.Succeeded)
