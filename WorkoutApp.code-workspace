@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "WorkoutApp.API"
+		},
+		{
+			"path": "WorkoutApp-SPA"
+		}
+	],
+    "settings": {}
+}
