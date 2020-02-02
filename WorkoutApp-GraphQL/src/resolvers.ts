@@ -1,33 +1,44 @@
 import { IResolvers } from "apollo-server";
-import { UserAPI } from "./datasources/UserAPI";
+import { IUserAPI } from "./interfaces/IUserAPI";
+import { UserToRegister, UserLogin, User, UserLoginResponse } from "./entities/User";
 
 export const resolvers: IResolvers = {
     Query: {
-        test: () => 'Hello world!',
-        users: (root, args, { dataSources }) => {
-            const userAPI: UserAPI = dataSources.userAPI;
+        test() {
+            return 'Hello World!';
+        },
 
-            const allUsers = userAPI.getAllUsers();
+        async users(root, args, { dataSources }): Promise<User[]> {
+            const userAPI: IUserAPI = dataSources.userAPI;
+
+            const allUsers = await userAPI.getAllUsers();
 
             return allUsers;
         },
-        user: (root, { id }, { dataSources }) => {
-            const userAPI: UserAPI = dataSources.userAPI;
 
-            const user = userAPI.getUserById(id);
+        async user(root, { id }, { dataSources }): Promise<User | null> {
+            const userAPI: IUserAPI = dataSources.userAPI;
 
-            console.log('ho');
+            const user = await userAPI.getUserById(id);
 
             return user;
         }
     },
     Mutation: {
-        registerUser: (root, userToRegister: { user: {firstName: string, lastName: string, age: number}}, { dataSources }) => {
-            const userAPI: UserAPI = dataSources.userAPI;
+        async registerUser(root, { user }: { user: UserToRegister }, { dataSources }): Promise<User> {
+            const userAPI: IUserAPI = dataSources.userAPI;
 
-            const createdUser = userAPI.createUser(userToRegister.user);
+            const createdUser = await userAPI.registerUser(user);
 
             return createdUser;
+        },
+
+        async login(root, { userCredentials }: { userCredentials: UserLogin }, { dataSources }): Promise<UserLoginResponse> {
+            const userAPI: IUserAPI = dataSources.userAPI;
+
+            const loginRes = await userAPI.login(userCredentials);
+
+            return loginRes;
         }
     }
 }

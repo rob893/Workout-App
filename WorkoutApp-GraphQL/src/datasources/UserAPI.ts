@@ -1,50 +1,28 @@
-import { DataSource } from "apollo-datasource";
-import { User } from "../entities/User";
+import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest';
+import { User, UserToRegister, UserLogin, UserLoginResponse } from "../entities/User";
+import { IUserAPI } from "../interfaces/IUserAPI";
 
-const users: User[] = [
-    {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Smith',
-        age: 26
-    },
-    {
-        id: '2',
-        firstName: 'Joe',
-        lastName: 'Black',
-        age: 23
-    },
-    {
-        id: '3',
-        firstName: 'Jane',
-        lastName: 'Doe',
-        age: 28
-    },
-    {
-        id: '4',
-        firstName: 'Matt',
-        lastName: 'Albege',
-        age: 35
-    }
-];
-
-export class UserAPI extends DataSource {
-
-    private readonly users: User[];
-
+export class UserAPI extends RESTDataSource implements IUserAPI {
 
     public constructor() {
         super();
-        this.users = users;
+        this.baseURL = 'https://rwherber.com/api/workoutapp/';
     }
 
-
-    public getAllUsers(): User[] {
-        return this.users;
+    public willSendRequest(request: RequestOptions): void {
+        if (this.context && this.context.token) {
+            request.headers.set('authorization', this.context.token);
+        }
     }
 
-    public getUserById(id: string): User | null {
-        const user = this.users.find(u => u.id === id);
+    public async getAllUsers(): Promise<User[]> {
+        const users = await this.get<User[]>('users');
+
+        return users;
+    }
+
+    public async getUserById(id: string): Promise<User | null> {
+        const user = await this.get<User>(`users/${id}`);
 
         if (!user) {
             return null;
@@ -53,17 +31,15 @@ export class UserAPI extends DataSource {
         return user;
     }
 
-    public createUser(userToCreate: User | { firstName: string, lastName: string, age: number }): User {
-        const nextId = Math.max(...this.users.map(u => Number.parseInt(u.id))) + 1;
-        const user = {
-            id: nextId.toString(),
-            firstName: userToCreate.firstName,
-            lastName: userToCreate.lastName,
-            age: userToCreate.age
-        };
+    public async registerUser(userToCreate: UserToRegister): Promise<User> {
+        const res = await this.post<User>('auth/register', new Object({...userToCreate}));
 
-        this.users.push(user);
+        return res;
+    }
 
-        return user;
+    public async login(userLogin: UserLogin): Promise<UserLoginResponse> {
+        const res = await this.post<UserLoginResponse>('auth/login', new Object({...userLogin}));
+
+        return res;
     }
 }
