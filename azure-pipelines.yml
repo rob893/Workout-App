@@ -40,6 +40,23 @@ steps:
 - task: Npm@1
   inputs:
     command: 'install'
+    workingDir: 'WorkoutApp-GraphQL/'
+  
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: 'WorkoutApp-GraphQL/'
+    customCommand: 'run build'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'WorkoutApp-GraphQL/'
+    ArtifactName: 'GraphQL'
+    publishLocation: 'Container'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
     workingDir: 'WorkoutApp-SPA/'
   
 - task: Npm@1
