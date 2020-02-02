@@ -48,6 +48,16 @@ steps:
     workingDir: 'WorkoutApp-GraphQL/'
     customCommand: 'run build'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: 'WorkoutApp-GraphQL/'
+    Contents: |
+      dist/**/*.js
+      src/**/*.ts
+      package.json
+      tsconfig.json
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: 'WorkoutApp-GraphQL/'
