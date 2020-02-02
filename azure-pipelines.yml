@@ -60,7 +60,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: 'WorkoutApp-GraphQL/'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'GraphQL'
     publishLocation: 'Container'
 
