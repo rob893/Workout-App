@@ -5,7 +5,7 @@ import { UserToRegister, UserLogin, User, UserLoginResponse } from "./entities/U
 export const resolvers: IResolvers = {
     Query: {
         test() {
-            return 'Hello World!';
+            return 'Hello World and stuff!';
         },
 
         async users(root, args, { dataSources }): Promise<User[]> {
