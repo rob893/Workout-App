@@ -20,7 +20,7 @@ steps:
 #   displayName: 'dotnet build $(buildConfiguration)'
 - task: Npm@1
   inputs:
-    command: 'install --only=dev'
+    command: 'install'
     workingDir: 'WorkoutApp-GraphQL/'
   
 - task: Npm@1
