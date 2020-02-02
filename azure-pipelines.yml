@@ -18,28 +18,9 @@ steps:
 # - script: dotnet build --configuration $(buildConfiguration)
 #   workingDirectory: WorkoutApp.API/
 #   displayName: 'dotnet build $(buildConfiguration)'
-
-# Install .NET Core 3.1.x
-- task: UseDotNet@2
-  inputs:
-    version: '3.1.x'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: false
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    workingDirectory: 'WorkoutApp.API/'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'API'
-    publishLocation: 'Container'
-
 - task: Npm@1
   inputs:
-    command: 'install'
+    command: 'install --only=dev'
     workingDir: 'WorkoutApp-GraphQL/'
   
 - task: Npm@1
@@ -62,6 +43,24 @@ steps:
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'GraphQL'
+    publishLocation: 'Container'
+
+# Install .NET Core 3.1.x
+- task: UseDotNet@2
+  inputs:
+    version: '3.1.x'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    workingDirectory: 'WorkoutApp.API/'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'API'
     publishLocation: 'Container'
 
 - task: Npm@1
