@@ -13,6 +13,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
+using WorkoutApp.API.Models.Settings;
+using Microsoft.Extensions.Options;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -23,15 +25,15 @@ namespace WorkoutApp.API.Controllers
     {
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
-        private readonly IConfiguration config;
+        private readonly AuthenticationSettings authSettings;
         private readonly IMapper mapper;
 
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config, IMapper mapper)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IOptions<AuthenticationSettings> authSettings, IMapper mapper)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
-            this.config = config;
+            this.authSettings = authSettings.Value;
             this.mapper = mapper;
         }
 
@@ -53,6 +55,11 @@ namespace WorkoutApp.API.Controllers
             return BadRequest(result.Errors);
         }
 
+        /// <summary>
+        /// Logs the user in
+        /// </summary>
+        /// <param name="userForLoginDto"></param>
+        /// <returns>200 with user object on success. 401 on failure.</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
         {
@@ -95,15 +102,23 @@ namespace WorkoutApp.API.Controllers
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("AppSettings:Token").Value));
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.APISecrect));
+
+            if (key.KeySize < 128)
+            {
+                throw new Exception("API Secret must be longer");
+            }
 
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
-                SigningCredentials = creds
+                Expires = DateTime.Now.AddMinutes(authSettings.TokenExpirationTimeInMinutes),
+                NotBefore = DateTime.Now,
+                SigningCredentials = creds,
+                Audience = authSettings.TokenAudience,
+                Issuer = authSettings.TokenIssuer
             };
 
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();

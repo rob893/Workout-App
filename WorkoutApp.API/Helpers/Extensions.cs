@@ -1,7 +1,9 @@
 using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using WorkoutApp.API.Middleware;
 
 namespace WorkoutApp.API.Helpers
 {
@@ -34,6 +36,11 @@ namespace WorkoutApp.API.Helpers
             }
 
             return age;
+        }
+
+        public static IApplicationBuilder UseGlobalExceptionHandler(this IApplicationBuilder builder)
+        {
+            return builder.UseExceptionHandler(b => b.UseMiddleware<GlobalExceptionHandlerMiddleware>());
         }
     }
 }
