@@ -110,7 +110,7 @@ namespace WorkoutApp.API
             app.UseCors(header => header.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders(new string[] { "Token-Expired" }));
             app.UseGlobalExceptionHandler();
             app.UseHsts();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints =>
             {

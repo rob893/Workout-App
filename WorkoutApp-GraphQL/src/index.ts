@@ -2,9 +2,12 @@ import { ApolloServer } from 'apollo-server';
 import { typeDefs } from './schema';
 import { resolvers } from './resolvers';
 import { UserAPI } from './datasources/UserAPI';
-
+import dotenv from 'dotenv';
+import { ExerciseAPI } from './datasources/ExerciseAPI';
 
 async function start(): Promise<void> {
+    dotenv.config();
+    
     const server = new ApolloServer({
         context: ({ req }) => {
             const token = req.headers && req.headers.authorization || '';
@@ -16,7 +19,8 @@ async function start(): Promise<void> {
         typeDefs,
         resolvers,
         dataSources: () => ({
-            userAPI: new UserAPI()
+            userAPI: new UserAPI(),
+            exerciseAPI: new ExerciseAPI()
         })
     });
 

@@ -1,5 +1,9 @@
 {
     "scripts": {
-        "start": "cd WorkoutApp.API/ && dotnet watch run"
+        "start-api": "cd WorkoutApp.API/ && dotnet watch run",
+        "start-graphql": "cd WorkoutApp-GraphQL/ && npm run dev-debug",
+        "start-client": "cd WorkoutApp-SPA/ && ng serve",
+        "start": "concurrently --kill-others \"npm run start-api\" \"npm run start-graphql\" \"npm run start-client\"",
+        "start-new-shells": "start npm run start-api && start npm run start-graphql && start npm run start-client"
     }
 }

@@ -76,12 +76,12 @@ namespace WorkoutApp.API.Controllers
 
             repo.Delete<Equipment>(equipment);
 
-            if (await repo.SaveAll())
+            if (!await repo.SaveAll())
             {
-                return Ok();
+               return BadRequest(new ProblemDetailsWithErrors("Failed to delete the equipment.", 400, Request)); 
             }
-
-            return BadRequest("Failed to delete the equipment!");
+            
+            return Ok();
         }
     }
 }

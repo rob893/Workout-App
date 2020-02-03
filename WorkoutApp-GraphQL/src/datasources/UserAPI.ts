@@ -6,7 +6,7 @@ export class UserAPI extends RESTDataSource implements IUserAPI {
 
     public constructor() {
         super();
-        this.baseURL = 'https://rwherber.com/api/workoutapp/';
+        this.baseURL = process.env.WORKOUT_APP_API_URL || 'http://localhost:5002';
     }
 
     public willSendRequest(request: RequestOptions): void {

@@ -1,6 +1,8 @@
 import { IResolvers } from "apollo-server";
 import { IUserAPI } from "./interfaces/IUserAPI";
 import { UserToRegister, UserLogin, User, UserLoginResponse } from "./entities/User";
+import { Exercise } from "./entities/Exercise";
+import { ExerciseAPI } from "./datasources/ExerciseAPI";
 
 export const resolvers: IResolvers = {
     Query: {
@@ -22,6 +24,22 @@ export const resolvers: IResolvers = {
             const user = await userAPI.getUserById(id);
 
             return user;
+        },
+
+        async exercises(root, args, { dataSources }): Promise<Exercise[]> {
+            const exerciseAPI: ExerciseAPI = dataSources.exerciseAPI;
+
+            const exercises = await exerciseAPI.getExercises();
+
+            return exercises;
+        },
+
+        async exercise(root, { id }, { dataSources }): Promise<Exercise | null> {
+            const exerciseAPI: ExerciseAPI = dataSources.exerciseAPI;
+
+            const exercise = await exerciseAPI.getExerciseById(id);
+
+            return exercise;
         }
     },
     Mutation: {

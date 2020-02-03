@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using WorkoutApp.API.Models.Settings;
 using Microsoft.Extensions.Options;
+using WorkoutApp.API.Helpers;
+using System.Linq;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -44,15 +46,14 @@ namespace WorkoutApp.API.Controllers
 
             var result = await userManager.CreateAsync(userToCreate, userForRegisterDto.Password);
 
-
             UserForReturnDto userToReturn = mapper.Map<UserForReturnDto>(userToCreate);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return CreatedAtRoute("GetUser", new {controller = "Users", id = userToCreate.Id}, userToReturn);
+                return BadRequest(new ProblemDetailsWithErrors(result.Errors.Select(e => e.Description).ToList(), 400, Request));
             }
 
-            return BadRequest(result.Errors);
+            return CreatedAtRoute("GetUser", new { controller = "Users", id = userToCreate.Id }, userToReturn);
         }
 
         /// <summary>
@@ -67,29 +68,30 @@ namespace WorkoutApp.API.Controllers
 
             if (userFromRepo == null)
             {
-                return Unauthorized();
+                return Unauthorized(new ProblemDetailsWithErrors("Invalid username or password.", 401, Request));
             }
 
             var result = await signInManager.CheckPasswordSignInAsync(userFromRepo, userForLoginDto.Password, false);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                UserForReturnDto user = mapper.Map<UserForReturnDto>(userFromRepo);
-
-                string token = await GenerateJwtToken(userFromRepo);
-
-                return Ok(new {
-                    token,
-                    user
-                });
+                return Unauthorized(new ProblemDetailsWithErrors("Invalid username or password.", 401, Request));
             }
 
-            return Unauthorized();
+            UserForReturnDto user = mapper.Map<UserForReturnDto>(userFromRepo);
+
+            string token = await GenerateJwtToken(userFromRepo);
+
+            return Ok(new
+            {
+                token,
+                user
+            });
         }
 
         private async Task<string> GenerateJwtToken(User user)
         {
-            List<Claim> claims = new List<Claim> 
+            List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
@@ -127,5 +129,5 @@ namespace WorkoutApp.API.Controllers
 
             return tokenHandler.WriteToken(token);
         }
-    }   
+    }
 }

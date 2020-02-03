@@ -5,6 +5,8 @@ type Query {
     test: String
     users: [User]!
     user(id: ID!): User
+    exercise(id: ID!): Exercise
+    exercises: [Exercise]
 }
 
 type Mutation {
@@ -24,6 +26,36 @@ type User {
 type UserLoginResponse {
     token: String!
     user: User!
+}
+
+type Exercise {
+    id: ID!
+    name: String!
+    primaryMuscle: Muscle
+    secondaryMuscle: Muscle
+    exerciseSteps: [ExerciseStep]
+    equipment: Equipment
+    exerciseCategorys: [ExerciseCategory]
+}
+
+type Muscle {
+    id: ID!
+    name: String!
+}
+
+type ExerciseStep {
+    exerciseStepNumber: Int!
+    description: String!
+}
+
+type Equipment {
+    id: ID!
+    name: String!
+}
+
+type ExerciseCategory {
+    id: ID!
+    name: String!
 }
 
 input RegisterUser {
