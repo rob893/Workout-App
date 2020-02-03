@@ -174,6 +174,11 @@ namespace WorkoutApp.API.Data
             return await context.Muscles.FirstOrDefaultAsync(m => m.Id == id);
         }
 
+        public async Task<IEnumerable<Muscle>> GetMusclesAsync()
+        {
+            return await context.Muscles.ToListAsync();
+        }
+
         public async Task<List<T>> Find<T>(Specification<T> spec) where T : class
         {
             var result = spec.Includes.Aggregate(context.Set<T>().AsQueryable(), (current, include) => current.Include(include));

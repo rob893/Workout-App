@@ -7,6 +7,10 @@ type Query {
     user(id: ID!): User
     exercise(id: ID!): Exercise
     exercises: [Exercise]
+    muscles: [Muscle]
+    muscle(id: ID!): Muscle
+    allEquipment: [Equipment]
+    equipment(id: ID!): Equipment
 }
 
 type Mutation {
@@ -34,13 +38,14 @@ type Exercise {
     primaryMuscle: Muscle
     secondaryMuscle: Muscle
     exerciseSteps: [ExerciseStep]
-    equipment: Equipment
+    equipment: [Equipment]
     exerciseCategorys: [ExerciseCategory]
 }
 
 type Muscle {
     id: ID!
     name: String!
+    exercises: [Exercise]
 }
 
 type ExerciseStep {
@@ -51,11 +56,13 @@ type ExerciseStep {
 type Equipment {
     id: ID!
     name: String!
+    exercises: [Exercise]
 }
 
 type ExerciseCategory {
     id: ID!
     name: String!
+    exercises: [Exercise]
 }
 
 input RegisterUser {

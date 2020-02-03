@@ -4,7 +4,7 @@ export interface Exercise {
     primaryMuscle: Muscle;
     secondaryMuscle: Muscle;
     exerciseSteps: ExerciseStep[];
-    equipment: Equipment;
+    equipment: Equipment[];
     exerciseCategorys: ExerciseCategory[];
 }
 

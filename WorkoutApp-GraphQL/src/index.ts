@@ -4,6 +4,8 @@ import { resolvers } from './resolvers';
 import { UserAPI } from './datasources/UserAPI';
 import dotenv from 'dotenv';
 import { ExerciseAPI } from './datasources/ExerciseAPI';
+import { MuscleAPI } from './datasources/MuscleAPI';
+import { EquipmentAPI } from './datasources/EquipmentAPI';
 
 async function start(): Promise<void> {
     dotenv.config();
@@ -20,7 +22,9 @@ async function start(): Promise<void> {
         resolvers,
         dataSources: () => ({
             userAPI: new UserAPI(),
-            exerciseAPI: new ExerciseAPI()
+            exerciseAPI: new ExerciseAPI(),
+            muscleAPI: new MuscleAPI(),
+            equipmentAPI: new EquipmentAPI()
         })
     });
 
