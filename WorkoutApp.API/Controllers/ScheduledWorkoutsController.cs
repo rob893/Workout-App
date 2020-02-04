@@ -90,35 +90,35 @@ namespace WorkoutApp.API.Controllers
             return BadRequest("Could not delete scheduled workout!");
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateScheduledWorkout(int id, [FromBody] JsonPatchDocument<ScheduledUserWorkout> patchDoc)
-        {
-            if (patchDoc == null)
-            {
-                return BadRequest();
-            }
+        // [HttpPatch("{id}")]
+        // public async Task<IActionResult> UpdateScheduledWorkout(int id, [FromBody] JsonPatchDocument<ScheduledUserWorkout> patchDoc)
+        // {
+        //     if (patchDoc == null)
+        //     {
+        //         return BadRequest();
+        //     }
 
-            ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
+        //     ScheduledUserWorkout workout = await repo.GetScheduledUserWorkout(id);
 
-            if (workout == null)
-            {
-                return NotFound();
-            }
+        //     if (workout == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
+        //     if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+        //     {
+        //         return Unauthorized();
+        //     }
 
-            patchDoc.ApplyTo(workout);
+        //     patchDoc.ApplyTo(workout);
 
-            if (await repo.SaveAll())
-            {
-                return Ok(workout);
-            }
+        //     if (await repo.SaveAll())
+        //     {
+        //         return Ok(workout);
+        //     }
 
-            return BadRequest("Could not apply changes.");
-        }
+        //     return BadRequest("Could not apply changes.");
+        // }
 
         [HttpPatch("{id}/startWorkout")]
         public async Task<IActionResult> StartWorkout(int id)
