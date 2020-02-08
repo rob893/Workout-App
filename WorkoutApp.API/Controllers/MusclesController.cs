@@ -1,12 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Data;
-using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Helpers.QueryParams;
 using WorkoutApp.API.Models;
 
 namespace WorkoutApp.API.Controllers
@@ -36,7 +33,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetMuscle")]
         public async Task<ActionResult<Muscle>> GetMuscle(int id)
         {
-            var muscle = await repo.GetMuscle(id);
+            var muscle = await repo.GetMuscleAsync(id);
 
             if (muscle == null)
             {

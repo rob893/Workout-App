@@ -47,7 +47,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{exerciseId}/detailed")]
         public async Task<IActionResult> GetExerciseDetailed(int exerciseId)
         {
-            Exercise exercise = await repo.GetExercise(exerciseId);
+            Exercise exercise = await repo.GetExerciseAsync(exerciseId);
 
             ExerciseForReturnDetailedDto exToReturn = mapper.Map<ExerciseForReturnDetailedDto>(exercise);
 
@@ -69,7 +69,7 @@ namespace WorkoutApp.API.Controllers
         {
             eqParams.ExerciseIds.Add(exerciseId);
 
-            PagedList<Equipment> equipment = await repo.GetExerciseEquipment(eqParams);
+            PagedList<Equipment> equipment = await repo.GetExerciseEquipmentAsync(eqParams);
 
             Response.AddPagination(equipment.CurrentPage, equipment.PageSize, equipment.TotalCount, equipment.TotalPages);
 
@@ -85,12 +85,12 @@ namespace WorkoutApp.API.Controllers
 
             if (exercise.PrimaryMuscleId != null)
             {
-                newExercise.PrimaryMuscle = await repo.GetMuscle(exercise.PrimaryMuscleId.Value);
+                newExercise.PrimaryMuscle = await repo.GetMuscleAsync(exercise.PrimaryMuscleId.Value);
             }
 
             if (exercise.SecondaryMuscleId != null)
             {
-                newExercise.SecondaryMuscle = await repo.GetMuscle(exercise.SecondaryMuscleId.Value);
+                newExercise.SecondaryMuscle = await repo.GetMuscleAsync(exercise.SecondaryMuscleId.Value);
             }
 
             if (exercise.EquipmentIds != null)
@@ -115,7 +115,7 @@ namespace WorkoutApp.API.Controllers
             
             repo.Add<Exercise>(newExercise);
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 return CreatedAtAction(nameof(GetExercise), new { id = newExercise.Id }, newExercise);
             }
@@ -126,7 +126,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExercise(int id)
         {
-            Exercise exercise = await repo.GetExercise(id);
+            Exercise exercise = await repo.GetExerciseAsync(id);
 
             if (exercise == null)
             {
@@ -135,7 +135,7 @@ namespace WorkoutApp.API.Controllers
 
             repo.Delete<Exercise>(exercise);
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 return Ok();
             }

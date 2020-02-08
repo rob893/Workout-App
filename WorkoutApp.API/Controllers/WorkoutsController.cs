@@ -7,10 +7,8 @@ using WorkoutApp.API.Data;
 using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Helpers.Specifications;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -30,7 +28,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetWorkouts([FromQuery] WorkoutParams woParams)
         {
-            PagedList<Workout> workouts = await repo.GetWorkouts(woParams);
+            PagedList<Workout> workouts = await repo.GetWorkoutsAsync(woParams);
 
             IEnumerable<WorkoutForReturnDto> workoutsToReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
             Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
@@ -41,7 +39,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name="GetWorkout")]
         public async Task<IActionResult> GetWorkout(int id)
         {
-            Workout workout = await repo.GetWorkout(id);
+            Workout workout = await repo.GetWorkoutAsync(id);
 
             if (workout == null)
             {
@@ -63,7 +61,7 @@ namespace WorkoutApp.API.Controllers
 
             repo.Add<Workout>(workout);
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 WorkoutForReturnDto woReturn = mapper.Map<WorkoutForReturnDto>(workout);
 
@@ -76,7 +74,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWorkout(int id)
         {
-            Workout workoutToDelete = await repo.GetWorkout(id);
+            Workout workoutToDelete = await repo.GetWorkoutAsync(id);
 
             if (workoutToDelete == null)
             {
@@ -90,7 +88,7 @@ namespace WorkoutApp.API.Controllers
 
             repo.Delete<Workout>(workoutToDelete);
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 return Ok();
             }
@@ -101,7 +99,7 @@ namespace WorkoutApp.API.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdateWorkout(int id, [FromBody] WorkoutForUpdateDto workoutUpdate)
         {
-            Workout workoutToUpdate = await repo.GetWorkout(id);
+            Workout workoutToUpdate = await repo.GetWorkoutAsync(id);
             bool changed = false;
 
             if (workoutToUpdate == null)
@@ -161,7 +159,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest("The update has no changes!");
             }
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 WorkoutForReturnDto updatedWorkout = mapper.Map<WorkoutForReturnDto>(workoutToUpdate);
 

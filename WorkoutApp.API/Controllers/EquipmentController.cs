@@ -28,7 +28,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetEquipment([FromQuery] EquipmentParams eqParams)
         {
-            PagedList<Equipment> equipment = await repo.GetExerciseEquipment(eqParams);
+            PagedList<Equipment> equipment = await repo.GetExerciseEquipmentAsync(eqParams);
             
             Response.AddPagination(equipment.CurrentPage, equipment.PageSize, equipment.TotalCount, equipment.TotalPages);
 
@@ -40,7 +40,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetSingleEquipment")]
         public async Task<IActionResult> GetSingleEquipment(int id)
         {
-            Equipment equipment = await repo.GetSingleExerciseEquipment(id);
+            Equipment equipment = await repo.GetSingleExerciseEquipmentAsync(id);
 
             EquipmentForReturnDto equipmentToReturn = mapper.Map<EquipmentForReturnDto>(equipment);
             
@@ -54,7 +54,7 @@ namespace WorkoutApp.API.Controllers
             
             repo.Add<Equipment>(equipment);
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 EquipmentForReturnDto eqReturn = mapper.Map<EquipmentForReturnDto>(equipment);
 
@@ -67,7 +67,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSingleEquipment(int id)
         {
-            Equipment equipment = await repo.GetSingleExerciseEquipment(id);
+            Equipment equipment = await repo.GetSingleExerciseEquipmentAsync(id);
 
             if (equipment == null)
             {
@@ -76,7 +76,7 @@ namespace WorkoutApp.API.Controllers
 
             repo.Delete<Equipment>(equipment);
 
-            if (!await repo.SaveAll())
+            if (!await repo.SaveAllAsync())
             {
                return BadRequest(new ProblemDetailsWithErrors("Failed to delete the equipment.", 400, Request)); 
             }

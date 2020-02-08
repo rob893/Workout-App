@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,7 +9,6 @@ using WorkoutApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Helpers.Specifications;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -38,7 +36,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<UserForReturnDto>>> GetUsers()
         {
-            List<User> users = await repo.GetUsers();
+            List<User> users = await repo.GetUsersAsync();
 
             List<UserForReturnDto> usersToReturn = mapper.Map<List<UserForReturnDto>>(users);
 
@@ -94,7 +92,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name="GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
-            User user = await repo.GetUser(id);
+            User user = await repo.GetUserAsync(id);
 
             UserForReturnDto userToReturn = mapper.Map<UserForReturnDto>(user);
 
@@ -111,7 +109,7 @@ namespace WorkoutApp.API.Controllers
 
             woParams.UserId = userId;
 
-            PagedList<Workout> workouts = await repo.GetWorkouts(woParams);
+            PagedList<Workout> workouts = await repo.GetWorkoutsAsync(woParams);
             Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
 
             IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
@@ -120,7 +118,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{userId}/scheduledWorkouts")]
-        public async Task<IActionResult> GetScheduledWorkoutsForUser(int userId, [FromQuery] SchUsrWoParams woParams)
+        public async Task<ActionResult<IEnumerable<ScheduledWoForReturnDto>>> GetScheduledWorkoutsForUser(int userId, [FromQuery] SchUsrWoParams woParams)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -129,20 +127,12 @@ namespace WorkoutApp.API.Controllers
 
             woParams.UserId = userId;
 
-            PagedList<ScheduledUserWorkout> workouts = await repo.GetScheduledUserWorkouts(woParams);
+            PagedList<ScheduledUserWorkout> workouts = await repo.GetScheduledUserWorkoutsAsync(woParams);
             Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
 
-            //IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
+            var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWoForReturnDto>>(workouts);
 
-            return Ok(workouts);//workoutsForReturn);
-        }
-
-        [HttpGet("test")]
-        public async Task<IActionResult> GetTest()
-        {
-            var result = await repo.Find<Exercise>(new TestSpec());
-
-            return Ok(result);
+            return Ok(workoutsForReturn);
         }
     }
 }

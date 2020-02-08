@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Helpers.Specifications;
 using WorkoutApp.API.Models;
 
 namespace WorkoutApp.API.Data
@@ -13,28 +11,26 @@ namespace WorkoutApp.API.Data
         void Add<T>(T entity) where T: class;
         void Delete<T>(T entity) where T: class;
         void DeleteRange<T>(IEnumerable<T> entity) where T: class;
-        Task<bool> SaveAll();
+        Task<bool> SaveAllAsync();
 
-        Task<List<User>> GetUsers();
-        Task<User> GetUser(int id);
+        Task<List<User>> GetUsersAsync();
+        Task<User> GetUserAsync(int id);
 
-        Task<Workout> GetWorkout(int id);
-        Task<PagedList<Workout>> GetWorkouts(WorkoutParams woParams);
+        Task<Workout> GetWorkoutAsync(int id);
+        Task<PagedList<Workout>> GetWorkoutsAsync(WorkoutParams woParams);
 
-        Task<Muscle> GetMuscle(int id);
+        Task<Muscle> GetMuscleAsync(int id);
         Task<IEnumerable<Muscle>> GetMusclesAsync();
 
-        Task<ScheduledUserWorkout> GetScheduledUserWorkout(int id);
-        Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkouts(SchUsrWoParams woParams);
+        Task<ScheduledUserWorkout> GetScheduledUserWorkoutAsync(int id);
+        Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams);
 
-        Task<WorkoutInvitation> GetWorkoutInvitation(int id);
+        Task<WorkoutInvitation> GetWorkoutInvitationAsync(int id);
 
-        Task<PagedList<Exercise>> GetExercises(ExerciseParams exParams);
-        Task<Exercise> GetExercise(int exerciseId);
+        Task<PagedList<Exercise>> GetExercisesAsync(ExerciseParams exParams);
+        Task<Exercise> GetExerciseAsync(int exerciseId);
 
-        Task<PagedList<Equipment>> GetExerciseEquipment(EquipmentParams eqParams);
-        Task<Equipment> GetSingleExerciseEquipment(int id);
-
-        Task<List<T>> Find<T>(Specification<T> spec) where T : class;
+        Task<PagedList<Equipment>> GetExerciseEquipmentAsync(EquipmentParams eqParams);
+        Task<Equipment> GetSingleExerciseEquipmentAsync(int id);
     }
 }

@@ -5,12 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using WorkoutApp.API.Data;
 using WorkoutApp.API.Dtos;
-using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Helpers.Specifications;
 using WorkoutApp.API.Data.Providers;
 
 namespace WorkoutApp.API.Controllers
@@ -60,7 +56,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePendingInvitation(int id)
         {
-            WorkoutInvitation woInv = await repo.GetWorkoutInvitation(id);
+            WorkoutInvitation woInv = await repo.GetWorkoutInvitationAsync(id);
 
             if (woInv == null) 
             {
@@ -79,7 +75,7 @@ namespace WorkoutApp.API.Controllers
 
             repo.Delete<WorkoutInvitation>(woInv);
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 return Ok();
             }
@@ -90,7 +86,7 @@ namespace WorkoutApp.API.Controllers
         [HttpPatch("{id}/accept")]
         public async Task<IActionResult> AcceptPendingInvitation(int id)
         {
-            WorkoutInvitation woInv = await repo.GetWorkoutInvitation(id);
+            WorkoutInvitation woInv = await repo.GetWorkoutInvitationAsync(id);
 
             if (woInv == null)
             {
@@ -111,14 +107,14 @@ namespace WorkoutApp.API.Controllers
             woInv.Declined = false;
             woInv.RespondedAtDateTime = DateTime.Now;
 
-            ScheduledUserWorkout schWo = await repo.GetScheduledUserWorkout(woInv.ScheduledUserWorkoutId);
+            ScheduledUserWorkout schWo = await repo.GetScheduledUserWorkoutAsync(woInv.ScheduledUserWorkoutId);
             schWo.ExtraSchUsrWoAttendees.Add(new ExtraSchUsrWoAttendee
             {
                 ScheduledUserWorkoutId = schWo.Id,
                 UserId = woInv.InviteeId
             });
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 return Ok(woInv);
             }
@@ -129,7 +125,7 @@ namespace WorkoutApp.API.Controllers
         [HttpPatch("{id}/decline")]
         public async Task<IActionResult> DeclinePendingInvitation(int id)
         {
-            WorkoutInvitation woInv = await repo.GetWorkoutInvitation(id);
+            WorkoutInvitation woInv = await repo.GetWorkoutInvitationAsync(id);
 
             if (woInv == null)
             {
@@ -150,7 +146,7 @@ namespace WorkoutApp.API.Controllers
             woInv.Declined = true;
             woInv.RespondedAtDateTime = DateTime.Now;
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 return Ok(woInv);
             }
@@ -161,9 +157,9 @@ namespace WorkoutApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateWorkoutInvitation([FromBody] WorkoutInvitationForCreationDto woInv)
         {
-            ScheduledUserWorkout scheduledWorkout = await repo.GetScheduledUserWorkout(woInv.ScheduledUserWorkoutId);
+            ScheduledUserWorkout scheduledWorkout = await repo.GetScheduledUserWorkoutAsync(woInv.ScheduledUserWorkoutId);
             
-            if (await repo.GetUser(woInv.InviteeId) == null || scheduledWorkout == null)
+            if (await repo.GetUserAsync(woInv.InviteeId) == null || scheduledWorkout == null)
             {
                 return NotFound();
             }
@@ -193,7 +189,7 @@ namespace WorkoutApp.API.Controllers
 
             repo.Add<WorkoutInvitation>(newInvitation);
 
-            if (await repo.SaveAll())
+            if (await repo.SaveAllAsync())
             {
                 return CreatedAtAction(nameof(GetWorkoutInvitation), new { id = newInvitation.Id }, newInvitation);
             }

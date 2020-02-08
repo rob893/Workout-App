@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -12,11 +13,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using WorkoutApp.API.Data;
@@ -52,13 +56,14 @@ namespace WorkoutApp.API
             .ConfigureApiBehaviorOptions(options =>
             {
                 options.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult();
-            });
+            })
+            .AddNewtonsoftJson();
 
             // Add the MySQL database context with connection info set in appsettings.json
             services.AddDbContext<DataContext>(x => x.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
-            
+
             // Configure identity
-            IdentityBuilder builder = services.AddIdentityCore<User>(opt => 
+            IdentityBuilder builder = services.AddIdentityCore<User>(opt =>
             {
                 opt.Password.RequireDigit = false;
                 opt.Password.RequiredLength = 4;
@@ -71,7 +76,7 @@ namespace WorkoutApp.API
             builder.AddRoleValidator<RoleValidator<Role>>();
             builder.AddRoleManager<RoleManager<Role>>();
             builder.AddSignInManager<SignInManager<User>>();
-            
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
@@ -82,7 +87,7 @@ namespace WorkoutApp.API
 
             ConfigureAuthentication(services);
             ConfigureSwagger(services);
-            
+
             services.AddCors();
             services.AddAutoMapper(typeof(Startup));
 
@@ -100,7 +105,7 @@ namespace WorkoutApp.API
             //seeder.SeedDatabase(true);
 
             app.UseSwagger();
-            
+
             if (AppEnvironment.IsDevelopment())
             {
                 app.UseSwaggerUI(c =>
@@ -134,7 +139,7 @@ namespace WorkoutApp.API
         {
             var authSettings = Configuration.GetSection("AuthenticationSettings").Get<AuthenticationSettings>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => 
+                .AddJwtBearer(options =>
                 {
                     //Set token validation options. These will be used when validating all tokens.
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -157,14 +162,14 @@ namespace WorkoutApp.API
                         OnChallenge = context =>
                         {
                             // Skip the default logic.
-                            context.HandleResponse(); 
+                            context.HandleResponse();
                             context.Response.StatusCode = 401;
                             context.Response.ContentType = "application/json";
 
                             string errorMessage = string.IsNullOrWhiteSpace(context.ErrorDescription) ? context.Error : $"{context.Error}. {context.ErrorDescription}.";
 
                             var problem = new ProblemDetailsWithErrors(errorMessage, 401, context.Request);
-                            
+
                             return context.Response.WriteAsync(JsonSerializer.Serialize(problem));
                         },
                         OnAuthenticationFailed = context =>
@@ -182,7 +187,7 @@ namespace WorkoutApp.API
 
         private void ConfigureSwagger(IServiceCollection services)
         {
-            services.AddSwaggerGen(c => 
+            services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Workout App API", Version = "v1" });
 
@@ -199,12 +204,12 @@ namespace WorkoutApp.API
                     {
                         new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference 
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer" 
+                                Id = "Bearer"
                             }
-                        }, new List<string>() 
+                        }, new List<string>()
                     }
                 });
 

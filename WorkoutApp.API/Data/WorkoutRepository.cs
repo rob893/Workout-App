@@ -2,10 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Helpers.Specifications;
 using WorkoutApp.API.Models;
 
 namespace WorkoutApp.API.Data
@@ -35,24 +33,24 @@ namespace WorkoutApp.API.Data
             context.RemoveRange(entities);
         }
 
-        public async Task<bool> SaveAll()
+        public async Task<bool> SaveAllAsync()
         {
             return await context.SaveChangesAsync() > 0;
         }
 
-        public async Task<User> GetUser(int id)
+        public async Task<User> GetUserAsync(int id)
         {
             User user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
             return user;
         }
 
-        public async Task<List<User>> GetUsers()
+        public async Task<List<User>> GetUsersAsync()
         {
             return await context.Users.ToListAsync();
         }
 
-        public async Task<PagedList<Exercise>> GetExercises(ExerciseParams exParams)
+        public async Task<PagedList<Exercise>> GetExercisesAsync(ExerciseParams exParams)
         {
             IQueryable<Exercise> exercises = context.Exercises
                 .Include(ex => ex.PrimaryMuscle)
@@ -75,7 +73,7 @@ namespace WorkoutApp.API.Data
             return await PagedList<Exercise>.CreateAsync(exercises, exParams.PageNumber, exParams.PageSize);
         }
 
-        public async Task<Exercise> GetExercise(int exerciseId)
+        public async Task<Exercise> GetExerciseAsync(int exerciseId)
         {
             return await context.Exercises
                 .Include(ex => ex.PrimaryMuscle)
@@ -91,7 +89,7 @@ namespace WorkoutApp.API.Data
             return await context.ExerciseCategorys.ToListAsync();
         }
 
-        public async Task<PagedList<Equipment>> GetExerciseEquipment(EquipmentParams eqParams)
+        public async Task<PagedList<Equipment>> GetExerciseEquipmentAsync(EquipmentParams eqParams)
         {
             IQueryable<Equipment> equipment = context.Equipment.OrderBy(eq => eq.Id);
             
@@ -103,12 +101,12 @@ namespace WorkoutApp.API.Data
             return await PagedList<Equipment>.CreateAsync(equipment, eqParams.PageNumber, eqParams.PageSize);
         }
 
-        public async Task<Equipment> GetSingleExerciseEquipment(int id)
+        public async Task<Equipment> GetSingleExerciseEquipmentAsync(int id)
         {
             return await context.Equipment.FirstOrDefaultAsync(eq => eq.Id == id);
         }
 
-        public async Task<Workout> GetWorkout(int id)
+        public async Task<Workout> GetWorkoutAsync(int id)
         {
             return await context.Workouts
                 .Include(wo => wo.ExerciseGroups)
@@ -116,7 +114,7 @@ namespace WorkoutApp.API.Data
                 .FirstOrDefaultAsync(wo => wo.Id == id);
         }
 
-        public async Task<PagedList<Workout>> GetWorkouts(WorkoutParams woParams)
+        public async Task<PagedList<Workout>> GetWorkoutsAsync(WorkoutParams woParams)
         {
             IQueryable<Workout> workouts = context.Workouts.OrderBy(wo => wo.Id)
                 .Include(wo => wo.ExerciseGroups)
@@ -130,21 +128,24 @@ namespace WorkoutApp.API.Data
             return await PagedList<Workout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
         }
 
-        public async Task<ScheduledUserWorkout> GetScheduledUserWorkout(int id)
+        public async Task<ScheduledUserWorkout> GetScheduledUserWorkoutAsync(int id)
         {
             return await context.ScheduledUserWorkouts
-                .Include(wo => wo.Workout)
+                .Include(wo => wo.Workout).ThenInclude(wo => wo.CreatedByUser)
+                .Include(wo => wo.Workout).ThenInclude(wo => wo.ExerciseGroups).ThenInclude(eg => eg.Exercise)
                 .Include(wo => wo.AdHocExercises)
                 .Include(wo => wo.ExtraSchUsrWoAttendees)
+                .Include(wo => wo.User)
                 .FirstOrDefaultAsync(wo => wo.Id == id);
         }
 
-        public async Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkouts(SchUsrWoParams woParams)
+        public async Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams)
         {
             IQueryable<ScheduledUserWorkout> workouts = context.ScheduledUserWorkouts.OrderBy(wo => wo.ScheduledDateTime)
                 .Include(wo => wo.Workout).ThenInclude(wo => wo.ExerciseGroups).ThenInclude(eg => eg.Exercise)
                 .Include(wo => wo.AdHocExercises)
-                .Include(wo => wo.ExtraSchUsrWoAttendees);
+                .Include(wo => wo.ExtraSchUsrWoAttendees)
+                .Include(wo => wo.User);
 
             if (woParams.UserId != null)
             {
@@ -164,12 +165,12 @@ namespace WorkoutApp.API.Data
             return await PagedList<ScheduledUserWorkout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
         }
 
-        public async Task<WorkoutInvitation> GetWorkoutInvitation(int id)
+        public async Task<WorkoutInvitation> GetWorkoutInvitationAsync(int id)
         {
             return await context.WorkoutInvitations.FirstOrDefaultAsync(woInv => woInv.Id == id);
         }
 
-        public async Task<Muscle> GetMuscle(int id)
+        public async Task<Muscle> GetMuscleAsync(int id)
         {
             return await context.Muscles.FirstOrDefaultAsync(m => m.Id == id);
         }
@@ -177,13 +178,6 @@ namespace WorkoutApp.API.Data
         public async Task<IEnumerable<Muscle>> GetMusclesAsync()
         {
             return await context.Muscles.ToListAsync();
-        }
-
-        public async Task<List<T>> Find<T>(Specification<T> spec) where T : class
-        {
-            var result = spec.Includes.Aggregate(context.Set<T>().AsQueryable(), (current, include) => current.Include(include));
-            var result2 = spec.IncludeStrings.Aggregate(result, (current, include) => current.Include(include));
-            return await result2.Where(spec.ToExpression()).ToListAsync();
         }
     }
 }

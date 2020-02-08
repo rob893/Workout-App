@@ -1,102 +1,81 @@
 import { IResolvers } from "apollo-server";
-import { IUserAPI } from "./interfaces/IUserAPI";
 import { UserToRegister, UserLogin, User, UserLoginResponse } from "./entities/User";
 import { Exercise, Muscle, Equipment, ExerciseCategory } from "./entities/Exercise";
-import { ExerciseAPI } from "./datasources/ExerciseAPI";
-import { MuscleAPI } from "./datasources/MuscleAPI";
-import { EquipmentAPI } from "./datasources/EquipmentAPI";
+import { WorkoutAppContext } from ".";
 
-export const resolvers: IResolvers = {
+export const resolvers: IResolvers<any, WorkoutAppContext> = {
     Query: {
         test() {
             return 'Hello World and stuff!';
         },
 
-        async users(root, args, { dataSources }): Promise<User[]> {
-            const userAPI: IUserAPI = dataSources.userAPI;
-
-            const allUsers = await userAPI.getAllUsers();
-
-            return allUsers;
+        users(root, args, { dataSources: { userAPI } }): Promise<User[]> {
+            return userAPI.getAllUsers();
         },
 
-        async user(root, { id }, { dataSources }): Promise<User | null> {
-            const userAPI: IUserAPI = dataSources.userAPI;
-
-            const user = await userAPI.getUserById(id);
-
-            return user;
+        user(root, { id }, { dataSources: { userAPI } }): Promise<User | null> {
+            return userAPI.getUserById(id)
         },
 
-        async exercises(root, args, { dataSources }): Promise<Exercise[]> {
-            const exerciseAPI: ExerciseAPI = dataSources.exerciseAPI;
-
-            const exercises = await exerciseAPI.getExercises();
-
-            return exercises;
+        exercises(root, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
+            return exerciseAPI.getExercises();
         },
 
-        async exercise(root, { id }, { dataSources }): Promise<Exercise | null> {
-            const exerciseAPI: ExerciseAPI = dataSources.exerciseAPI;
-
-            const exercise = await exerciseAPI.getExerciseById(id);
-
-            return exercise;
+        exercise(root, { id }, { dataSources: { exerciseAPI } }): Promise<Exercise | null> {
+            return exerciseAPI.getExerciseById(id);
         },
 
-        async muscles(root, args, { dataSources }): Promise<Muscle[]> {
-            const muscleAPI: MuscleAPI = dataSources.muscleAPI;
-
-            const muscles = await muscleAPI.getMuscles();
-
-            return muscles;
+        muscles(root, args, { dataSources: { muscleAPI } }): Promise<Muscle[]> {
+            return muscleAPI.getMuscles();
         },
 
-        async muscle(root, { id }, { dataSources }): Promise<Muscle | null> {
-            const muscleAPI: MuscleAPI = dataSources.muscleAPI;
-
-            const muscle = await muscleAPI.getMuscleById(id);
-
-            return muscle;
+        muscle(root, { id }, { dataSources: { muscleAPI } }): Promise<Muscle | null> {
+            return muscleAPI.getMuscleById(id);
         },
 
-        async allEquipment(root, args, { dataSources }): Promise<Equipment[]> {
-            const equipmentAPI: EquipmentAPI = dataSources.equipmentAPI;
-
-            const equipment = await equipmentAPI.getAllEquipment();
-
-            return equipment;
+        allEquipment(root, args, { dataSources: { equipmentAPI } }): Promise<Equipment[]> {
+            return equipmentAPI.getAllEquipment();
         },
 
-        async equipment(root, { id }, { dataSources }): Promise<Equipment | null> {
-            const equipmentAPI: EquipmentAPI = dataSources.equipmentAPI;
+        equipment(root, { id }, { dataSources: { equipmentAPI } }): Promise<Equipment | null> {
+            return equipmentAPI.getEquipmentById(id);
+        },
 
-            const equipment = await equipmentAPI.getEquipmentById(id);
-
-            return equipment;
+        me(root, args, { claims: { nameid }, dataSources: { userAPI } }): Promise<User | null> {
+            return nameid ? userAPI.getUserById(nameid) : Promise.resolve(null);
         }
     },
     Mutation: {
-        async registerUser(root, { user }: { user: UserToRegister }, { dataSources }): Promise<User> {
-            const userAPI: IUserAPI = dataSources.userAPI;
-
-            const createdUser = await userAPI.registerUser(user);
-
-            return createdUser;
+        registerUser(root, { user }: { user: UserToRegister }, { dataSources: { userAPI } }): Promise<User> {
+            return userAPI.registerUser(user);
         },
 
-        async login(root, { userCredentials }: { userCredentials: UserLogin }, { dataSources }): Promise<UserLoginResponse> {
-            const userAPI: IUserAPI = dataSources.userAPI;
+        login(root, { userCredentials }: { userCredentials: UserLogin }, { dataSources: { userAPI } }): Promise<UserLoginResponse> {
+            return userAPI.login(userCredentials);
+        },
+        
+        createScheduledWorkout(root, { newWorkout }, { dataSources: { workoutAPI } }) {
+            return workoutAPI.createScheduledWorkout(newWorkout);
+        },
 
-            const loginRes = await userAPI.login(userCredentials);
+        startScheduledWorkout(root, { id }, { dataSources: { workoutAPI } }) {
+            return workoutAPI.startScheduledWorkout(id);
+        }
+    },
+    User: {
+        scheduledWorkouts(user: User, args, { dataSources: { userAPI }}) {
+            return userAPI.getScheduledWorkoutsForUser(user.id);
+        }
+    },
+    ExerciseGroup: {
+        async exercise(root, args, { dataSources: { exerciseAPI } }) {
+            const exercises = await exerciseAPI.getExercises();
 
-            return loginRes;
+            return exercises.find(ex => ex.id === root.exercise.id);
         }
     },
     Muscle: {
-        async exercises(root: Muscle, args, { dataSources }): Promise<Exercise[]> {
-            const exerciseAPI: ExerciseAPI = dataSources.exerciseAPI;
-
+        async exercises(root: Muscle, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
             const exercises = await exerciseAPI.getExercises();
 
             const exercisesForMuscle = exercises.filter(exercise => {
@@ -111,9 +90,7 @@ export const resolvers: IResolvers = {
         }
     },
     Equipment: {
-        async exercises(root: Equipment, args, { dataSources }): Promise<Exercise[]> {
-            const exerciseAPI: ExerciseAPI = dataSources.exerciseAPI;
-
+        async exercises(root: Equipment, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
             const exercises = await exerciseAPI.getExercises();
 
             const exercisesForEquipment = exercises.filter(exercise => exercise.equipment.some(equipment => equipment.id === root.id));
@@ -122,9 +99,7 @@ export const resolvers: IResolvers = {
         }
     },
     ExerciseCategory: {
-        async exercises(root: ExerciseCategory, args, { dataSources }): Promise<Exercise[]> {
-            const exerciseAPI: ExerciseAPI = dataSources.exerciseAPI;
-
+        async exercises(root: ExerciseCategory, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
             const exercises = await exerciseAPI.getExercises();
 
             const exercisesForCategory = exercises.filter(exercise => exercise.exerciseCategorys.some(category => category.id === root.id));

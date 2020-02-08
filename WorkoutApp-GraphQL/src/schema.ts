@@ -4,27 +4,32 @@ export const typeDefs = gql`
 type Query {
     test: String
     users: [User]!
-    user(id: ID!): User
-    exercise(id: ID!): Exercise
+    user(id: Int!): User
+    exercise(id: Int!): Exercise
     exercises: [Exercise]
     muscles: [Muscle]
-    muscle(id: ID!): Muscle
+    muscle(id: Int!): Muscle
     allEquipment: [Equipment]
-    equipment(id: ID!): Equipment
+    equipment(id: Int!): Equipment
+    me: User
 }
 
 type Mutation {
     registerUser(user: RegisterUser): User
     login(userCredentials: UserLogin): UserLoginResponse
+    createScheduledWorkout(newWorkout: NewScheduledWorkout): ScheduledWorkout
+    startScheduledWorkout(id: Int): ScheduledWorkout
 }
 
 type User {
-    id: ID!
+    id: Int!
     userName: String!
     firstName: String!
     lastName: String!,
     email: String!,
     created: String!
+    createdWorkouts: [Workout]
+    scheduledWorkouts: [ScheduledWorkout]
 }
 
 type UserLoginResponse {
@@ -32,8 +37,37 @@ type UserLoginResponse {
     user: User!
 }
 
+type Workout {
+    id: Int!
+    label: String!
+    color: String
+    createdByUserId: Int!
+    createdOnDate: String
+    lastModifiedDate: String
+    shareable: Boolean
+    exerciseGroups: [ExerciseGroup]
+}
+
+type ExerciseGroup {
+    id: Int!
+    exercise: Exercise!
+    sets: Int!
+    repetitions: Int!
+}
+
+type ScheduledWorkout {
+    id: Int!
+    user: User!
+    workout: Workout!
+    startedDateTime: String
+    completedDateTime: String
+    scheduledDateTime: String!
+    adHocExercises: [ExerciseGroup]
+    extraSchUsrWoAttendees: [User]
+}
+
 type Exercise {
-    id: ID!
+    id: Int!
     name: String!
     primaryMuscle: Muscle
     secondaryMuscle: Muscle
@@ -43,7 +77,7 @@ type Exercise {
 }
 
 type Muscle {
-    id: ID!
+    id: Int!
     name: String!
     exercises: [Exercise]
 }
@@ -54,13 +88,13 @@ type ExerciseStep {
 }
 
 type Equipment {
-    id: ID!
+    id: Int!
     name: String!
     exercises: [Exercise]
 }
 
 type ExerciseCategory {
-    id: ID!
+    id: Int!
     name: String!
     exercises: [Exercise]
 }
@@ -76,5 +110,10 @@ input RegisterUser {
 input UserLogin {
     username: String!
     password: String!
+}
+
+input NewScheduledWorkout {
+    workoutId: Int!
+    scheduledDateTime: String!
 }
 `;

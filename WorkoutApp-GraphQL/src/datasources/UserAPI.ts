@@ -1,8 +1,7 @@
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest';
 import { User, UserToRegister, UserLogin, UserLoginResponse } from "../entities/User";
-import { IUserAPI } from "../interfaces/IUserAPI";
 
-export class UserAPI extends RESTDataSource implements IUserAPI {
+export class UserAPI extends RESTDataSource {
 
     public constructor() {
         super();
@@ -41,5 +40,9 @@ export class UserAPI extends RESTDataSource implements IUserAPI {
         const res = await this.post<UserLoginResponse>('auth/login', new Object({...userLogin}));
 
         return res;
+    }
+
+    public getScheduledWorkoutsForUser(userId: string): Promise<any[]> {
+        return this.get(`users/${userId}/scheduledWorkouts`)
     }
 }
