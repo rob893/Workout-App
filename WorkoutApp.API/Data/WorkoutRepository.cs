@@ -134,7 +134,7 @@ namespace WorkoutApp.API.Data
                 .Include(wo => wo.Workout).ThenInclude(wo => wo.CreatedByUser)
                 .Include(wo => wo.Workout).ThenInclude(wo => wo.ExerciseGroups).ThenInclude(eg => eg.Exercise)
                 .Include(wo => wo.AdHocExercises)
-                .Include(wo => wo.ExtraSchUsrWoAttendees)
+                .Include(wo => wo.ExtraSchUsrWoAttendees).ThenInclude(attendee => attendee.User)
                 .Include(wo => wo.User)
                 .FirstOrDefaultAsync(wo => wo.Id == id);
         }
@@ -142,9 +142,10 @@ namespace WorkoutApp.API.Data
         public async Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams)
         {
             IQueryable<ScheduledUserWorkout> workouts = context.ScheduledUserWorkouts.OrderBy(wo => wo.ScheduledDateTime)
+                .Include(wo => wo.Workout).ThenInclude(wo => wo.CreatedByUser)
                 .Include(wo => wo.Workout).ThenInclude(wo => wo.ExerciseGroups).ThenInclude(eg => eg.Exercise)
                 .Include(wo => wo.AdHocExercises)
-                .Include(wo => wo.ExtraSchUsrWoAttendees)
+                .Include(wo => wo.ExtraSchUsrWoAttendees).ThenInclude(attendee => attendee.User)
                 .Include(wo => wo.User);
 
             if (woParams.UserId != null)

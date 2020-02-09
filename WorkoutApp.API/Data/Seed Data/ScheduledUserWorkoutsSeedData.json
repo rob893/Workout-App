@@ -21,7 +21,20 @@
         "Id": 4,
         "UserId": 3,
         "WorkoutId": 3,
-        "ScheduledDateTime": "5/27/19 9am"
+        "ScheduledDateTime": "5/27/19 9am",
+        "AdHocExercises": [
+            {
+                "ExerciseId": 6,
+                "Sets": 3,
+                "Repetitions": 12
+            }
+        ],
+        "ExtraSchUsrWoAttendees": [
+            {
+                "ScheduledUserWorkoutId": 4,
+                "UserId": 1
+            }
+        ]
     },
     {
         "Id": 5,

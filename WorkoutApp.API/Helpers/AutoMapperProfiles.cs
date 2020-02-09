@@ -16,7 +16,9 @@ namespace WorkoutApp.API.Helpers
             CreateMap<WorkoutForCreationDto, Workout>();
             CreateMap<WorkoutForUpdateDto, Workout>();
             CreateMap<ScheduledWoForCreationDto, ScheduledUserWorkout>();
-            CreateMap<ScheduledUserWorkout, ScheduledWoForReturnDto>();
+            CreateMap<ScheduledUserWorkout, ScheduledWoForReturnDto>()
+                .ForMember(dto => dto.ExtraSchUsrWoAttendees, opt =>
+                    opt.MapFrom(wo => wo.ExtraSchUsrWoAttendees.Select(attendee => attendee.User)));
 
             CreateMap<ExerciseGroup, ExerciseGroupForReturnDto>();
 

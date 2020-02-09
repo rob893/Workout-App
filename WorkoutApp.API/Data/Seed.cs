@@ -158,8 +158,23 @@ namespace WorkoutApp.API.Data
 
             string data = System.IO.File.ReadAllText("Data/Seed Data/ExerciseSeedData.json");
             List<Exercise> exercises = JsonConvert.DeserializeObject<List<Exercise>>(data);
+            // This is needed to ensure we don't try to create a new entity with same PK as one being tracked.
+            var muscleDict = context.Muscles.ToDictionary(m => m.Id);
 
-            exercises.ForEach(ex => context.Exercises.Add(ex));
+            foreach (var exercise in exercises) 
+            {
+                if (muscleDict.ContainsKey(exercise.PrimaryMuscle.Id))
+                {
+                    exercise.PrimaryMuscle = muscleDict[exercise.PrimaryMuscle.Id];
+                }
+                
+                if (exercise.SecondaryMuscle != null && muscleDict.ContainsKey(exercise.SecondaryMuscle.Id)) 
+                {
+                    exercise.SecondaryMuscle = muscleDict[exercise.SecondaryMuscle.Id];
+                }
+
+                context.Exercises.Add(exercise);
+            }
 
             context.SaveChanges();
         }
