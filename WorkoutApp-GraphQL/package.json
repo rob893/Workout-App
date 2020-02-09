@@ -14,16 +14,16 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@types/jwt-decode": "^2.2.1",
-        "apollo-datasource": "^0.6.4",
-        "apollo-datasource-rest": "^0.6.11",
-        "apollo-server": "^2.9.16",
+        "apollo-datasource": "^0.7.0",
+        "apollo-datasource-rest": "^0.7.0",
+        "apollo-server": "^2.10.0",
         "dotenv": "^8.2.0",
         "graphql": "^14.5.8",
         "jwt-decode": "^2.2.0"
     },
     "devDependencies": {
         "@types/node": "^13.1.7",
+        "@types/jwt-decode": "^2.2.1",
         "nodemon": "^2.0.2",
         "ts-node": "^8.6.2",
         "typescript": "^3.7.4"
