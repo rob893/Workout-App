@@ -26,6 +26,10 @@
             {
                 "ExerciseCategoryId": 5,
                 "ExerciseId": 1
+            },
+            {
+                "ExerciseCategoryId": 10,
+                "ExerciseId": 1
             }
         ]
     },
@@ -88,6 +92,10 @@
             {
                 "ExerciseCategoryId": 5,
                 "ExerciseId": 2
+            },
+            {
+                "ExerciseCategoryId": 10,
+                "ExerciseId": 2
             }
         ]
     },
@@ -125,6 +133,10 @@
             },
             {
                 "ExerciseCategoryId": 4,
+                "ExerciseId": 3
+            },
+            {
+                "ExerciseCategoryId": 10,
                 "ExerciseId": 3
             }
         ]
@@ -180,6 +192,10 @@
             {
                 "ExerciseCategoryId": 8,
                 "ExerciseId": 4
+            },
+            {
+                "ExerciseCategoryId": 9,
+                "ExerciseId": 5
             }
         ]
     },
@@ -230,6 +246,10 @@
             {
                 "ExerciseCategoryId": 8,
                 "ExerciseId": 5
+            },
+            {
+                "ExerciseCategoryId": 9,
+                "ExerciseId": 5
             }
         ]
     },
@@ -267,6 +287,10 @@
         "ExerciseCategorys": [
             {
                 "ExerciseCategoryId": 5,
+                "ExerciseId": 6
+            },
+            {
+                "ExerciseCategoryId": 10,
                 "ExerciseId": 6
             }
         ]

@@ -32,7 +32,11 @@
         "ExtraSchUsrWoAttendees": [
             {
                 "ScheduledUserWorkoutId": 4,
-                "UserId": 1
+                "UserId": 2
+            },
+            {
+                "ScheduledUserWorkoutId": 4,
+                "UserId": 4
             }
         ]
     },
@@ -47,5 +51,17 @@
         "UserId": 5,
         "WorkoutId": 2,
         "ScheduledDateTime": "5/28/19 9am"
+    },
+    {
+        "Id": 7,
+        "UserId": 4,
+        "WorkoutId": 2,
+        "ScheduledDateTime": "5/28/19 9am",
+        "ExtraSchUsrWoAttendees": [
+            {
+                "ScheduledUserWorkoutId": 7,
+                "UserId": 3
+            }
+        ]
     }
 ]

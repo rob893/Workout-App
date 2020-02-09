@@ -30,5 +30,13 @@
     {
         "Id": 8,
         "Name": "Full Body"
+    },
+    {
+        "Id": 9,
+        "Name": "Lower Body"
+    },
+    {
+        "Id": 10,
+        "Name": "Upper Body"
     }
 ]

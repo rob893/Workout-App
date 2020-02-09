@@ -150,7 +150,8 @@ namespace WorkoutApp.API.Data
 
             if (woParams.UserId != null)
             {
-                workouts = workouts.Where(wo => wo.UserId == woParams.UserId.Value);
+                workouts = workouts.Where(wo => wo.UserId == woParams.UserId.Value ||
+                    wo.ExtraSchUsrWoAttendees.Select(a => a.UserId).Contains(woParams.UserId.Value));
             }
 
             if (woParams.MinDate != null)
