@@ -15,10 +15,27 @@ type Query {
 }
 
 type Mutation {
-    registerUser(user: RegisterUser): User
-    login(userCredentials: UserLogin): UserLoginResponse
-    createScheduledWorkout(newWorkout: NewScheduledWorkout): ScheduledWorkout
-    startScheduledWorkout(id: Int): ScheduledWorkout
+    registerUser(user: RegisterUser!): RegisterUserPayload!
+    login(userCredentials: UserLogin!): UserLoginPayload!
+    createScheduledWorkout(newWorkout: NewScheduledWorkout!): CreateScheduledWorkoutPayload!
+    startScheduledWorkout(id: Int!): StartScheduledWorkoutPayload!
+}
+
+type RegisterUserPayload {
+    user: User!
+}
+
+type UserLoginPayload {
+    token: String!
+    user: User!
+}
+
+type CreateScheduledWorkoutPayload {
+    scheduledWorkout: ScheduledWorkout!
+}
+
+type StartScheduledWorkoutPayload {
+    scheduledWorkout: ScheduledWorkout!
 }
 
 type User {
@@ -30,11 +47,6 @@ type User {
     created: String!
     createdWorkouts: [Workout]
     scheduledWorkouts: [ScheduledWorkout]
-}
-
-type UserLoginResponse {
-    token: String!
-    user: User!
 }
 
 type Workout {

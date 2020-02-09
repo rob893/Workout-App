@@ -46,24 +46,27 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         }
     },
     Mutation: {
-        registerUser(root, { user }: { user: UserToRegister }, { dataSources: { userAPI } }): Promise<User> {
-            return userAPI.registerUser(user);
+        async registerUser(root, { user }: { user: UserToRegister }, { dataSources: { userAPI } }): Promise<{ user: User }> {
+            const newUser = await userAPI.registerUser(user);
+            return { user: newUser };
         },
 
         login(root, { userCredentials }: { userCredentials: UserLogin }, { dataSources: { userAPI } }): Promise<UserLoginResponse> {
             return userAPI.login(userCredentials);
         },
-        
-        createScheduledWorkout(root, { newWorkout }, { dataSources: { workoutAPI } }) {
-            return workoutAPI.createScheduledWorkout(newWorkout);
+
+        async createScheduledWorkout(root, { newWorkout }, { dataSources: { workoutAPI } }) {
+            const createdWorkout = await workoutAPI.createScheduledWorkout(newWorkout);
+            return { scheduledWorkout: createdWorkout };
         },
 
-        startScheduledWorkout(root, { id }, { dataSources: { workoutAPI } }) {
-            return workoutAPI.startScheduledWorkout(id);
+        async startScheduledWorkout(root, { id }, { dataSources: { workoutAPI } }) {
+            const workout = await workoutAPI.startScheduledWorkout(id);
+            return { scheduledWorkout: workout };
         }
     },
     User: {
-        scheduledWorkouts(user: User, args, { dataSources: { userAPI }}) {
+        scheduledWorkouts(user: User, args, { dataSources: { userAPI } }) {
             return userAPI.getScheduledWorkoutsForUser(user.id);
         }
     },
