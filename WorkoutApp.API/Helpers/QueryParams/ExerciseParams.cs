@@ -17,4 +17,11 @@ namespace WorkoutApp.API.Helpers.QueryParams
         public List<int> ExerciseCategoryId { get; set; } = new List<int>();
         public List<int> EquipmentId { get; set; } = new List<int>();
     }
+
+    public class RandomExercisesParams
+    {
+        public List<string> ExerciseCategories { get; set; } = new List<string>();
+        public int NumExercisesPerCategory { get; set; }
+        public bool Favorites { get; set; }
+    }
 }

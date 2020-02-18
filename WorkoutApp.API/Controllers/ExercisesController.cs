@@ -64,6 +64,14 @@ namespace WorkoutApp.API.Controllers
             return Ok(exercises);
         }
 
+        [HttpGet("detailed/random")]
+        public async Task<IActionResult> GetRandomExercisesDetailed([FromQuery] RandomExercisesParams exParams)
+        {
+            var exercises = await exerciseProvider.GetRandomExercisesAsync(exParams);
+
+            return Ok(exercises);
+        }
+
         [HttpGet("{exerciseId}/equipment")]
         public async Task<IActionResult> GetEquipmentForExercise(int exerciseId, [FromQuery] EquipmentParams eqParams)
         {
