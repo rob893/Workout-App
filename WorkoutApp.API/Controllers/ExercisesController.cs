@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -67,7 +68,8 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("detailed/random")]
         public async Task<IActionResult> GetRandomExercisesDetailed([FromQuery] RandomExercisesParams exParams)
         {
-            var exercises = await exerciseProvider.GetRandomExercisesAsync(exParams);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var exercises = await exerciseProvider.GetRandomExercisesAsync(exParams, userId);
 
             return Ok(exercises);
         }

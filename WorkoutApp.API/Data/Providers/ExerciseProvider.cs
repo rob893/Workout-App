@@ -48,16 +48,33 @@ namespace WorkoutApp.API.Data.Providers
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ExerciseForReturnDetailedDto>> GetRandomExercisesAsync(RandomExercisesParams exParams)
+        public async Task<IEnumerable<ExerciseForReturnDetailedDto>> GetRandomExercisesAsync(RandomExercisesParams exParams, int? userId = null)
         {
-            var exercises = await context.Exercises.AsNoTracking()
-                .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
-                .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
-                .Include(e => e.PrimaryMuscle)
-                .Include(e => e.SecondaryMuscle)
-                .Include(e => e.ExerciseSteps)
-                .ToListAsync();
-            
+            List<Exercise> exercises;
+
+            if (!exParams.Favorites || userId == null)
+            {
+                exercises = await context.Exercises.AsNoTracking()
+                    .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
+                    .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
+                    .Include(e => e.PrimaryMuscle)
+                    .Include(e => e.SecondaryMuscle)
+                    .Include(e => e.ExerciseSteps)
+                    .ToListAsync();
+            }
+            else
+            {
+                exercises = await context.Users.AsNoTracking()
+                    .Where(u => u.Id == userId.Value)
+                    .SelectMany(u => u.FavoriteExercises.Select(fe => fe.Exercise))
+                    .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
+                    .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
+                    .Include(e => e.PrimaryMuscle)
+                    .Include(e => e.SecondaryMuscle)
+                    .Include(e => e.ExerciseSteps)
+                    .ToListAsync();
+            }
+
             var exerciseDict = new Dictionary<string, List<Exercise>>(StringComparer.InvariantCultureIgnoreCase);
 
             foreach (var e in exercises)
