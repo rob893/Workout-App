@@ -22,8 +22,13 @@ namespace WorkoutApp.API.Data
             this.roleManager = roleManager;
         }
 
-        public void SeedDatabase(bool clearCurrentData = false)
+        public void SeedDatabase(bool clearCurrentData = false, bool applyMigrations = false)
         {
+            if (applyMigrations)
+            {
+                context.Database.Migrate();
+            }
+
             if (clearCurrentData)
             {
                 ClearAllData();

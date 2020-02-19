@@ -9,26 +9,30 @@ using WorkoutApp.API.Data;
 namespace WorkoutApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190618021028_AddedExtraWoAttendees")]
-    partial class AddedExtraWoAttendees
+    [Migration("20200219043800_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
+                .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("ClaimType");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("ClaimValue");
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("RoleId");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -40,13 +44,17 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("ClaimType");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("ClaimValue");
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -57,13 +65,17 @@ namespace WorkoutApp.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.Property<string>("LoginProvider");
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("ProviderKey");
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("ProviderDisplayName");
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -74,13 +86,17 @@ namespace WorkoutApp.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("LoginProvider");
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("Value");
+                    b.Property<string>("Value")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -90,9 +106,11 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.Equipment", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
@@ -101,9 +119,11 @@ namespace WorkoutApp.API.Migrations
 
             modelBuilder.Entity("WorkoutApp.API.Models.EquipmentExercise", b =>
                 {
-                    b.Property<int>("ExerciseId");
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("EquipmentId");
+                    b.Property<int>("EquipmentId")
+                        .HasColumnType("int");
 
                     b.HasKey("ExerciseId", "EquipmentId");
 
@@ -115,13 +135,17 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.Exercise", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int?>("PrimaryMuscleId");
+                    b.Property<int?>("PrimaryMuscleId")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("SecondaryMuscleId");
+                    b.Property<int?>("SecondaryMuscleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -135,9 +159,11 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.ExerciseCategory", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
@@ -146,9 +172,11 @@ namespace WorkoutApp.API.Migrations
 
             modelBuilder.Entity("WorkoutApp.API.Models.ExerciseCategoryExercise", b =>
                 {
-                    b.Property<int>("ExerciseCategoryId");
+                    b.Property<int>("ExerciseCategoryId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("ExerciseId");
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("int");
 
                     b.HasKey("ExerciseCategoryId", "ExerciseId");
 
@@ -160,17 +188,23 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.ExerciseGroup", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<int>("ExerciseId");
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("Repetitions");
+                    b.Property<int>("Repetitions")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("ScheduledUserWorkoutId");
+                    b.Property<int?>("ScheduledUserWorkoutId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("Sets");
+                    b.Property<int>("Sets")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("WorkoutId");
+                    b.Property<int?>("WorkoutId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -185,11 +219,14 @@ namespace WorkoutApp.API.Migrations
 
             modelBuilder.Entity("WorkoutApp.API.Models.ExerciseStep", b =>
                 {
-                    b.Property<int>("ExerciseId");
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("ExerciseStepNumber");
+                    b.Property<int>("ExerciseStepNumber")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("ExerciseId", "ExerciseStepNumber");
 
@@ -198,9 +235,11 @@ namespace WorkoutApp.API.Migrations
 
             modelBuilder.Entity("WorkoutApp.API.Models.ExtraSchUsrWoAttendee", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("ScheduledUserWorkoutId");
+                    b.Property<int>("ScheduledUserWorkoutId")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "ScheduledUserWorkoutId");
 
@@ -212,9 +251,11 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.Muscle", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
@@ -224,15 +265,19 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.Role", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
@@ -247,17 +292,23 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.ScheduledUserWorkout", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("CompletedDateTime");
+                    b.Property<DateTime?>("CompletedDateTime")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("ScheduledDateTime");
+                    b.Property<DateTime>("ScheduledDateTime")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("StartedDateTime");
+                    b.Property<DateTime?>("StartedDateTime")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<int>("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("WorkoutId");
+                    b.Property<int>("WorkoutId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -271,45 +322,63 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.User", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<int>("AccessFailedCount");
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<bool>("EmailConfirmed");
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("LastName");
+                    b.Property<string>("LastName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<bool>("LockoutEnabled");
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTimeOffset?>("LockoutEnd");
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("NormalizedEmail")
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
                     b.Property<string>("NormalizedUserName")
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<string>("PasswordHash");
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("PhoneNumber");
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<bool>("PhoneNumberConfirmed");
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("SecurityStamp");
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<bool>("TwoFactorEnabled");
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserName")
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
@@ -324,11 +393,28 @@ namespace WorkoutApp.API.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("WorkoutApp.API.Models.UserFavoriteExercise", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ExerciseId");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.ToTable("UserFavoriteExercise");
+                });
+
             modelBuilder.Entity("WorkoutApp.API.Models.UserRole", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("RoleId");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -340,23 +426,32 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.Workout", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Color");
+                    b.Property<string>("Color")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("CreatedByUserId");
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedOnDate");
+                    b.Property<DateTime>("CreatedOnDate")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<bool>("IsDeleted");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("Label");
+                    b.Property<string>("Label")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<DateTime>("LastModifiedDate");
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<bool>("Shareable");
+                    b.Property<bool>("Shareable")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("WorkoutCopiedFromId");
+                    b.Property<int?>("WorkoutCopiedFromId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -370,19 +465,26 @@ namespace WorkoutApp.API.Migrations
             modelBuilder.Entity("WorkoutApp.API.Models.WorkoutInvitation", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<bool>("Accepted");
+                    b.Property<bool>("Accepted")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Declined");
+                    b.Property<bool>("Declined")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("InviteeId");
+                    b.Property<int>("InviteeId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("InviterId");
+                    b.Property<int>("InviterId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("RespondedAtDateTime");
+                    b.Property<DateTime?>("RespondedAtDateTime")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<int>("ScheduledUserWorkoutId");
+                    b.Property<int>("ScheduledUserWorkoutId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -397,34 +499,38 @@ namespace WorkoutApp.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("WorkoutApp.API.Models.Role")
+                    b.HasOne("WorkoutApp.API.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("WorkoutApp.API.Models.User")
+                    b.HasOne("WorkoutApp.API.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("WorkoutApp.API.Models.User")
+                    b.HasOne("WorkoutApp.API.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("WorkoutApp.API.Models.User")
+                    b.HasOne("WorkoutApp.API.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.EquipmentExercise", b =>
@@ -432,12 +538,14 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.Equipment", "Equipment")
                         .WithMany("Exercises")
                         .HasForeignKey("EquipmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WorkoutApp.API.Models.Exercise", "Exercise")
                         .WithMany("Equipment")
                         .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.Exercise", b =>
@@ -456,12 +564,14 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.ExerciseCategory", "ExerciseCategory")
                         .WithMany("Exercises")
                         .HasForeignKey("ExerciseCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WorkoutApp.API.Models.Exercise", "Exercise")
                         .WithMany("ExerciseCategorys")
                         .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.ExerciseGroup", b =>
@@ -469,7 +579,8 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.Exercise", "Exercise")
                         .WithMany()
                         .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WorkoutApp.API.Models.ScheduledUserWorkout", "ScheduledUserWorkout")
                         .WithMany("AdHocExercises")
@@ -485,7 +596,8 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.Exercise", "Exercise")
                         .WithMany("ExerciseSteps")
                         .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.ExtraSchUsrWoAttendee", b =>
@@ -493,12 +605,14 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.ScheduledUserWorkout", "ScheduledUserWorkout")
                         .WithMany("ExtraSchUsrWoAttendees")
                         .HasForeignKey("ScheduledUserWorkoutId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WorkoutApp.API.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.ScheduledUserWorkout", b =>
@@ -506,12 +620,29 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.User", "User")
                         .WithMany("ScheduledUserWorkouts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WorkoutApp.API.Models.Workout", "Workout")
                         .WithMany()
                         .HasForeignKey("WorkoutId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WorkoutApp.API.Models.UserFavoriteExercise", b =>
+                {
+                    b.HasOne("WorkoutApp.API.Models.Exercise", "Exercise")
+                        .WithMany("FavoritedBy")
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkoutApp.API.Models.User", "User")
+                        .WithMany("FavoriteExercises")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.UserRole", b =>
@@ -519,12 +650,14 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WorkoutApp.API.Models.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.Workout", b =>
@@ -532,7 +665,8 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.User", "CreatedByUser")
                         .WithMany("CreatedWorkouts")
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WorkoutApp.API.Models.Workout", "WorkoutCopiedFrom")
                         .WithMany()
@@ -544,17 +678,20 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.User", "Invitee")
                         .WithMany("ReceivedInvitations")
                         .HasForeignKey("InviteeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WorkoutApp.API.Models.User", "Inviter")
                         .WithMany("SentInvitations")
                         .HasForeignKey("InviterId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WorkoutApp.API.Models.ScheduledUserWorkout", "ScheduledUserWorkout")
                         .WithMany()
                         .HasForeignKey("ScheduledUserWorkoutId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

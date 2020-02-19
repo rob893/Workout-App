@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkoutApp.API.Migrations
 {
-    public partial class IdentityInitial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -353,6 +353,30 @@ namespace WorkoutApp.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserFavoriteExercise",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false),
+                    ExerciseId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserFavoriteExercise", x => new { x.UserId, x.ExerciseId });
+                    table.ForeignKey(
+                        name: "FK_UserFavoriteExercise_Exercises_ExerciseId",
+                        column: x => x.ExerciseId,
+                        principalTable: "Exercises",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserFavoriteExercise_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ExerciseGroups",
                 columns: table => new
                 {
@@ -385,6 +409,66 @@ namespace WorkoutApp.API.Migrations
                         principalTable: "Workouts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExtraSchUsrWoAttendee",
+                columns: table => new
+                {
+                    ScheduledUserWorkoutId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExtraSchUsrWoAttendee", x => new { x.UserId, x.ScheduledUserWorkoutId });
+                    table.ForeignKey(
+                        name: "FK_ExtraSchUsrWoAttendee_ScheduledUserWorkouts_ScheduledUserWor~",
+                        column: x => x.ScheduledUserWorkoutId,
+                        principalTable: "ScheduledUserWorkouts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExtraSchUsrWoAttendee_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkoutInvitations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    InviterId = table.Column<int>(nullable: false),
+                    InviteeId = table.Column<int>(nullable: false),
+                    ScheduledUserWorkoutId = table.Column<int>(nullable: false),
+                    Accepted = table.Column<bool>(nullable: false),
+                    Declined = table.Column<bool>(nullable: false),
+                    RespondedAtDateTime = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkoutInvitations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WorkoutInvitations_AspNetUsers_InviteeId",
+                        column: x => x.InviteeId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WorkoutInvitations_AspNetUsers_InviterId",
+                        column: x => x.InviterId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WorkoutInvitations_ScheduledUserWorkouts_ScheduledUserWorkou~",
+                        column: x => x.ScheduledUserWorkoutId,
+                        principalTable: "ScheduledUserWorkouts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -460,6 +544,11 @@ namespace WorkoutApp.API.Migrations
                 column: "SecondaryMuscleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExtraSchUsrWoAttendee_ScheduledUserWorkoutId",
+                table: "ExtraSchUsrWoAttendee",
+                column: "ScheduledUserWorkoutId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ScheduledUserWorkouts_UserId",
                 table: "ScheduledUserWorkouts",
                 column: "UserId");
@@ -468,6 +557,26 @@ namespace WorkoutApp.API.Migrations
                 name: "IX_ScheduledUserWorkouts_WorkoutId",
                 table: "ScheduledUserWorkouts",
                 column: "WorkoutId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserFavoriteExercise_ExerciseId",
+                table: "UserFavoriteExercise",
+                column: "ExerciseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutInvitations_InviteeId",
+                table: "WorkoutInvitations",
+                column: "InviteeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutInvitations_InviterId",
+                table: "WorkoutInvitations",
+                column: "InviterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutInvitations_ScheduledUserWorkoutId",
+                table: "WorkoutInvitations",
+                column: "ScheduledUserWorkoutId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Workouts_CreatedByUserId",
@@ -510,6 +619,15 @@ namespace WorkoutApp.API.Migrations
                 name: "ExerciseStep");
 
             migrationBuilder.DropTable(
+                name: "ExtraSchUsrWoAttendee");
+
+            migrationBuilder.DropTable(
+                name: "UserFavoriteExercise");
+
+            migrationBuilder.DropTable(
+                name: "WorkoutInvitations");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -519,16 +637,16 @@ namespace WorkoutApp.API.Migrations
                 name: "ExerciseCategorys");
 
             migrationBuilder.DropTable(
-                name: "ScheduledUserWorkouts");
-
-            migrationBuilder.DropTable(
                 name: "Exercises");
 
             migrationBuilder.DropTable(
-                name: "Workouts");
+                name: "ScheduledUserWorkouts");
 
             migrationBuilder.DropTable(
                 name: "Muscles");
+
+            migrationBuilder.DropTable(
+                name: "Workouts");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

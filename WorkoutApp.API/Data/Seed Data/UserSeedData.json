@@ -52,5 +52,14 @@
         "LastName": "Smith",
         "Email": "lsmith@gmail.com",
         "Created": "2017-08-02"
+    },
+    {
+        "Id": 7,
+        "UserName": "Celeste",
+        "Password": "password",
+        "FirstName": "Celeste",
+        "LastName": "Kirkland",
+        "Email": "test@test.com",
+        "Created": "2020-02-18"
     }
 ]

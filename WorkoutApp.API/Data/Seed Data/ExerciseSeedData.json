@@ -251,6 +251,12 @@
                 "ExerciseCategoryId": 9,
                 "ExerciseId": 5
             }
+        ],
+        "FavoritedBy": [
+            {
+                "UserId": 7,
+                "ExerciseId": 5
+            }
         ]
     },
     {

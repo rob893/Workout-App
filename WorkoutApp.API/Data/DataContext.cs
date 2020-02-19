@@ -50,6 +50,19 @@ namespace WorkoutApp.API.Data
                     .WithOne(inv => inv.Inviter)
                     .HasForeignKey(inv => inv.InviterId);
             });
+
+            modelBuilder.Entity<UserFavoriteExercise>(favEx => 
+            {
+                favEx.HasKey(k => new { k.UserId, k.ExerciseId });
+
+                favEx.HasOne(fe => fe.User)
+                    .WithMany(u => u.FavoriteExercises)
+                    .HasForeignKey(fe => fe.UserId);
+
+                favEx.HasOne(fe => fe.Exercise)
+                    .WithMany(ex => ex.FavoritedBy)
+                    .HasForeignKey(fe => fe.ExerciseId);
+            });
                 
             modelBuilder.Entity<ExerciseStep>()
                 .HasKey(k => new { k.ExerciseId, k.ExerciseStepNumber });
