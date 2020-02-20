@@ -24,7 +24,7 @@ namespace WorkoutApp.API.Controllers
 
         public ExercisesController(IWorkoutRepository repo, IMapper mapper, ExerciseProvider exerciseProvider)
         {
-            this.repo = repo; 
+            this.repo = repo;
             this.mapper = mapper;
             this.exerciseProvider = exerciseProvider;
         }
@@ -68,10 +68,21 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("detailed/random")]
         public async Task<IActionResult> GetRandomExercisesDetailed([FromQuery] RandomExercisesParams exParams)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var exercises = await exerciseProvider.GetRandomExercisesAsync(exParams, userId);
+            IEnumerable<Exercise> exercises;
 
-            return Ok(exercises);
+            if (exParams.Favorites)
+            {
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                exercises = await exerciseProvider.GetRandomFavoriteExercisesForUserAsync(exParams.ExerciseCategories, exParams.NumExercisesPerCategory, userId);
+            }
+            else
+            {
+                exercises = await exerciseProvider.GetRandomExercisesAsync(exParams.ExerciseCategories, exParams.NumExercisesPerCategory);
+            }
+
+            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
+
+            return Ok(exercisesToReturn);
         }
 
         [HttpGet("{exerciseId}/equipment")]
@@ -106,8 +117,9 @@ namespace WorkoutApp.API.Controllers
             if (exercise.EquipmentIds != null)
             {
                 newExercise.Equipment = new List<EquipmentExercise>();
-                exercise.EquipmentIds.ForEach(id => 
-                    newExercise.Equipment.Add(new EquipmentExercise {
+                exercise.EquipmentIds.ForEach(id =>
+                    newExercise.Equipment.Add(new EquipmentExercise
+                    {
                         EquipmentId = id
                     })
                 );
@@ -116,13 +128,14 @@ namespace WorkoutApp.API.Controllers
             if (exercise.ExerciseCategoryIds != null)
             {
                 newExercise.ExerciseCategorys = new List<ExerciseCategoryExercise>();
-                exercise.ExerciseCategoryIds.ForEach(id => 
-                    newExercise.ExerciseCategorys.Add(new ExerciseCategoryExercise {
+                exercise.ExerciseCategoryIds.ForEach(id =>
+                    newExercise.ExerciseCategorys.Add(new ExerciseCategoryExercise
+                    {
                         ExerciseCategoryId = id
                     })
                 );
             }
-            
+
             repo.Add<Exercise>(newExercise);
 
             if (await repo.SaveAllAsync())

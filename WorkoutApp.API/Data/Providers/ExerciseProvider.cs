@@ -1,3 +1,4 @@
+using System.Diagnostics.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,76 +49,35 @@ namespace WorkoutApp.API.Data.Providers
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ExerciseForReturnDetailedDto>> GetRandomExercisesAsync(RandomExercisesParams exParams, int? userId = null)
+        public async Task<IEnumerable<Exercise>> GetRandomFavoriteExercisesForUserAsync(IEnumerable<string> exerciseCategories, int numExercises, int userId)
         {
-            List<Exercise> exercises;
+            var exercises = await context.Users.AsNoTracking()
+                .Where(u => u.Id == userId)
+                .SelectMany(u => u.FavoriteExercises.Select(fe => fe.Exercise))
+                .Where(e => e.ExerciseCategorys.Any(ec => exerciseCategories.Contains(ec.ExerciseCategory.Name)))
+                .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
+                .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
+                .Include(e => e.PrimaryMuscle)
+                .Include(e => e.SecondaryMuscle)
+                .Include(e => e.ExerciseSteps)
+                .ToListAsync();
 
-            if (!exParams.Favorites || userId == null)
-            {
-                exercises = await context.Exercises.AsNoTracking()
-                    .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
-                    .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
-                    .Include(e => e.PrimaryMuscle)
-                    .Include(e => e.SecondaryMuscle)
-                    .Include(e => e.ExerciseSteps)
-                    .ToListAsync();
-            }
-            else
-            {
-                exercises = await context.Users.AsNoTracking()
-                    .Where(u => u.Id == userId.Value)
-                    .SelectMany(u => u.FavoriteExercises.Select(fe => fe.Exercise))
-                    .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
-                    .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
-                    .Include(e => e.PrimaryMuscle)
-                    .Include(e => e.SecondaryMuscle)
-                    .Include(e => e.ExerciseSteps)
-                    .ToListAsync();
-            }
+            return exercises;
+        }
 
-            var exerciseDict = new Dictionary<string, List<Exercise>>(StringComparer.InvariantCultureIgnoreCase);
+        public async Task<IEnumerable<Exercise>> GetRandomExercisesAsync(IEnumerable<string> exerciseCategories, int numExercises)
+        {
+            var exercises = await context.ExerciseCategorys.AsNoTracking()
+               .Where(ec => exerciseCategories.Contains(ec.Name))
+               .SelectMany(ec => ec.Exercises.Select(ece => ece.Exercise))
+               .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
+               .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
+               .Include(e => e.PrimaryMuscle)
+               .Include(e => e.SecondaryMuscle)
+               .Include(e => e.ExerciseSteps)
+               .ToListAsync();
 
-            foreach (var e in exercises)
-            {
-                foreach (var category in e.ExerciseCategorys.Select(ec => ec.ExerciseCategory.Name))
-                {
-                    if (exerciseDict.ContainsKey(category))
-                    {
-                        exerciseDict[category].Add(e);
-                    }
-                    else
-                    {
-                        exerciseDict[category] = new List<Exercise> { e };
-                    }
-                }
-            }
-
-            var randomExercises = new HashSet<Exercise>();
-            var random = new Random();
-
-            foreach (var category in exParams.ExerciseCategories)
-            {
-                if (exerciseDict.ContainsKey(category))
-                {
-                    var idList = exerciseDict[category];
-
-                    for (int i = 0; i < exParams.NumExercisesPerCategory; i++)
-                    {
-                        if (idList.Count == 0)
-                        {
-                            break;
-                        }
-
-                        var randomIndex = random.Next(idList.Count);
-                        randomExercises.Add(idList[randomIndex]);
-                        idList.RemoveAt(randomIndex);
-                    }
-                }
-            }
-
-            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(randomExercises);
-
-            return exercisesToReturn;
+            return exercises;
         }
 
         public async Task<PagedList<ExerciseForReturnDetailedDto>> GetExercisesDetailed(ExerciseParams exParams)
