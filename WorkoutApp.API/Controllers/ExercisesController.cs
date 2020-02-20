@@ -73,11 +73,11 @@ namespace WorkoutApp.API.Controllers
             if (exParams.Favorites)
             {
                 var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                exercises = await exerciseProvider.GetRandomFavoriteExercisesForUserAsync(exParams.ExerciseCategories, exParams.NumExercisesPerCategory, userId);
+                exercises = await exerciseProvider.GetRandomFavoriteExercisesForUserAsync(exParams.NumExercises.Value, userId, exParams.ExerciseCategory);
             }
             else
             {
-                exercises = await exerciseProvider.GetRandomExercisesAsync(exParams.ExerciseCategories, exParams.NumExercisesPerCategory);
+                exercises = await exerciseProvider.GetRandomExercisesAsync(exParams.NumExercises.Value, exParams.ExerciseCategory);
             }
 
             var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);

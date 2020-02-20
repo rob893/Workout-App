@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 
 namespace WorkoutApp.API.Helpers.QueryParams
@@ -20,8 +21,9 @@ namespace WorkoutApp.API.Helpers.QueryParams
 
     public class RandomExercisesParams
     {
-        public List<string> ExerciseCategories { get; set; } = new List<string>();
-        public int NumExercisesPerCategory { get; set; }
+        public string ExerciseCategory { get; set; }
+        [Required]
+        public int? NumExercises { get; set; }
         public bool Favorites { get; set; }
     }
 }

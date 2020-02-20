@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -10,6 +11,9 @@ namespace WorkoutApp.API.Helpers
     //These add functions to exsisting classes basically.
     public static class Extensions
     {
+        private static Random rng = new Random();
+
+
         public static void AddApplicationError(this HttpResponse response, string message)
         {
             response.Headers.Add("Application-Error", message);
@@ -30,7 +34,7 @@ namespace WorkoutApp.API.Helpers
         {
             int age = DateTime.Today.Year - theDateTime.Year;
 
-            if (theDateTime.AddYears(age) > DateTime.Today) 
+            if (theDateTime.AddYears(age) > DateTime.Today)
             {
                 age--;
             }
@@ -41,6 +45,21 @@ namespace WorkoutApp.API.Helpers
         public static IApplicationBuilder UseGlobalExceptionHandler(this IApplicationBuilder builder)
         {
             return builder.UseExceptionHandler(b => b.UseMiddleware<GlobalExceptionHandlerMiddleware>());
+        }
+
+        public static IList<T> Shuffle<T>(this IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+
+            return list;
         }
     }
 }

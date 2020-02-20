@@ -49,35 +49,45 @@ namespace WorkoutApp.API.Data.Providers
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Exercise>> GetRandomFavoriteExercisesForUserAsync(IEnumerable<string> exerciseCategories, int numExercises, int userId)
+        public async Task<IEnumerable<Exercise>> GetRandomFavoriteExercisesForUserAsync(int numExercises, int userId, string exerciseCategory = null)
         {
-            var exercises = await context.Users.AsNoTracking()
+            var exercisesQ = context.Users.AsNoTracking()
                 .Where(u => u.Id == userId)
                 .SelectMany(u => u.FavoriteExercises.Select(fe => fe.Exercise))
-                .Where(e => e.ExerciseCategorys.Any(ec => exerciseCategories.Contains(ec.ExerciseCategory.Name)))
                 .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
                 .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
                 .Include(e => e.PrimaryMuscle)
                 .Include(e => e.SecondaryMuscle)
-                .Include(e => e.ExerciseSteps)
-                .ToListAsync();
+                .Include(e => e.ExerciseSteps);
 
-            return exercises;
+            if (exerciseCategory != null)
+            {
+                exercisesQ.Where(e => e.ExerciseCategorys.Any(ec => ec.ExerciseCategory.Name == exerciseCategory));
+            }
+
+            var exercises = await exercisesQ.ToListAsync();
+
+            return exercises.Shuffle().Take(numExercises);
         }
 
-        public async Task<IEnumerable<Exercise>> GetRandomExercisesAsync(IEnumerable<string> exerciseCategories, int numExercises)
+        public async Task<IEnumerable<Exercise>> GetRandomExercisesAsync(int numExercises, string exerciseCategory = null)
         {
-            var exercises = await context.ExerciseCategorys.AsNoTracking()
-               .Where(ec => exerciseCategories.Contains(ec.Name))
+            var exercisesQ = context.ExerciseCategorys.AsNoTracking()
                .SelectMany(ec => ec.Exercises.Select(ece => ece.Exercise))
                .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
                .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
                .Include(e => e.PrimaryMuscle)
                .Include(e => e.SecondaryMuscle)
-               .Include(e => e.ExerciseSteps)
-               .ToListAsync();
+               .Include(e => e.ExerciseSteps);
+            
+            if (exerciseCategory != null)
+            {
+                exercisesQ.Where(e => e.ExerciseCategorys.Any(ec => ec.ExerciseCategory.Name == exerciseCategory));
+            }
 
-            return exercises;
+            var exercises = await exercisesQ.ToListAsync();
+
+            return exercises.Shuffle().Take(numExercises);
         }
 
         public async Task<PagedList<ExerciseForReturnDetailedDto>> GetExercisesDetailed(ExerciseParams exParams)
