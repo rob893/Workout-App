@@ -51,7 +51,7 @@ namespace WorkoutApp.API.Data.Providers
 
         public async Task<IEnumerable<Exercise>> GetRandomFavoriteExercisesForUserAsync(int numExercises, int userId, string exerciseCategory = null)
         {
-            var exercisesQ = context.Users.AsNoTracking()
+            IQueryable<Exercise> exercisesQ = context.Users.AsNoTracking()
                 .Where(u => u.Id == userId)
                 .SelectMany(u => u.FavoriteExercises.Select(fe => fe.Exercise))
                 .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
@@ -62,7 +62,7 @@ namespace WorkoutApp.API.Data.Providers
 
             if (exerciseCategory != null)
             {
-                exercisesQ.Where(e => e.ExerciseCategorys.Any(ec => ec.ExerciseCategory.Name == exerciseCategory));
+                exercisesQ = exercisesQ.Where(e => e.ExerciseCategorys.Any(ec => ec.ExerciseCategory.Name == exerciseCategory));
             }
 
             var exercises = await exercisesQ.ToListAsync();
@@ -72,8 +72,7 @@ namespace WorkoutApp.API.Data.Providers
 
         public async Task<IEnumerable<Exercise>> GetRandomExercisesAsync(int numExercises, string exerciseCategory = null)
         {
-            var exercisesQ = context.ExerciseCategorys.AsNoTracking()
-               .SelectMany(ec => ec.Exercises.Select(ece => ece.Exercise))
+            IQueryable<Exercise> exercisesQ = context.Exercises.AsNoTracking()
                .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
                .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
                .Include(e => e.PrimaryMuscle)
@@ -82,7 +81,7 @@ namespace WorkoutApp.API.Data.Providers
             
             if (exerciseCategory != null)
             {
-                exercisesQ.Where(e => e.ExerciseCategorys.Any(ec => ec.ExerciseCategory.Name == exerciseCategory));
+                exercisesQ = exercisesQ.Where(e => e.ExerciseCategorys.Any(ec => ec.ExerciseCategory.Name == exerciseCategory));
             }
 
             var exercises = await exercisesQ.ToListAsync();
