@@ -103,16 +103,14 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest("This invitation has already been responeded to.");
             }
 
+            var user = await repo.GetUserAsync(woInv.InviteeId);
+
             woInv.Accepted = true;
             woInv.Declined = false;
             woInv.RespondedAtDateTime = DateTime.Now;
 
-            ScheduledUserWorkout schWo = await repo.GetScheduledUserWorkoutAsync(woInv.ScheduledUserWorkoutId);
-            schWo.ExtraSchUsrWoAttendees.Add(new ExtraSchUsrWoAttendee
-            {
-                ScheduledUserWorkoutId = schWo.Id,
-                UserId = woInv.InviteeId
-            });
+            ScheduledWorkout schWo = await repo.GetScheduledUserWorkoutAsync(woInv.ScheduledWorkoutId);
+            schWo.Attendees.Add(user);
 
             if (await repo.SaveAllAsync())
             {
@@ -157,7 +155,7 @@ namespace WorkoutApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateWorkoutInvitation([FromBody] WorkoutInvitationForCreationDto woInv)
         {
-            ScheduledUserWorkout scheduledWorkout = await repo.GetScheduledUserWorkoutAsync(woInv.ScheduledUserWorkoutId);
+            ScheduledWorkout scheduledWorkout = await repo.GetScheduledUserWorkoutAsync(woInv.ScheduledUserWorkoutId);
             
             if (await repo.GetUserAsync(woInv.InviteeId) == null || scheduledWorkout == null)
             {
@@ -166,7 +164,7 @@ namespace WorkoutApp.API.Controllers
 
             int inviterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            if (inviterId != scheduledWorkout.UserId)
+            if (inviterId != scheduledWorkout.ScheduledByUserId)
             {
                 return BadRequest("You cannot invite people to workouts that are not yours!");
             }
@@ -185,7 +183,7 @@ namespace WorkoutApp.API.Controllers
 
             newInvitation.InviteeId = woInv.InviteeId;
             newInvitation.InviterId = inviterId;
-            newInvitation.ScheduledUserWorkoutId = woInv.ScheduledUserWorkoutId;
+            newInvitation.ScheduledWorkoutId = woInv.ScheduledUserWorkoutId;
 
             repo.Add<WorkoutInvitation>(newInvitation);
 

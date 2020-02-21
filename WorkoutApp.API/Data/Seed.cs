@@ -46,10 +46,13 @@ namespace WorkoutApp.API.Data
 
         private void ClearAllData()
         {
+            context.WorkoutCompletionRecords.RemoveRange(context.WorkoutCompletionRecords);
+            context.ExerciseGroupCompletionRecords.RemoveRange(context.ExerciseGroupCompletionRecords);
+            context.ExerciseSetCompletionRecords.RemoveRange(context.ExerciseSetCompletionRecords);
             context.Muscles.RemoveRange(context.Muscles);
             context.Equipment.RemoveRange(context.Equipment.Include(e => e.Exercises));
             context.WorkoutInvitations.RemoveRange(context.WorkoutInvitations);
-            context.ScheduledUserWorkouts.RemoveRange(context.ScheduledUserWorkouts);
+            context.ScheduledWorkouts.RemoveRange(context.ScheduledWorkouts);
             context.Workouts.RemoveRange(context.Workouts);
             context.ExerciseGroups.RemoveRange(context.ExerciseGroups);
             context.Exercises.RemoveRange(context.Exercises.Include(ex => ex.Equipment).Include(ex => ex.ExerciseCategorys).Include(ex => ex.ExerciseSteps));
@@ -201,15 +204,15 @@ namespace WorkoutApp.API.Data
 
         private void SeedScheduledWorkouts()
         {
-            if (context.ScheduledUserWorkouts.Any())
+            if (context.ScheduledWorkouts.Any())
             {
                 return;
             }
 
             string data = System.IO.File.ReadAllText("Data/Seed Data/ScheduledUserWorkoutsSeedData.json");
-            List<ScheduledUserWorkout> scheduledWorkouts = JsonConvert.DeserializeObject<List<ScheduledUserWorkout>>(data);
+            List<ScheduledWorkout> scheduledWorkouts = JsonConvert.DeserializeObject<List<ScheduledWorkout>>(data);
 
-            scheduledWorkouts.ForEach(sWo => context.ScheduledUserWorkouts.Add(sWo));
+            scheduledWorkouts.ForEach(sWo => context.ScheduledWorkouts.Add(sWo));
 
             context.SaveChanges();
         }

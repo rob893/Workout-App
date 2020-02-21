@@ -202,7 +202,7 @@ namespace WorkoutApp.API.Controllers
 
             woParams.UserId = userId;
 
-            PagedList<ScheduledUserWorkout> workouts = await repo.GetScheduledUserWorkoutsAsync(woParams);
+            PagedList<ScheduledWorkout> workouts = await repo.GetScheduledUserWorkoutsAsync(woParams);
             Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
 
             var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWoForReturnDto>>(workouts);

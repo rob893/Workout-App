@@ -16,8 +16,11 @@ namespace WorkoutApp.API.Data
         public DbSet<Equipment> Equipment { get; set; }
         public DbSet<Muscle> Muscles { get; set; }
         public DbSet<Workout> Workouts { get; set; }
-        public DbSet<ScheduledUserWorkout> ScheduledUserWorkouts { get; set; }
+        public DbSet<ScheduledWorkout> ScheduledWorkouts { get; set; }
         public DbSet<WorkoutInvitation> WorkoutInvitations { get; set; }
+        public DbSet<WorkoutCompletionRecord> WorkoutCompletionRecords { get; set; }
+        public DbSet<ExerciseGroupCompletionRecord> ExerciseGroupCompletionRecords { get; set; }
+        public DbSet<ExerciseSetCompletionRecord> ExerciseSetCompletionRecords { get; set; }
     
         public DataContext(DbContextOptions<DataContext> options) : base (options){}
 
@@ -63,20 +66,18 @@ namespace WorkoutApp.API.Data
                     .WithMany(ex => ex.FavoritedBy)
                     .HasForeignKey(fe => fe.ExerciseId);
             });
+
+            modelBuilder.Entity<ScheduledWorkout>(workout =>
+            {
+                workout.HasOne(wo => wo.ScheduledByUser)
+                    .WithMany(user => user.OwnedScheduledWorkouts)
+                    .HasForeignKey(wo => wo.ScheduledByUserId);
+
+                //workout.HasMany(wo => wo.Attendees)
+            });
                 
             modelBuilder.Entity<ExerciseStep>()
                 .HasKey(k => new { k.ExerciseId, k.ExerciseStepNumber });
-            
-            modelBuilder.Entity<ExtraSchUsrWoAttendee>(extraSchUsrWoAttendee => 
-            {
-                extraSchUsrWoAttendee.HasKey(k => new { k.UserId, k.ScheduledUserWorkoutId });
-
-                extraSchUsrWoAttendee.HasOne(attendee => attendee.ScheduledUserWorkout)
-                    .WithMany(schUsrWo => schUsrWo.ExtraSchUsrWoAttendees)
-                    .HasForeignKey(attendee => attendee.ScheduledUserWorkoutId);
-
-                extraSchUsrWoAttendee.HasOne(attendee => attendee.User);
-            });
 
             modelBuilder.Entity<ExerciseCategoryExercise>(exCatEx => 
             {

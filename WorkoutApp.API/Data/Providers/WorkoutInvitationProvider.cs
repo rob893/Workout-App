@@ -34,7 +34,7 @@ namespace WorkoutApp.API.Data.Providers
         {
             return await context.WorkoutInvitations
                 .AsNoTracking()
-                .Where(woInv => woInv.InviteeId == inviteeId && woInv.InviterId == inviterId && woInv.ScheduledUserWorkoutId == scheduledWorkoutId)
+                .Where(woInv => woInv.InviteeId == inviteeId && woInv.InviterId == inviterId && woInv.ScheduledWorkoutId == scheduledWorkoutId)
                 .FirstOrDefaultAsync();
         }
 

@@ -130,25 +130,25 @@ namespace WorkoutApp.API.Controllers
                 workoutToUpdate.Shareable = workoutUpdate.Shareable.Value;
             }
 
-            if (workoutUpdate.ExerciseGroupIdsToRemove != null)
-            {
-                changed = true;
+            // if (workoutUpdate.ExerciseGroupIdsToRemove != null)
+            // {
+            //     changed = true;
 
-                HashSet<int> idsToRemove = new HashSet<int>(workoutUpdate.ExerciseGroupIdsToRemove);
-                workoutToUpdate.ExerciseGroups.RemoveAll(eg => idsToRemove.Contains(eg.Id));
-            }
+            //     HashSet<int> idsToRemove = new HashSet<int>(workoutUpdate.ExerciseGroupIdsToRemove);
+            //     workoutToUpdate.ExerciseGroups.RemoveAll(eg => idsToRemove.Contains(eg.Id));
+            // }
 
-            if (workoutUpdate.ExerciseGroupsToAdd != null)
-            {
-                changed = true;
+            // if (workoutUpdate.ExerciseGroupsToAdd != null)
+            // {
+            //     changed = true;
 
-                foreach (ExerciseGroupForCreationDto exGroup in workoutUpdate.ExerciseGroupsToAdd)
-                {
-                    ExerciseGroup newGroup = mapper.Map<ExerciseGroup>(exGroup);
-                    newGroup.Workout = workoutToUpdate;
-                    repo.Add<ExerciseGroup>(newGroup);
-                }
-            }
+            //     foreach (ExerciseGroupForCreationDto exGroup in workoutUpdate.ExerciseGroupsToAdd)
+            //     {
+            //         ExerciseGroup newGroup = mapper.Map<ExerciseGroup>(exGroup);
+            //         newGroup.Workout = workoutToUpdate;
+            //         repo.Add<ExerciseGroup>(newGroup);
+            //     }
+            // }
 
             if (changed)
             {

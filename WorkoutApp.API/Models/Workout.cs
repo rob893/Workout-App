@@ -7,6 +7,7 @@ namespace WorkoutApp.API.Models
     {
         public int Id { get; set; }
         public string Label { get; set; }
+        public string Description { get; set; }
         public string Color { get; set; }
         public User CreatedByUser { get; set; }
         public int CreatedByUserId { get; set; }

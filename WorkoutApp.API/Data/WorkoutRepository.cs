@@ -130,31 +130,31 @@ namespace WorkoutApp.API.Data
             return await PagedList<Workout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
         }
 
-        public async Task<ScheduledUserWorkout> GetScheduledUserWorkoutAsync(int id)
+        public async Task<ScheduledWorkout> GetScheduledUserWorkoutAsync(int id)
         {
-            return await context.ScheduledUserWorkouts
+            return await context.ScheduledWorkouts
                 .Include(wo => wo.Workout).ThenInclude(wo => wo.CreatedByUser)
                 .Include(wo => wo.Workout).ThenInclude(wo => wo.ExerciseGroups).ThenInclude(eg => eg.Exercise)
                 .Include(wo => wo.AdHocExercises)
-                .Include(wo => wo.ExtraSchUsrWoAttendees).ThenInclude(attendee => attendee.User)
-                .Include(wo => wo.User)
+                .Include(wo => wo.Attendees)
+                .Include(wo => wo.ScheduledByUser)
                 .FirstOrDefaultAsync(wo => wo.Id == id);
         }
 
-        public async Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams)
+        public async Task<PagedList<ScheduledWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams)
         {
-            IQueryable<ScheduledUserWorkout> workouts = context.ScheduledUserWorkouts.OrderBy(wo => wo.ScheduledDateTime)
+            IQueryable<ScheduledWorkout> workouts = context.ScheduledWorkouts.OrderBy(wo => wo.ScheduledDateTime)
                 .Include(wo => wo.Workout).ThenInclude(wo => wo.CreatedByUser)
                 .Include(wo => wo.Workout).ThenInclude(wo => wo.ExerciseGroups).ThenInclude(eg => eg.Exercise)
                 .Include(wo => wo.AdHocExercises)
-                .Include(wo => wo.ExtraSchUsrWoAttendees).ThenInclude(attendee => attendee.User)
-                .Include(wo => wo.User);
+                .Include(wo => wo.Attendees)
+                .Include(wo => wo.ScheduledByUser);
 
-            if (woParams.UserId != null)
-            {
-                workouts = workouts.Where(wo => wo.UserId == woParams.UserId.Value ||
-                    wo.ExtraSchUsrWoAttendees.Select(a => a.UserId).Contains(woParams.UserId.Value));
-            }
+            // if (woParams.UserId != null)
+            // {
+            //     workouts = workouts.Where(wo => wo.UserId == woParams.UserId.Value ||
+            //         wo.ExtraSchUsrWoAttendees.Select(a => a.UserId).Contains(woParams.UserId.Value));
+            // }
 
             if (woParams.MinDate != null)
             {
@@ -166,7 +166,7 @@ namespace WorkoutApp.API.Data
                 workouts = workouts.Where(wo => wo.ScheduledDateTime <= woParams.MaxDate.Value.AddHours(23).AddMinutes(59));
             }
 
-            return await PagedList<ScheduledUserWorkout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
+            return await PagedList<ScheduledWorkout>.CreateAsync(workouts, woParams.PageNumber, woParams.PageSize);
         }
 
         public async Task<WorkoutInvitation> GetWorkoutInvitationAsync(int id)

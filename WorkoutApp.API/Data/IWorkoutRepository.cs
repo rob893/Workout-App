@@ -22,8 +22,8 @@ namespace WorkoutApp.API.Data
         Task<Muscle> GetMuscleAsync(int id);
         Task<IEnumerable<Muscle>> GetMusclesAsync();
 
-        Task<ScheduledUserWorkout> GetScheduledUserWorkoutAsync(int id);
-        Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams);
+        Task<ScheduledWorkout> GetScheduledUserWorkoutAsync(int id);
+        Task<PagedList<ScheduledWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams);
 
         Task<WorkoutInvitation> GetWorkoutInvitationAsync(int id);
 

@@ -48,11 +48,11 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("Invalid workout id!", 400, Request));
             }
 
-            ScheduledUserWorkout newWorkout = mapper.Map<ScheduledUserWorkout>(newWorkoutDto);
+            var newWorkout = mapper.Map<ScheduledWorkout>(newWorkoutDto);
 
-            newWorkout.UserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            newWorkout.ScheduledByUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            repo.Add<ScheduledUserWorkout>(newWorkout);
+            repo.Add<ScheduledWorkout>(newWorkout);
 
             if (await repo.SaveAllAsync())
             {
@@ -67,20 +67,20 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSceduledWorkout(int id)
         {
-            ScheduledUserWorkout workout = await repo.GetScheduledUserWorkoutAsync(id);
+            var workout = await repo.GetScheduledUserWorkoutAsync(id);
 
             if (workout == null)
             {
                 return NotFound();
             }
 
-            if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            if (workout.ScheduledByUserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
                 return Unauthorized();
             }
 
             repo.DeleteRange<ExerciseGroup>(workout.AdHocExercises);
-            repo.Delete<ScheduledUserWorkout>(workout);
+            repo.Delete<ScheduledWorkout>(workout);
 
             if (await repo.SaveAllAsync())
             {
@@ -91,21 +91,21 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ScheduledWoForReturnDto>> UpdateScheduledWorkout(int id, [FromBody] JsonPatchDocument<ScheduledUserWorkout> patchDoc)
+        public async Task<ActionResult<ScheduledWoForReturnDto>> UpdateScheduledWorkout(int id, [FromBody] JsonPatchDocument<ScheduledWorkout> patchDoc)
         {
             if (patchDoc == null)
             {
                 return BadRequest();
             }
 
-            ScheduledUserWorkout workout = await repo.GetScheduledUserWorkoutAsync(id);
+            var workout = await repo.GetScheduledUserWorkoutAsync(id);
 
             if (workout == null)
             {
                 return NotFound();
             }
 
-            if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            if (workout.ScheduledByUserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
                 return Unauthorized();
             }
@@ -125,14 +125,14 @@ namespace WorkoutApp.API.Controllers
         [HttpPatch("{id}/startWorkout")]
         public async Task<ActionResult<ScheduledWoForReturnDto>> StartWorkout(int id)
         {
-            ScheduledUserWorkout workout = await repo.GetScheduledUserWorkoutAsync(id);
+            var workout = await repo.GetScheduledUserWorkoutAsync(id);
 
             if (workout == null)
             {
                 return NotFound();
             }
 
-            if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            if (workout.ScheduledByUserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
                 return Unauthorized();
             }
@@ -164,7 +164,7 @@ namespace WorkoutApp.API.Controllers
                 return NotFound();
             }
 
-            if (workout.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            if (workout.ScheduledByUserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
                 return Unauthorized();
             }
