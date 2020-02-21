@@ -40,7 +40,9 @@ namespace WorkoutApp.API.Data
 
         public async Task<User> GetUserAsync(int id)
         {
-            User user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            User user = await context.Users.Include(u => u.CreatedWorkouts)
+                .Include(u => u.FavoriteExercises)
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             return user;
         }

@@ -70,6 +70,21 @@ namespace WorkoutApp.API.Data.Providers
             return exercises.Shuffle().Take(numExercises);
         }
 
+        public async Task<IEnumerable<Exercise>> GetFavoriteExercisesForUserAsync(int userId)
+        {
+            var exercises = await context.Users.AsNoTracking()
+                .Where(u => u.Id == userId)
+                .SelectMany(u => u.FavoriteExercises.Select(fe => fe.Exercise))
+                .Include(e => e.ExerciseCategorys).ThenInclude(ec => ec.ExerciseCategory)
+                .Include(e => e.Equipment).ThenInclude(eq => eq.Equipment)
+                .Include(e => e.PrimaryMuscle)
+                .Include(e => e.SecondaryMuscle)
+                .Include(e => e.ExerciseSteps)
+                .ToListAsync();
+
+            return exercises;
+        }
+
         public async Task<IEnumerable<Exercise>> GetRandomExercisesAsync(int numExercises, string exerciseCategory = null)
         {
             IQueryable<Exercise> exercisesQ = context.Exercises.AsNoTracking()

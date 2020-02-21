@@ -12,6 +12,7 @@ using WorkoutApp.API.Helpers.QueryParams;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using WorkoutApp.API.Data.Providers;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -20,17 +21,19 @@ namespace WorkoutApp.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IWorkoutRepository repo;
+        private readonly ExerciseProvider exerciseProvider;
         private readonly IMapper mapper;
         private readonly DataContext context;
         private readonly UserManager<User> userManager;
 
 
-        public UsersController(IWorkoutRepository repo, IMapper mapper, DataContext context, UserManager<User> userManager)
+        public UsersController(IWorkoutRepository repo, IMapper mapper, DataContext context, UserManager<User> userManager, ExerciseProvider exerciseProvider)
         {
             this.repo = repo; 
             this.mapper = mapper;
             this.context = context;
             this.userManager = userManager;
+            this.exerciseProvider = exerciseProvider;
         }
 
         [HttpGet]
@@ -115,6 +118,78 @@ namespace WorkoutApp.API.Controllers
             IEnumerable<WorkoutForReturnDto> workoutsForReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
 
             return Ok(workoutsForReturn);
+        }
+
+        [HttpGet("{userId}/favorites/exercises")]
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> GetUserFavoriteExercises(int userId, [FromQuery] string exerciseCategory)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var exercises = await exerciseProvider.GetFavoriteExercisesForUserAsync(userId);
+
+            var dtos = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
+
+            return Ok(dtos);
+        }
+
+        [HttpPost("{userId}/favorites/exercises/{exerciseId}")]
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> FavoriteAnExercise(int userId, int exerciseId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var user = await repo.GetUserAsync(userId);
+            var exercise = await repo.GetExerciseAsync(exerciseId);
+
+            if (user.FavoriteExercises.Any(e => e.ExerciseId == exerciseId))
+            {
+                return BadRequest(new ProblemDetailsWithErrors("You cannot favorite the same exercise more than once.", 400, Request));
+            }
+
+            user.FavoriteExercises.Add(new UserFavoriteExercise
+            {
+                Exercise = exercise
+            });
+
+            if (!await repo.SaveAllAsync())
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Unable to favorite the exercise.", 400, Request));
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{userId}/favorites/exercises/{exerciseId}")]
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> UnfavoriteAnExercise(int userId, int exerciseId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var user = await repo.GetUserAsync(userId);
+            var exercise = await repo.GetExerciseAsync(exerciseId);
+
+            var exerciseToRemove = user.FavoriteExercises.FirstOrDefault(fe => fe.ExerciseId == exerciseId);
+
+            if (exerciseToRemove == null)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("You cannot unfavorite an exercise you have not favorited.", 400, Request));
+            }
+
+            user.FavoriteExercises.Remove(exerciseToRemove);
+
+            if (!await repo.SaveAllAsync())
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Unable to favorite the exercise.", 400, Request));
+            }
+
+            return NoContent();
         }
 
         [HttpGet("{userId}/scheduledWorkouts")]
