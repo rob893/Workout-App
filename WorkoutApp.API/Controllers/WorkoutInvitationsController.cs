@@ -110,7 +110,11 @@ namespace WorkoutApp.API.Controllers
             woInv.RespondedAtDateTime = DateTime.Now;
 
             ScheduledWorkout schWo = await repo.GetScheduledUserWorkoutAsync(woInv.ScheduledWorkoutId);
-            schWo.Attendees.Add(user);
+            schWo.Attendees.Add(new ScheduledWorkoutUser
+            {
+                User = user,
+                ScheduledWorkout = schWo
+            });
 
             if (await repo.SaveAllAsync())
             {

@@ -12,7 +12,7 @@ namespace WorkoutApp.API.Models
         public List<UserFavoriteExercise> FavoriteExercises { get; set; }
         public List<Workout> CreatedWorkouts { get; set; }
         public List<ScheduledWorkout> OwnedScheduledWorkouts { get; set; }
-        public List<ScheduledWorkout> ScheduledWorkouts { get; set; }
+        public List<ScheduledWorkoutUser> ScheduledWorkouts { get; set; }
         public List<UserRole> UserRoles { get; set; }
         public List<WorkoutInvitation> ReceivedInvitations { get; set; }
         public List<WorkoutInvitation> SentInvitations { get; set; }

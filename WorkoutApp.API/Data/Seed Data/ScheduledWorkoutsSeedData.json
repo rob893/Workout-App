@@ -1,0 +1,307 @@
+[
+    {
+        "Id": 1,
+        "ScheduledByUserId": 3,
+        "WorkoutId": 4,
+        "ScheduledDateTime": "5/25/19 9am",
+        "Attendees": [
+            {
+                "ScheduledWorkoutId": 1,
+                "UserId": 3
+            }
+        ],
+        "WorkoutCompletionRecords": [
+            {
+                "UserId": 3,
+                "WorkoutId": 4,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseGroupCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 1,
+                "ExerciseGroupId": 8,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseSetCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 1,
+                "Notes": "Some notes"
+            }
+        ]
+    },
+    {
+        "Id": 2,
+        "ScheduledByUserId": 3,
+        "WorkoutId": 1,
+        "ScheduledDateTime": "5/25/19 3pm",
+        "Attendees": [
+            {
+                "ScheduledWorkoutId": 2,
+                "UserId": 3
+            }
+        ],
+        "WorkoutCompletionRecords": [
+            {
+                "UserId": 3,
+                "WorkoutId": 1,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseGroupCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 6,
+                "ExerciseGroupId": 1,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseSetCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 6,
+                "Notes": "Some notes"
+            }
+        ]
+    },
+    {
+        "Id": 3,
+        "ScheduledByUserId": 3,
+        "WorkoutId": 2,
+        "ScheduledDateTime": "5/26/19 9am",
+        "Attendees": [
+            {
+                "ScheduledWorkoutId": 3,
+                "UserId": 3
+            }
+        ],
+        "WorkoutCompletionRecords": [
+            {
+                "UserId": 3,
+                "WorkoutId": 2,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseGroupCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 5,
+                "ExerciseGroupId": 4,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseSetCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 5,
+                "Notes": "Some notes"
+            }
+        ]
+    },
+    {
+        "Id": 4,
+        "ScheduledByUserId": 3,
+        "WorkoutId": 3,
+        "ScheduledDateTime": "5/27/19 9am",
+        "AdHocExercises": [
+            {
+                "ExerciseId": 6,
+                "Sets": 3,
+                "Repetitions": 12
+            }
+        ],
+        "Attendees": [
+            {
+                "ScheduledWorkoutId": 4,
+                "UserId": 3
+            },
+            {
+                "ScheduledWorkoutId": 4,
+                "UserId": 5
+            }
+        ],
+        "WorkoutCompletionRecords": [
+            {
+                "UserId": 3,
+                "WorkoutId": 3,
+                "Notes": "Some notes"
+            },
+            {
+                "UserId": 5,
+                "WorkoutId": 3,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseGroupCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 1,
+                "ExerciseGroupId": 6,
+                "Notes": "Some notes"
+            },
+            {
+                "UserId": 5,
+                "ExerciseId": 1,
+                "ExerciseGroupId": 6,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseSetCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 1,
+                "Notes": "Some notes"
+            },
+            {
+                "UserId": 5,
+                "ExerciseId": 1,
+                "Notes": "Some notes"
+            }
+        ]
+    },
+    {
+        "Id": 5,
+        "ScheduledByUserId": 2,
+        "WorkoutId": 4,
+        "ScheduledDateTime": "5/25/19 9am",
+        "Attendees": [
+            {
+                "ScheduledWorkoutId": 5,
+                "UserId": 2
+            }
+        ],
+        "WorkoutCompletionRecords": [
+            {
+                "UserId": 2,
+                "WorkoutId": 4,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseGroupCompletionRecords": [
+            {
+                "UserId": 2,
+                "ExerciseId": 1,
+                "ExerciseGroupId": 8,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseSetCompletionRecords": [
+            {
+                "UserId": 2,
+                "ExerciseId": 1,
+                "Notes": "Some notes"
+            }
+        ]
+    },
+    {
+        "Id": 6,
+        "ScheduledByUserId": 5,
+        "WorkoutId": 2,
+        "ScheduledDateTime": "5/28/19 9am",
+        "Attendees": [
+            {
+                "ScheduledWorkoutId": 6,
+                "UserId": 3
+            },
+            {
+                "ScheduledWorkoutId": 6,
+                "UserId": 5
+            }
+        ],
+        "WorkoutCompletionRecords": [
+            {
+                "UserId": 3,
+                "WorkoutId": 2,
+                "Notes": "Some notes"
+            },
+            {
+                "UserId": 5,
+                "WorkoutId": 2,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseGroupCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 5,
+                "ExerciseGroupId": 4,
+                "Notes": "Some notes"
+            },
+            {
+                "UserId": 5,
+                "ExerciseId": 5,
+                "ExerciseGroupId": 4,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseSetCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 5,
+                "Notes": "Some notes"
+            },
+            {
+                "UserId": 5,
+                "ExerciseId": 5,
+                "Notes": "Some notes"
+            }
+        ]
+    },
+    {
+        "Id": 7,
+        "ScheduledByUserId": 4,
+        "WorkoutId": 2,
+        "ScheduledDateTime": "5/28/19 9am",
+        "Attendees": [
+            {
+                "ScheduledWorkoutId": 7,
+                "UserId": 3
+            },
+            {
+                "ScheduledWorkoutId": 7,
+                "UserId": 4
+            }
+        ],
+        "WorkoutCompletionRecords": [
+            {
+                "UserId": 3,
+                "WorkoutId": 2,
+                "Notes": "Some notes"
+            },
+            {
+                "UserId": 7,
+                "WorkoutId": 2,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseGroupCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 5,
+                "ExerciseGroupId": 4,
+                "Notes": "Some notes"
+            },
+            {
+                "UserId": 7,
+                "ExerciseId": 5,
+                "ExerciseGroupId": 4,
+                "Notes": "Some notes"
+            }
+        ],
+        "ExerciseSetCompletionRecords": [
+            {
+                "UserId": 3,
+                "ExerciseId": 5,
+                "Notes": "Some notes"
+            },
+            {
+                "UserId": 7,
+                "ExerciseId": 5,
+                "Notes": "Some notes"
+            }
+        ]
+    }
+]

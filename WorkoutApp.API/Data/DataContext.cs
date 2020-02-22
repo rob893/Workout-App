@@ -72,8 +72,19 @@ namespace WorkoutApp.API.Data
                 workout.HasOne(wo => wo.ScheduledByUser)
                     .WithMany(user => user.OwnedScheduledWorkouts)
                     .HasForeignKey(wo => wo.ScheduledByUserId);
+            });
 
-                //workout.HasMany(wo => wo.Attendees)
+            modelBuilder.Entity<ScheduledWorkoutUser>(sWoUser =>
+            {
+                sWoUser.HasKey(k => new { k.UserId, k.ScheduledWorkoutId });
+
+                sWoUser.HasOne(swu => swu.User)
+                    .WithMany(user => user.ScheduledWorkouts)
+                    .HasForeignKey(swu => swu.UserId);
+
+                sWoUser.HasOne(swu => swu.ScheduledWorkout)
+                    .WithMany(swo => swo.Attendees)
+                    .HasForeignKey(swu => swu.ScheduledWorkoutId);
             });
                 
             modelBuilder.Entity<ExerciseStep>()

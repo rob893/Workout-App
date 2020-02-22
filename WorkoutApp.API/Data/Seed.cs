@@ -209,7 +209,7 @@ namespace WorkoutApp.API.Data
                 return;
             }
 
-            string data = System.IO.File.ReadAllText("Data/Seed Data/ScheduledUserWorkoutsSeedData.json");
+            string data = System.IO.File.ReadAllText("Data/Seed Data/ScheduledWorkoutsSeedData.json");
             List<ScheduledWorkout> scheduledWorkouts = JsonConvert.DeserializeObject<List<ScheduledWorkout>>(data);
 
             scheduledWorkouts.ForEach(sWo => context.ScheduledWorkouts.Add(sWo));

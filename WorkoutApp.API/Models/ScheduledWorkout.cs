@@ -8,7 +8,7 @@ namespace WorkoutApp.API.Models
         public int Id { get; set; }
         public User ScheduledByUser { get; set; }
         public int ScheduledByUserId { get; set; }
-        public List<User> Attendees { get; set; }
+        public List<ScheduledWorkoutUser> Attendees { get; set; }
         public Workout Workout { get; set; }
         public int WorkoutId { get; set; }
         public List<ExerciseGroup> AdHocExercises { get; set; }
