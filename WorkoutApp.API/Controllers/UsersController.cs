@@ -10,9 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Helpers.QueryParams;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using WorkoutApp.API.Data.Providers;
+using WorkoutApp.API.Data.Repositories;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -23,81 +22,147 @@ namespace WorkoutApp.API.Controllers
         private readonly IWorkoutRepository repo;
         private readonly ExerciseProvider exerciseProvider;
         private readonly IMapper mapper;
-        private readonly DataContext context;
-        private readonly UserManager<User> userManager;
+        private readonly UserRepository userRepository;
 
 
-        public UsersController(IWorkoutRepository repo, IMapper mapper, DataContext context, UserManager<User> userManager, ExerciseProvider exerciseProvider)
+        public UsersController(IWorkoutRepository repo, IMapper mapper, ExerciseProvider exerciseProvider, UserRepository userRepository)
         {
-            this.repo = repo; 
+            this.repo = repo;
             this.mapper = mapper;
-            this.context = context;
-            this.userManager = userManager;
             this.exerciseProvider = exerciseProvider;
+            this.userRepository = userRepository;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserForReturnDto>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetUsersAsync()
         {
-            List<User> users = await repo.GetUsersAsync();
+            var users = await userRepository.GetUsersAsync();
 
-            List<UserForReturnDto> usersToReturn = mapper.Map<List<UserForReturnDto>>(users);
+            var usersToReturn = mapper.Map<IEnumerable<UserForReturnDto>>(users);
 
             return Ok(usersToReturn);
         }
 
         [Authorize(Policy = "RequireAdminRole")]
-        [HttpGet("usersWithRoles")]
-        public async Task<IActionResult> GetUsersWithRoles() //Change this. Dont want context in controller
-        {   
-            var userList = await (from user in context.Users orderby user.UserName
-                                    select new 
-                                    {
-                                        Id = user.Id,
-                                        UserName = user.UserName,
-                                        Roles = (from userRole in user.UserRoles
-                                            join role in context.Roles
-                                            on userRole.RoleId
-                                            equals role.Id
-                                            select role.Name).ToList()
-                                    }).ToListAsync();
-            return Ok(userList);
+        [HttpGet("detailed")]
+        public async Task<ActionResult<IEnumerable<UserForReturnDetailedDto>>> GetUsersDetailedAsync()
+        {
+            var users = await userRepository.GetUsersDetailedAsync();
+            var usersToReturn = mapper.Map<IEnumerable<UserForReturnDetailedDto>>(users);
+
+            return Ok(usersToReturn);
+        }
+
+        [HttpGet("{id}", Name = "GetUserAsync")]
+        public async Task<ActionResult<UserForReturnDto>> GetUserAsync(int id)
+        {
+            var user = await userRepository.GetUserAsync(id);
+
+            var userToReturn = mapper.Map<UserForReturnDto>(user);
+
+            return Ok(userToReturn);
         }
 
         [Authorize(Policy = "RequireAdminRole")]
-        [HttpPost("{id}/editRoles")]
-        public async Task<IActionResult> EditRoles(int id, [FromBody] RoleEditDto roleEditDto)
+        [HttpGet("{id}/detailed")]
+        public async Task<ActionResult<UserForReturnDetailedDto>> GetUserDetailedAsync(int id)
         {
-            User user = await userManager.FindByIdAsync(id.ToString());
+            var users = await userRepository.GetUserDetailedAsync(id);
+            var usersToReturn = mapper.Map<UserForReturnDetailedDto>(users);
 
-            IList<string> userRoles = await userManager.GetRolesAsync(user);
-
-            string[] selectedRoles = roleEditDto.RoleNames;
-
-            selectedRoles = selectedRoles ?? new string[] {};
-            var result = await userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
-
-            if (!result.Succeeded)
-            {
-                return BadRequest("Failed to add to roles.");
-            }
-
-            result = await userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
-
-            if (!result.Succeeded)
-            {
-                return BadRequest("Failed to remove roles.");
-            }
-
-            return Ok(await userManager.GetRolesAsync(user));
+            return Ok(usersToReturn);
         }
 
-        [HttpGet("{id}", Name="GetUser")]
-        public async Task<IActionResult> GetUser(int id)
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpGet("roles")]
+        public async Task<ActionResult<RoleForReturnDto>> GetRolesAsync()
         {
-            User user = await repo.GetUserAsync(id);
+            var roles = await userRepository.GetRolesAsync();
 
-            UserForReturnDto userToReturn = mapper.Map<UserForReturnDto>(user);
+            var rolesForReturn = mapper.Map<IEnumerable<RoleForReturnDto>>(roles);
+
+            return Ok(rolesForReturn);
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPost("{id}/roles")]
+        public async Task<ActionResult<UserForReturnDetailedDto>> AddRolesAsync(int id, [FromBody] RoleEditDto roleEditDto)
+        {
+            if (roleEditDto.RoleNames == null || roleEditDto.RoleNames.Length == 0)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("At least one role must be specified.", 400, Request));
+            }
+
+            var user = await userRepository.GetUserDetailedAsync(id);
+            var roles = await userRepository.GetRolesAsync();
+
+            var userRoles = user.UserRoles.Select(ur => ur.Role.Name.ToUpper()).ToHashSet();
+            var selectedRoles = roleEditDto.RoleNames.Select(role => role.ToUpper()).ToHashSet();
+
+            var rolesToAdd = roles.Where(role =>
+            {
+                var upperName = role.Name.ToUpper();
+                return selectedRoles.Contains(upperName) && !userRoles.Contains(upperName);
+            });
+
+            if (rolesToAdd.Count() == 0)
+            {
+                return Ok(mapper.Map<UserForReturnDetailedDto>(user));
+            }
+
+            user.UserRoles.AddRange(rolesToAdd.Select(role => new UserRole
+            {
+                Role = role
+            }));
+
+            var success = await userRepository.SaveAllAsync();
+
+            if (!success)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Failed to add roles.", 400, Request));
+            }
+
+            var userToReturn = mapper.Map<UserForReturnDetailedDto>(user);
+
+            return Ok(userToReturn);
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpDelete("{id}/roles")]
+        public async Task<ActionResult<UserForReturnDetailedDto>> RemoveRolesAsync(int id, [FromBody] RoleEditDto roleEditDto)
+        {
+            if (roleEditDto.RoleNames == null || roleEditDto.RoleNames.Length == 0)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("At least one role must be specified.", 400, Request));
+            }
+
+            var user = await userRepository.GetUserDetailedAsync(id);
+            var roles = await userRepository.GetRolesAsync();
+
+            var userRoles = user.UserRoles.Select(ur => ur.Role.Name.ToUpper()).ToHashSet();
+            var selectedRoles = roleEditDto.RoleNames.Select(role => role.ToUpper()).ToHashSet();
+
+            var roleIdsToRemove = roles.Where(role =>
+            {
+                var upperName = role.Name.ToUpper();
+                return selectedRoles.Contains(upperName) && userRoles.Contains(upperName);
+            }).Select(role => role.Id).ToHashSet();
+
+            if (roleIdsToRemove.Count() == 0)
+            {
+                return Ok(mapper.Map<UserForReturnDetailedDto>(user));
+            }
+
+            user.UserRoles.RemoveAll(ur => roleIdsToRemove.Contains(ur.RoleId));
+
+            var success = await userRepository.SaveAllAsync();
+
+            if (!success)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Failed to remove roles.", 400, Request));
+            }
+
+            var userToReturn = mapper.Map<UserForReturnDetailedDto>(user);
 
             return Ok(userToReturn);
         }

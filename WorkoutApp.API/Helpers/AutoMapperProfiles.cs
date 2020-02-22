@@ -10,8 +10,13 @@ namespace WorkoutApp.API.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<User, UserForReturnDto>();
+            CreateMap<User, UserForReturnDetailedDto>()
+                .ForMember(dto => dto.Roles, opt =>
+                    opt.MapFrom(u => u.UserRoles.Select(ur => ur.Role.Name)));
+
             CreateMap<UserForRegisterDto, User>();
-            
+            CreateMap<Role, RoleForReturnDto>();
+
             CreateMap<Workout, WorkoutForReturnDto>();
             CreateMap<WorkoutForCreationDto, Workout>();
             CreateMap<WorkoutForUpdateDto, Workout>();
@@ -26,17 +31,20 @@ namespace WorkoutApp.API.Helpers
             CreateMap<Exercise, ExerciseForReturnDto>();
             CreateMap<Exercise, ExerciseForReturnDetailedDto>()
                 .ForMember(dto => dto.ExerciseSteps, opt =>
-                    opt.MapFrom(ex => ex.ExerciseSteps.Select(es => new ExerciseStepForReturnDto {
+                    opt.MapFrom(ex => ex.ExerciseSteps.Select(es => new ExerciseStepForReturnDto
+                    {
                         ExerciseStepNumber = es.ExerciseStepNumber,
                         Description = es.Description
                     }).ToList()))
-                .ForMember(dto => dto.Equipment, opt => 
-                    opt.MapFrom(ex => ex.Equipment.Select(exEq => new EquipmentForReturnDto {
+                .ForMember(dto => dto.Equipment, opt =>
+                    opt.MapFrom(ex => ex.Equipment.Select(exEq => new EquipmentForReturnDto
+                    {
                         Id = exEq.EquipmentId,
                         Name = exEq.Equipment.Name
                     }).ToList()))
                 .ForMember(dto => dto.ExerciseCategorys, opt =>
-                    opt.MapFrom(ex => ex.ExerciseCategorys.Select(ece => new ExerciseCategoryForReturnDto {
+                    opt.MapFrom(ex => ex.ExerciseCategorys.Select(ece => new ExerciseCategoryForReturnDto
+                    {
                         Id = ece.ExerciseCategoryId,
                         Name = ece.ExerciseCategory.Name
                     }).ToList()));

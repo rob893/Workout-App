@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,18 +11,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using WorkoutApp.API.Data;
 using WorkoutApp.API.Data.Providers;
+using WorkoutApp.API.Data.Repositories;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models;
 using WorkoutApp.API.Models.Settings;
@@ -57,7 +54,10 @@ namespace WorkoutApp.API
             {
                 options.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult();
             })
-            .AddNewtonsoftJson();
+            .AddNewtonsoftJson(options => 
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
 
             // Add the MySQL database context with connection info set in appsettings.json
             services.AddDbContext<DataContext>(x => x.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
@@ -95,6 +95,7 @@ namespace WorkoutApp.API
             services.AddScoped<IWorkoutRepository, WorkoutRepository>();
             services.AddScoped<ExerciseProvider>();
             services.AddScoped<WorkoutInvitationProvider>();
+            services.AddScoped<UserRepository>();
 
             services.AddTransient<Seed>();
         }
@@ -170,7 +171,7 @@ namespace WorkoutApp.API
 
                             var problem = new ProblemDetailsWithErrors(errorMessage, 401, context.Request);
 
-                            return context.Response.WriteAsync(JsonSerializer.Serialize(problem));
+                            return context.Response.WriteAsync(JsonConvert.SerializeObject(problem));
                         },
                         OnAuthenticationFailed = context =>
                         {
