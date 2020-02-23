@@ -18,6 +18,11 @@ namespace WorkoutApp.API.Data.Repositories
             context.Add(entity);
         }
 
+        public void AddRange(IEnumerable<T> entities)
+        {
+            context.AddRange(entities);
+        }
+
         public void Delete(T entity)
         {
             context.Remove(entity);

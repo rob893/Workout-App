@@ -105,12 +105,18 @@ namespace WorkoutApp.API.Controllers
 
             if (exercise.PrimaryMuscleId != null)
             {
-                newExercise.PrimaryMuscle = await repo.GetMuscleAsync(exercise.PrimaryMuscleId.Value);
+                newExercise.PrimaryMuscle = new Muscle
+                {
+                    Id = exercise.PrimaryMuscleId.Value
+                };
             }
 
             if (exercise.SecondaryMuscleId != null)
             {
-                newExercise.SecondaryMuscle = await repo.GetMuscleAsync(exercise.SecondaryMuscleId.Value);
+                newExercise.SecondaryMuscle = new Muscle
+                {
+                    Id = exercise.SecondaryMuscleId.Value
+                };
             }
 
             if (exercise.EquipmentIds != null)

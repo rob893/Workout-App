@@ -85,6 +85,15 @@ namespace WorkoutApp.API.Data
                     .WithMany(swo => swo.Attendees)
                     .HasForeignKey(swu => swu.ScheduledWorkoutId);
             });
+
+            modelBuilder.Entity<Exercise>(exercise =>
+            {
+                exercise.HasOne(e => e.PrimaryMuscle)
+                    .WithMany(m => m.PrimaryExercises);
+
+                exercise.HasOne(e => e.SecondaryMuscle)
+                    .WithMany(m => m.SecondaryExercises);
+            });
                 
             modelBuilder.Entity<ExerciseStep>()
                 .HasKey(k => new { k.ExerciseId, k.ExerciseStepNumber });

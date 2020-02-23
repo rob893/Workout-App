@@ -173,15 +173,5 @@ namespace WorkoutApp.API.Data
         {
             return await context.WorkoutInvitations.FirstOrDefaultAsync(woInv => woInv.Id == id);
         }
-
-        public async Task<Muscle> GetMuscleAsync(int id)
-        {
-            return await context.Muscles.FirstOrDefaultAsync(m => m.Id == id);
-        }
-
-        public async Task<IEnumerable<Muscle>> GetMusclesAsync()
-        {
-            return await context.Muscles.ToListAsync();
-        }
     }
 }

@@ -17,6 +17,10 @@ namespace WorkoutApp.API.Helpers
             CreateMap<UserForRegisterDto, User>();
             CreateMap<Role, RoleForReturnDto>();
 
+            CreateMap<Muscle, MuscleForReturnDto>();
+            CreateMap<Muscle, MuscleForReturnDetailedDto>();
+            CreateMap<MuscleForCreateDto, Muscle>();
+
             CreateMap<Workout, WorkoutForReturnDto>();
             CreateMap<WorkoutForCreationDto, Workout>();
             CreateMap<WorkoutForUpdateDto, Workout>();
@@ -53,11 +57,6 @@ namespace WorkoutApp.API.Helpers
             CreateMap<ExerciseGroupForCreationDto, ExerciseGroup>();
 
             CreateMap<EquipmentForCreationDto, Equipment>();
-            // CreateMap<EquipmentExercise, EquipmentForReturnDto>()
-            //     .ForMember(dto => dto.Id, opts =>
-            //         opts.MapFrom(exEq => exEq.EquipmentId))
-            //     .ForMember(dto => dto.Name, opts => 
-            //         opts.MapFrom(exEq => exEq.Equipment.Name));
             CreateMap<Equipment, EquipmentForReturnDto>().ReverseMap();
         }
     }
