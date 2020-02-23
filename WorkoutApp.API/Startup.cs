@@ -23,7 +23,7 @@ using WorkoutApp.API.Data;
 using WorkoutApp.API.Data.Providers;
 using WorkoutApp.API.Data.Repositories;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
 using WorkoutApp.API.Models.Settings;
 
 namespace WorkoutApp.API

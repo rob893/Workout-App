@@ -1,7 +1,7 @@
 using System.Linq;
 using AutoMapper;
-using WorkoutApp.API.Dtos;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
+using WorkoutApp.API.Models.Dtos;
 
 namespace WorkoutApp.API.Helpers
 {
@@ -22,8 +22,8 @@ namespace WorkoutApp.API.Helpers
             CreateMap<WorkoutForUpdateDto, Workout>();
             CreateMap<ScheduledWoForCreationDto, ScheduledWorkout>();
             CreateMap<ScheduledWorkout, ScheduledWoForReturnDto>()
-                .ForMember(dto => dto.ExtraSchUsrWoAttendees, opt =>
-                    opt.MapFrom(wo => wo.Attendees));
+                .ForMember(dto => dto.Attendees, opt =>
+                    opt.MapFrom(wo => wo.Attendees.Select(x => x.User)));
 
             CreateMap<ExerciseGroup, ExerciseGroupForReturnDto>();
 

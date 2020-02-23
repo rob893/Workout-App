@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
 using Newtonsoft.Json;
 using System.Linq;
-using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 

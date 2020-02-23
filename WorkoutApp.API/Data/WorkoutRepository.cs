@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
+using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Data
 {
@@ -141,7 +141,7 @@ namespace WorkoutApp.API.Data
                 .FirstOrDefaultAsync(wo => wo.Id == id);
         }
 
-        public async Task<PagedList<ScheduledWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams)
+        public async Task<PagedList<ScheduledWorkout>> GetScheduledUserWorkoutsAsync(ScheduledWorkoutSearchParams woParams)
         {
             IQueryable<ScheduledWorkout> workouts = context.ScheduledWorkouts.OrderBy(wo => wo.ScheduledDateTime)
                 .Include(wo => wo.Workout).ThenInclude(wo => wo.CreatedByUser)

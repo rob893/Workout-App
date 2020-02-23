@@ -4,11 +4,11 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using WorkoutApp.API.Data;
-using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutApp.API.Helpers.QueryParams;
+using WorkoutApp.API.Models.Dtos;
+using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -31,7 +31,7 @@ namespace WorkoutApp.API.Controllers
             PagedList<Workout> workouts = await repo.GetWorkoutsAsync(woParams);
 
             IEnumerable<WorkoutForReturnDto> workoutsToReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
-            Response.AddPagination(workouts.CurrentPage, workouts.PageSize, workouts.TotalCount, workouts.TotalPages);
+            Response.AddPagination(workouts.PageNumber, workouts.PageSize, workouts.TotalItems, workouts.TotalPages);
 
             return Ok(workoutsToReturn);
         }

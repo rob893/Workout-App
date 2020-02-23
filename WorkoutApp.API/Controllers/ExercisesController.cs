@@ -2,14 +2,13 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Data;
 using WorkoutApp.API.Data.Providers;
-using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
+using WorkoutApp.API.Models.Dtos;
+using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -60,7 +59,7 @@ namespace WorkoutApp.API.Controllers
         {
             PagedList<ExerciseForReturnDetailedDto> exercises = await exerciseProvider.GetExercisesDetailed(exParams);
 
-            Response.AddPagination(exercises.CurrentPage, exercises.PageSize, exercises.TotalCount, exercises.TotalPages);
+            Response.AddPagination(exercises.PageNumber, exercises.PageSize, exercises.TotalItems, exercises.TotalPages);
 
             return Ok(exercises);
         }
@@ -92,7 +91,7 @@ namespace WorkoutApp.API.Controllers
 
             PagedList<Equipment> equipment = await repo.GetExerciseEquipmentAsync(eqParams);
 
-            Response.AddPagination(equipment.CurrentPage, equipment.PageSize, equipment.TotalCount, equipment.TotalPages);
+            Response.AddPagination(equipment.PageNumber, equipment.PageSize, equipment.TotalItems, equipment.TotalPages);
 
             IEnumerable<EquipmentForReturnDto> equipmentForReturn = mapper.Map<IEnumerable<EquipmentForReturnDto>>(equipment);
 

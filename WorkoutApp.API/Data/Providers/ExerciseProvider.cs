@@ -1,14 +1,13 @@
-using System.Diagnostics.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using WorkoutApp.API.Dtos;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
+using WorkoutApp.API.Models.Dtos;
+using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Data.Providers
 {

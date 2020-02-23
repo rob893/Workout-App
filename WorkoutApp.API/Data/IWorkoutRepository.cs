@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
+using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Data
 {
@@ -23,7 +23,7 @@ namespace WorkoutApp.API.Data
         Task<IEnumerable<Muscle>> GetMusclesAsync();
 
         Task<ScheduledWorkout> GetScheduledUserWorkoutAsync(int id);
-        Task<PagedList<ScheduledWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams);
+        Task<PagedList<ScheduledWorkout>> GetScheduledUserWorkoutsAsync(ScheduledWorkoutSearchParams woParams);
 
         Task<WorkoutInvitation> GetWorkoutInvitationAsync(int id);
 

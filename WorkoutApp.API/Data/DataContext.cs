@@ -1,8 +1,7 @@
-using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
 
 namespace WorkoutApp.API.Data
 {

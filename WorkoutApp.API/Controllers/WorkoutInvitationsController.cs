@@ -4,8 +4,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using WorkoutApp.API.Data;
-using WorkoutApp.API.Dtos;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Dtos;
+using WorkoutApp.API.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Data.Providers;
 

@@ -4,7 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Data;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
 
 namespace WorkoutApp.API.Controllers
 {
