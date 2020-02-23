@@ -7,8 +7,8 @@ namespace WorkoutApp.API.Models.Dtos
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Muscle PrimaryMuscle { get; set; }
-        public Muscle SecondaryMuscle { get; set; }
+        public MuscleForReturnDto PrimaryMuscle { get; set; }
+        public MuscleForReturnDto SecondaryMuscle { get; set; }
         public List<ExerciseStepForReturnDto> ExerciseSteps { get; set; }
         public List<EquipmentForReturnDto> Equipment { get; set; }
         public List<ExerciseCategoryForReturnDto> ExerciseCategorys { get; set; }

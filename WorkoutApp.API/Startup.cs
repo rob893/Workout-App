@@ -97,6 +97,9 @@ namespace WorkoutApp.API
             services.AddScoped<WorkoutInvitationProvider>();
             services.AddScoped<UserRepository>();
             services.AddScoped<MuscleRepository>();
+            services.AddScoped<EquipmentRepository>();
+            services.AddScoped<ExerciseCategoryRepository>();
+            services.AddScoped<ExerciseRepository>();
 
             services.AddTransient<Seed>();
         }

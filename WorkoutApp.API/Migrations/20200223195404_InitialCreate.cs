@@ -66,7 +66,7 @@ namespace WorkoutApp.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExerciseCategorys",
+                name: "ExerciseCategories",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -75,7 +75,7 @@ namespace WorkoutApp.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExerciseCategorys", x => x.Id);
+                    table.PrimaryKey("PK_ExerciseCategories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,7 +84,8 @@ namespace WorkoutApp.API.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -321,9 +322,9 @@ namespace WorkoutApp.API.Migrations
                 {
                     table.PrimaryKey("PK_ExerciseCategoryExercise", x => new { x.ExerciseCategoryId, x.ExerciseId });
                     table.ForeignKey(
-                        name: "FK_ExerciseCategoryExercise_ExerciseCategorys_ExerciseCategoryId",
+                        name: "FK_ExerciseCategoryExercise_ExerciseCategories_ExerciseCategory~",
                         column: x => x.ExerciseCategoryId,
-                        principalTable: "ExerciseCategorys",
+                        principalTable: "ExerciseCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -819,7 +820,7 @@ namespace WorkoutApp.API.Migrations
                 name: "Equipment");
 
             migrationBuilder.DropTable(
-                name: "ExerciseCategorys");
+                name: "ExerciseCategories");
 
             migrationBuilder.DropTable(
                 name: "ExerciseGroups");

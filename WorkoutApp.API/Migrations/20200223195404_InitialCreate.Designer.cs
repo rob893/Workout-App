@@ -9,8 +9,8 @@ using WorkoutApp.API.Data;
 namespace WorkoutApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200223160933_UpatedMuscleSchem")]
-    partial class UpatedMuscleSchem
+    [Migration("20200223195404_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -167,7 +167,7 @@ namespace WorkoutApp.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ExerciseCategorys");
+                    b.ToTable("ExerciseCategories");
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.Domain.ExerciseCategoryExercise", b =>

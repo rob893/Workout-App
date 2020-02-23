@@ -165,7 +165,7 @@ namespace WorkoutApp.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ExerciseCategorys");
+                    b.ToTable("ExerciseCategories");
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.Domain.ExerciseCategoryExercise", b =>

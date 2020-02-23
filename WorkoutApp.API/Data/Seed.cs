@@ -55,7 +55,7 @@ namespace WorkoutApp.API.Data
             context.Workouts.RemoveRange(context.Workouts);
             context.ExerciseGroups.RemoveRange(context.ExerciseGroups);
             context.Exercises.RemoveRange(context.Exercises.Include(ex => ex.Equipment).Include(ex => ex.ExerciseCategorys).Include(ex => ex.ExerciseSteps));
-            context.ExerciseCategorys.RemoveRange(context.ExerciseCategorys.Include(ec => ec.Exercises));
+            context.ExerciseCategories.RemoveRange(context.ExerciseCategories.Include(ec => ec.Exercises));
             context.Users.RemoveRange(context.Users);
             context.Roles.RemoveRange(context.Roles);
 
@@ -140,7 +140,7 @@ namespace WorkoutApp.API.Data
 
         private void SeedExerciseCategories()
         {
-            if (context.ExerciseCategorys.Any())
+            if (context.ExerciseCategories.Any())
             {
                 return;
             }
@@ -150,7 +150,7 @@ namespace WorkoutApp.API.Data
 
             foreach (ExerciseCategory exerciseCategory in exerciseCategories)
             {
-                context.ExerciseCategorys.Add(exerciseCategory);
+                context.ExerciseCategories.Add(exerciseCategory);
             }
 
             context.SaveChanges();

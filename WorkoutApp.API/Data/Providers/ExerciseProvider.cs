@@ -103,7 +103,7 @@ namespace WorkoutApp.API.Data.Providers
             return exercises.Shuffle().Take(numExercises);
         }
 
-        public async Task<PagedList<ExerciseForReturnDetailedDto>> GetExercisesDetailed(ExerciseParams exParams)
+        public async Task<PagedList<ExerciseForReturnDetailedDto>> GetExercisesDetailed(ExerciseSearchParams exParams)
         {
             IQueryable<Exercise> exercises = context.Exercises
                 .AsNoTracking()
@@ -124,8 +124,8 @@ namespace WorkoutApp.API.Data.Providers
                 {
                     Id = ex.Id,
                     Name = ex.Name,
-                    PrimaryMuscle = ex.PrimaryMuscle,
-                    SecondaryMuscle = ex.SecondaryMuscle,
+                    //PrimaryMuscle = ex.PrimaryMuscle,
+                    //SecondaryMuscle = ex.SecondaryMuscle,
                     ExerciseSteps = ex.ExerciseSteps.Select(es => new ExerciseStepForReturnDto
                     {
                         ExerciseStepNumber = es.ExerciseStepNumber,

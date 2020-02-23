@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace WorkoutApp.API.Models.QueryParams
 {
-    public class ExerciseParams : PaginationParams
+    public class ExerciseSearchParams : PaginationParams
     {
         public List<int> ExerciseCategoryId { get; set; } = new List<int>();
         public List<int> EquipmentId { get; set; } = new List<int>();
     }
 
-    public class RandomExercisesParams : PaginationParams
+    public class RandomExerciseSearchParams : ExerciseSearchParams
     {
         public string ExerciseCategory { get; set; }
         [Required]
-        public int? NumExercises { get; set; }
+        public int NumExercises { get; set; }
         public bool Favorites { get; set; }
     }
 }

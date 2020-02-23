@@ -24,10 +24,10 @@ namespace WorkoutApp.API.Data
 
         Task<WorkoutInvitation> GetWorkoutInvitationAsync(int id);
 
-        Task<PagedList<Exercise>> GetExercisesAsync(ExerciseParams exParams);
+        Task<PagedList<Exercise>> GetExercisesAsync(ExerciseSearchParams exParams);
         Task<Exercise> GetExerciseAsync(int exerciseId);
 
-        Task<PagedList<Equipment>> GetExerciseEquipmentAsync(EquipmentParams eqParams);
+        Task<PagedList<Equipment>> GetExerciseEquipmentAsync(EquipmentSearchParams eqParams);
         Task<Equipment> GetSingleExerciseEquipmentAsync(int id);
     }
 }

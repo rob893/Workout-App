@@ -10,7 +10,7 @@ namespace WorkoutApp.API.Data
         IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public DbSet<Exercise> Exercises { get; set; }
-        public DbSet<ExerciseCategory> ExerciseCategorys { get; set; }
+        public DbSet<ExerciseCategory> ExerciseCategories { get; set; }
         public DbSet<ExerciseGroup> ExerciseGroups { get; set; }
         public DbSet<Equipment> Equipment { get; set; }
         public DbSet<Muscle> Muscles { get; set; }
