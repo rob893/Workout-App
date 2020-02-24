@@ -21,6 +21,7 @@ namespace WorkoutApp.API.Helpers
             CreateMap<Muscle, MuscleForReturnDetailedDto>();
             CreateMap<MuscleForCreateDto, Muscle>();
 
+            CreateMap<Workout, WorkoutForReturnDetailedDto>();
             CreateMap<Workout, WorkoutForReturnDto>();
             CreateMap<WorkoutForCreationDto, Workout>();
             CreateMap<WorkoutForUpdateDto, Workout>();

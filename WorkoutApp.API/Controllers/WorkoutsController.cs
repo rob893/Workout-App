@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using WorkoutApp.API.Data;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Models.Dtos;
 using WorkoutApp.API.Models.QueryParams;
+using WorkoutApp.API.Data.Repositories;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -16,65 +17,93 @@ namespace WorkoutApp.API.Controllers
     [ApiController]
     public class WorkoutsController : ControllerBase
     {
+        private readonly WorkoutRepository workoutRepository;
         private readonly IMapper mapper;
-        private readonly IWorkoutRepository repo;
 
-        public WorkoutsController(IMapper mapper, IWorkoutRepository repo)
+
+        public WorkoutsController(WorkoutRepository workoutRepository, IMapper mapper)
         {
+            this.workoutRepository = workoutRepository;
             this.mapper = mapper;
-            this.repo = repo;
         }
-        
-        [HttpGet]
-        public async Task<IActionResult> GetWorkouts([FromQuery] WorkoutParams woParams)
-        {
-            PagedList<Workout> workouts = await repo.GetWorkoutsAsync(woParams);
 
-            IEnumerable<WorkoutForReturnDto> workoutsToReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
-            Response.AddPagination(workouts.PageNumber, workouts.PageSize, workouts.TotalItems, workouts.TotalPages);
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<WorkoutForReturnDto>>> GetWorkoutsAsync([FromQuery] WorkoutSearchParams searchParams)
+        {
+            var workouts = await workoutRepository.GetWorkoutsAsync(searchParams);
+            Response.AddPagination(workouts);
+            var workoutsToReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
 
             return Ok(workoutsToReturn);
         }
 
-        [HttpGet("{id}", Name="GetWorkout")]
-        public async Task<IActionResult> GetWorkout(int id)
+        [HttpGet("detailed")]
+        public async Task<ActionResult<IEnumerable<WorkoutForReturnDetailedDto>>> GetWorkoutsDetailedAsync([FromQuery] WorkoutSearchParams searchParams)
         {
-            Workout workout = await repo.GetWorkoutAsync(id);
+            var workouts = await workoutRepository.GetWorkoutsDetailedAsync(searchParams);
+            Response.AddPagination(workouts);
+            var workoutsToReturn = mapper.Map<IEnumerable<WorkoutForReturnDetailedDto>>(workouts);
+
+            return Ok(workoutsToReturn);
+        }
+
+        [HttpGet("{id}", Name = "GetWorkout")]
+        public async Task<ActionResult<WorkoutForReturnDto>> GetWorkoutAsync(int id)
+        {
+            var workout = await workoutRepository.GetWorkoutAsync(id);
 
             if (workout == null)
             {
                 return NoContent();
             }
 
-            WorkoutForReturnDto workoutToReturn = mapper.Map<WorkoutForReturnDto>(workout);
+            var workoutToReturn = mapper.Map<WorkoutForReturnDto>(workout);
+
+            return Ok(workoutToReturn);
+        }
+
+        [HttpGet("{id}/detailed")]
+        public async Task<ActionResult<WorkoutForReturnDetailedDto>> GetWorkoutDetailedAsync(int id)
+        {
+            var workout = await workoutRepository.GetWorkoutDetailedAsync(id);
+
+            if (workout == null)
+            {
+                return NoContent();
+            }
+
+            var workoutToReturn = mapper.Map<WorkoutForReturnDetailedDto>(workout);
 
             return Ok(workoutToReturn);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWorkout([FromBody] WorkoutForCreationDto newWorkout)
+        public async Task<ActionResult<WorkoutForReturnDetailedDto>> CreateWorkoutAsync([FromBody] WorkoutForCreationDto newWorkout)
         {
-            Workout workout = mapper.Map<Workout>(newWorkout);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var workout = mapper.Map<Workout>(newWorkout);
 
             workout.CreatedOnDate = DateTime.Now;
             workout.LastModifiedDate = DateTime.Now;
+            workout.CreatedByUserId = userId;
 
-            repo.Add<Workout>(workout);
+            workoutRepository.Add(workout);
+            var saveResults = await workoutRepository.SaveAllAsync();
 
-            if (await repo.SaveAllAsync())
+            if (!saveResults)
             {
-                WorkoutForReturnDto woReturn = mapper.Map<WorkoutForReturnDto>(workout);
-
-                return CreatedAtRoute("GetWorkout", new { id = workout.Id }, woReturn); 
+                return BadRequest(new ProblemDetailsWithErrors("Unable to create workout.", 400, Request));
             }
-            
-            return BadRequest("Could not create workout!");
+
+            var workoutForReturn = mapper.Map<WorkoutForReturnDetailedDto>(workout);
+
+            return CreatedAtRoute("GetWorkout", new { id = workout.Id }, workoutForReturn);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWorkout(int id)
+        public async Task<ActionResult> DeleteWorkoutAsync(int id)
         {
-            Workout workoutToDelete = await repo.GetWorkoutAsync(id);
+            var workoutToDelete = await workoutRepository.GetWorkoutAsync(id);
 
             if (workoutToDelete == null)
             {
@@ -86,87 +115,64 @@ namespace WorkoutApp.API.Controllers
                 return Unauthorized();
             }
 
-            repo.Delete<Workout>(workoutToDelete);
+            workoutRepository.Delete(workoutToDelete);
+            var saveResults = await workoutRepository.SaveAllAsync();
 
-            if (await repo.SaveAllAsync())
+            if (!saveResults)
             {
-                return Ok();
+                return BadRequest(new ProblemDetailsWithErrors("Unable to delete workout.", 400, Request));
             }
 
-            return BadRequest("Failed to delete workout!");
+            return Ok();
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateWorkout(int id, [FromBody] WorkoutForUpdateDto workoutUpdate)
+        public async Task<ActionResult<WorkoutForReturnDetailedDto>> UpdateExerciseAsync(int id, [FromBody] JsonPatchDocument<Workout> patchDoc)
         {
-            Workout workoutToUpdate = await repo.GetWorkoutAsync(id);
-            bool changed = false;
-
-            if (workoutToUpdate == null)
+            if (patchDoc == null)
             {
-                return NoContent();
+                return BadRequest();
             }
 
-            if (workoutToUpdate.CreatedByUserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            var workout = await workoutRepository.GetWorkoutDetailedAsync(id);
+
+            if (workout == null)
             {
-                return Unauthorized();
+                return NotFound();
             }
 
-            if (workoutUpdate.Label != null && workoutUpdate.Label != workoutToUpdate.Label)
+            patchDoc.ApplyTo(workout);
+
+            var saveResult = await workoutRepository.SaveAllAsync();
+
+            if (!saveResult)
             {
-                changed = true;
-                workoutToUpdate.Label = workoutUpdate.Label;
+                return BadRequest(new ProblemDetailsWithErrors("Could not apply changes.", 400, Request));
             }
 
-            if (workoutUpdate.Color != null && workoutUpdate.Color != workoutToUpdate.Color)
+            var workoutToReturn = mapper.Map<WorkoutForReturnDetailedDto>(workout);
+
+            return Ok(workoutToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<WorkoutForReturnDetailedDto>> UpdateExercisePutAsync(int id, [FromBody] WorkoutForUpdateDto updateDto)
+        {
+            var workout = await workoutRepository.GetWorkoutDetailedAsync(id);
+            mapper.Map(updateDto, workout);
+
+            workout.LastModifiedDate = DateTime.Now;
+
+            var saveResult = await workoutRepository.SaveAllAsync();
+
+            if (!saveResult)
             {
-                changed = true;
-                workoutToUpdate.Color = workoutUpdate.Color;
+                return BadRequest(new ProblemDetailsWithErrors("Could not apply changes.", 400, Request));
             }
 
-            if (workoutUpdate.Shareable != null && workoutUpdate.Shareable.Value != workoutToUpdate.Shareable)
-            {
-                changed = true;
-                workoutToUpdate.Shareable = workoutUpdate.Shareable.Value;
-            }
+            var workoutToReturn = mapper.Map<WorkoutForReturnDetailedDto>(workout);
 
-            // if (workoutUpdate.ExerciseGroupIdsToRemove != null)
-            // {
-            //     changed = true;
-
-            //     HashSet<int> idsToRemove = new HashSet<int>(workoutUpdate.ExerciseGroupIdsToRemove);
-            //     workoutToUpdate.ExerciseGroups.RemoveAll(eg => idsToRemove.Contains(eg.Id));
-            // }
-
-            // if (workoutUpdate.ExerciseGroupsToAdd != null)
-            // {
-            //     changed = true;
-
-            //     foreach (ExerciseGroupForCreationDto exGroup in workoutUpdate.ExerciseGroupsToAdd)
-            //     {
-            //         ExerciseGroup newGroup = mapper.Map<ExerciseGroup>(exGroup);
-            //         newGroup.Workout = workoutToUpdate;
-            //         repo.Add<ExerciseGroup>(newGroup);
-            //     }
-            // }
-
-            if (changed)
-            {
-                workoutToUpdate.LastModifiedDate = DateTime.Now;
-            }
-            else
-            {
-                return BadRequest("The update has no changes!");
-            }
-
-            if (await repo.SaveAllAsync())
-            {
-                WorkoutForReturnDto updatedWorkout = mapper.Map<WorkoutForReturnDto>(workoutToUpdate);
-
-                return Ok(updatedWorkout);
-            }
-
-            return BadRequest("Could not update workout!");
+            return Ok(workoutToReturn);
         }
     }
 }

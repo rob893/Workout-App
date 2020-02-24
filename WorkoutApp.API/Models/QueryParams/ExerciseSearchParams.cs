@@ -13,7 +13,6 @@ namespace WorkoutApp.API.Models.QueryParams
     {
         public string ExerciseCategory { get; set; }
         [Required]
-        public int NumExercises { get; set; }
-        public bool Favorites { get; set; }
+        public int? NumExercises { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace WorkoutApp.API.Models.Dtos
         public int Id { get; set; }
         public UserForReturnDto ScheduledByUser { get; set; }
         public List<UserForReturnDto> Attendees { get; set; }
-        public WorkoutForReturnDto Workout { get; set; }
+        public WorkoutForReturnDetailedDto Workout { get; set; }
         public List<ExerciseGroupForReturnDto> AdHocExercises { get; set; }
         public DateTime? StartedDateTime { get; set; }
         public DateTime? CompletedDateTime { get; set; }

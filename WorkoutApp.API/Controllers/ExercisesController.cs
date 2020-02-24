@@ -9,6 +9,7 @@ using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models.Domain;
 using WorkoutApp.API.Models.Dtos;
 using WorkoutApp.API.Models.QueryParams;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -17,12 +18,14 @@ namespace WorkoutApp.API.Controllers
     public class ExercisesController : ControllerBase
     {
         private readonly ExerciseRepository exerciseRepository;
+        private readonly MuscleRepository muscleRepository;
         private readonly IMapper mapper;
 
 
-        public ExercisesController(ExerciseRepository exerciseRepository, IMapper mapper)
+        public ExercisesController(ExerciseRepository exerciseRepository, MuscleRepository muscleRepository, IMapper mapper)
         {
             this.exerciseRepository = exerciseRepository;
+            this.muscleRepository = muscleRepository;
             this.mapper = mapper;
         }
 
@@ -46,18 +49,16 @@ namespace WorkoutApp.API.Controllers
             return Ok(exercisesToReturn);
         }
 
-        // [HttpGet("detailed/random")]
-        // public async Task<ActionResult<ExerciseForReturnDetailedDto>> GetRandomExercisesDetailedAsync([FromQuery] RandomExerciseSearchParams searchParams)
-        // {
-        //     var exercises = await exerciseRepository.GetExercisesDetailedAsync(searchParams);
-        //     exercises = exercises.Shuffle().Take(searchParams.NumExercises);
-        //     Response.AddPagination(exercises);
-        //     var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
+        [HttpGet("detailed/random")]
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> GetRandomExercisesDetailedAsync([FromQuery] RandomExerciseSearchParams searchParams)
+        {
+            var exercises = await exerciseRepository.GetRandomExercisesDetailedAsync(searchParams);
+            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
 
-        //     return Ok(exercisesToReturn);
-        // }
+            return Ok(exercisesToReturn);
+        }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetExercise")]
         public async Task<ActionResult<ExerciseForReturnDto>> GetExerciseAsync(int id)
         {
             var exercise = await exerciseRepository.GetExerciseAsync(id);
@@ -75,77 +76,100 @@ namespace WorkoutApp.API.Controllers
             return Ok(exerciseToReturn);
         }
 
-        // [HttpPost]
-        // public async Task<IActionResult> CreateExercise([FromBody] ExerciseForCreationDto exercise)
-        // {
-        //     Exercise newExercise = mapper.Map<Exercise>(exercise);
+        [HttpPost]
+        public async Task<ActionResult<ExerciseForReturnDto>> CreateExercise([FromBody] ExerciseForCreationDto exercise)
+        {
+            var newExercise = mapper.Map<Exercise>(exercise);
 
-        //     if (exercise.PrimaryMuscleId != null)
-        //     {
-        //         newExercise.PrimaryMuscle = new Muscle
-        //         {
-        //             Id = exercise.PrimaryMuscleId.Value
-        //         };
-        //     }
+            if (exercise.PrimaryMuscleId != null)
+            {
+                var primaryMuscle = await muscleRepository.GetMuscleAsync(exercise.PrimaryMuscleId.Value);
+                newExercise.PrimaryMuscle = primaryMuscle;
+            }
 
-        //     if (exercise.SecondaryMuscleId != null)
-        //     {
-        //         newExercise.SecondaryMuscle = new Muscle
-        //         {
-        //             Id = exercise.SecondaryMuscleId.Value
-        //         };
-        //     }
+            if (exercise.SecondaryMuscleId != null)
+            {
+                var secondaryMuscle = await muscleRepository.GetMuscleAsync(exercise.SecondaryMuscleId.Value);
+                newExercise.SecondaryMuscle = secondaryMuscle;
+            }
 
-        //     if (exercise.EquipmentIds != null)
-        //     {
-        //         newExercise.Equipment = new List<EquipmentExercise>();
-        //         exercise.EquipmentIds.ForEach(id =>
-        //             newExercise.Equipment.Add(new EquipmentExercise
-        //             {
-        //                 EquipmentId = id
-        //             })
-        //         );
-        //     }
+            if (exercise.EquipmentIds != null)
+            {
+                newExercise.Equipment = exercise.EquipmentIds.Select(eqId => new EquipmentExercise
+                {
+                    EquipmentId = eqId
+                }).ToList();
+            }
 
-        //     if (exercise.ExerciseCategoryIds != null)
-        //     {
-        //         newExercise.ExerciseCategorys = new List<ExerciseCategoryExercise>();
-        //         exercise.ExerciseCategoryIds.ForEach(id =>
-        //             newExercise.ExerciseCategorys.Add(new ExerciseCategoryExercise
-        //             {
-        //                 ExerciseCategoryId = id
-        //             })
-        //         );
-        //     }
+            if (exercise.ExerciseCategoryIds != null)
+            {
+                newExercise.ExerciseCategorys = exercise.ExerciseCategoryIds.Select(ecId => new ExerciseCategoryExercise
+                {
+                    ExerciseCategoryId = ecId
+                }).ToList();
+            }
 
-        //     repo.Add<Exercise>(newExercise);
+            exerciseRepository.Add(newExercise);
+            var saveResult = await exerciseRepository.SaveAllAsync();
 
-        //     if (await repo.SaveAllAsync())
-        //     {
-        //         return CreatedAtAction(nameof(GetExercise), new { id = newExercise.Id }, newExercise);
-        //     }
+            if (!saveResult)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Unable to create exercise.", 400, Request));
+            }
 
-        //     return BadRequest("Could not create exercise.");
-        // }
+            var exerciseToReturn = mapper.Map<ExerciseForReturnDto>(newExercise);
 
-        // [HttpDelete("{id}")]
-        // public async Task<IActionResult> DeleteExercise(int id)
-        // {
-        //     Exercise exercise = await repo.GetExerciseAsync(id);
+            return CreatedAtRoute("GetExercise", new { id = newExercise.Id }, exerciseToReturn);
+        }
 
-        //     if (exercise == null)
-        //     {
-        //         return NotFound();
-        //     }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteExercise(int id)
+        {
+            var exercise = await exerciseRepository.GetExerciseAsync(id);
 
-        //     repo.Delete<Exercise>(exercise);
+            if (exercise == null)
+            {
+                return NotFound();
+            }
 
-        //     if (await repo.SaveAllAsync())
-        //     {
-        //         return Ok();
-        //     }
+            exerciseRepository.Delete(exercise);
+            var saveResult = await exerciseRepository.SaveAllAsync();
 
-        //     return BadRequest("Could not delete exercise.");
-        // }
+            if (!saveResult)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Unable to delete exercise.", 400, Request));
+            }
+
+            return Ok();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<ExerciseForReturnDetailedDto>> UpdateExerciseAsync(int id, [FromBody] JsonPatchDocument<Exercise> patchDoc)
+        {
+            if (patchDoc == null)
+            {
+                return BadRequest();
+            }
+
+            var exercise = await exerciseRepository.GetExerciseDetailedAsync(id);
+
+            if (exercise == null)
+            {
+                return NotFound();
+            }
+
+            patchDoc.ApplyTo(exercise);
+
+            var saveResult = await exerciseRepository.SaveAllAsync();
+
+            if (!saveResult)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Could not apply changes.", 400, Request));
+            }
+
+            var exerciseToReturn = mapper.Map<ExerciseForReturnDetailedDto>(exercise);
+
+            return Ok(exerciseToReturn);
+        }
     }
 }

@@ -92,7 +92,7 @@ namespace WorkoutApp.API
             services.AddAutoMapper(typeof(Startup));
 
             //Must add repos here so they can be injected. Interface => concrete implementation
-            services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+            services.AddScoped<IWorkoutRepository, WorkoutRepositoryOLD>();
             services.AddScoped<ExerciseProvider>();
             services.AddScoped<WorkoutInvitationProvider>();
             services.AddScoped<UserRepository>();
@@ -100,6 +100,7 @@ namespace WorkoutApp.API
             services.AddScoped<EquipmentRepository>();
             services.AddScoped<ExerciseCategoryRepository>();
             services.AddScoped<ExerciseRepository>();
+            services.AddScoped<WorkoutRepository>();
 
             services.AddTransient<Seed>();
         }

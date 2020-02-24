@@ -14,7 +14,7 @@ namespace WorkoutApp.API.Helpers
         public int TotalItems { get; set; }
 
 
-        public PagedList(List<T> items, int totalItems, int pageNumber, int pageSize)
+        public PagedList(IEnumerable<T> items, int totalItems, int pageNumber, int pageSize)
         {
             TotalItems = totalItems;
             PageSize = pageSize;

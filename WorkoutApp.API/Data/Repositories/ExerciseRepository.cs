@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,23 @@ namespace WorkoutApp.API.Data.Repositories
             query = AddWhereClauses(query, searchParams);
 
             return await PagedList<Exercise>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+        }
+
+        public async Task<IEnumerable<Exercise>> GetRandomExercisesDetailedAsync(RandomExerciseSearchParams searchParams)
+        {
+            IQueryable<Exercise> query = context.Exercises;
+
+            query = AddDetailedIncludes(query);
+            query = AddWhereClauses(query, searchParams);
+
+            if (searchParams.ExerciseCategory != null)
+            {
+                query = query.Where(e => e.ExerciseCategorys.Any(ec => ec.ExerciseCategory.Name == searchParams.ExerciseCategory));
+            }
+
+            var exercises = await query.ToListAsync();
+
+            return exercises.Shuffle().Take(searchParams.NumExercises.Value);
         }
 
         private IQueryable<Exercise> AddDetailedIncludes(IQueryable<Exercise> query)

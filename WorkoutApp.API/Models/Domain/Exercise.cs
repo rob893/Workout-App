@@ -6,6 +6,7 @@ namespace WorkoutApp.API.Models.Domain
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public Muscle PrimaryMuscle { get; set; }
         public Muscle SecondaryMuscle { get; set; }
         public List<UserFavoriteExercise> FavoritedBy { get; set; }
