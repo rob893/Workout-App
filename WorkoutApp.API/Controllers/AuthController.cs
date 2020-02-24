@@ -1,12 +1,9 @@
 using System.Threading.Tasks;
-using WorkoutApp.API.Data;
-using WorkoutApp.API.Models;
-using WorkoutApp.API.Dtos;
+using WorkoutApp.API.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
@@ -17,6 +14,7 @@ using WorkoutApp.API.Models.Settings;
 using Microsoft.Extensions.Options;
 using WorkoutApp.API.Helpers;
 using System.Linq;
+using WorkoutApp.API.Models.Dtos;
 
 namespace WorkoutApp.API.Controllers
 {

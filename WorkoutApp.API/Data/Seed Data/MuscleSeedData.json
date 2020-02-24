@@ -1,54 +1,67 @@
 [
     {
         "Id": 1,
-        "Name": "Quadriceps"
+        "Name": "Quadriceps",
+        "Description": "Quadriceps femoris muscle, large fleshy muscle group covering the front and sides of the thigh. It has four parts: rectus femoris, vastus lateralis, vastus medialis, and vastus intermedius. They originate at the ilium (upper part of the pelvis, or hipbone) and femur (thighbone), come together in a tendon surrounding the patella (kneecap), and insert at (are attached to) the tibia (shinbone). These muscles extend the legs at the knee and are important for standing, walking, and almost all activities involving the legs."
     },
     {
         "Id": 2,
-        "Name": "Hamstrings"
+        "Name": "Hamstrings",
+        "Description": ""
     },
     {
         "Id": 3,
-        "Name": "Calf"
+        "Name": "Calf",
+        "Description": ""
     },
     {
         "Id": 4,
-        "Name": "Gluteus"
+        "Name": "Gluteus",
+        "Description": ""
     },
     {
         "Id": 5,
-        "Name": "Erector Spinae"
+        "Name": "Erector Spinae",
+        "Description": ""
     },
     {
         "Id": 6,
-        "Name": "Latissimus Dorsi"
+        "Name": "Latissimus Dorsi",
+        "Description": ""
     },
     {
         "Id": 7,
-        "Name": "Trapezius"
+        "Name": "Trapezius",
+        "Description": ""
     },
     {
         "Id": 8,
-        "Name": "Rectus Abdominis"
+        "Name": "Rectus Abdominis",
+        "Description": ""
     },
     {
         "Id": 9,
-        "Name": "Obliques"
+        "Name": "Obliques",
+        "Description": ""
     },
     {
         "Id": 10,
-        "Name": "Pectoralis"
+        "Name": "Pectoralis",
+        "Description": ""
     },
     {
         "Id": 11,
-        "Name": "Deltoid"
+        "Name": "Deltoid",
+        "Description": ""
     },
     {
         "Id": 12,
-        "Name": "Biceps"
+        "Name": "Biceps",
+        "Description": ""
     },
     {
         "Id": 13,
-        "Name": "Triceps"
+        "Name": "Triceps",
+        "Description": ""
     }
 ]

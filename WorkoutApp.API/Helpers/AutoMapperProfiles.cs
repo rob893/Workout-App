@@ -1,7 +1,7 @@
 using System.Linq;
 using AutoMapper;
-using WorkoutApp.API.Dtos;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
+using WorkoutApp.API.Models.Dtos;
 
 namespace WorkoutApp.API.Helpers
 {
@@ -10,47 +10,51 @@ namespace WorkoutApp.API.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<User, UserForReturnDto>();
+            CreateMap<User, UserForReturnDetailedDto>()
+                .ForMember(dto => dto.Roles, opt =>
+                    opt.MapFrom(u => u.UserRoles.Select(ur => ur.Role.Name)));
+
             CreateMap<UserForRegisterDto, User>();
-            
+            CreateMap<Role, RoleForReturnDto>();
+
+            CreateMap<Muscle, MuscleForReturnDto>();
+            CreateMap<Muscle, MuscleForReturnDetailedDto>();
+            CreateMap<MuscleForCreateDto, Muscle>();
+
+            CreateMap<Workout, WorkoutForReturnDetailedDto>();
             CreateMap<Workout, WorkoutForReturnDto>();
             CreateMap<WorkoutForCreationDto, Workout>();
             CreateMap<WorkoutForUpdateDto, Workout>();
-            CreateMap<ScheduledWoForCreationDto, ScheduledUserWorkout>();
-            CreateMap<ScheduledUserWorkout, ScheduledWoForReturnDto>()
-                .ForMember(dto => dto.ExtraSchUsrWoAttendees, opt =>
-                    opt.MapFrom(wo => wo.ExtraSchUsrWoAttendees.Select(attendee => attendee.User)));
+            CreateMap<ScheduledWoForCreationDto, ScheduledWorkout>();
+            CreateMap<ScheduledWorkout, ScheduledWoForReturnDto>()
+                .ForMember(dto => dto.Attendees, opt =>
+                    opt.MapFrom(wo => wo.Attendees.Select(x => x.User)));
 
             CreateMap<ExerciseGroup, ExerciseGroupForReturnDto>();
 
             CreateMap<ExerciseForCreationDto, Exercise>();
             CreateMap<Exercise, ExerciseForReturnDto>();
             CreateMap<Exercise, ExerciseForReturnDetailedDto>()
-                .ForMember(dto => dto.ExerciseSteps, opt =>
-                    opt.MapFrom(ex => ex.ExerciseSteps.Select(es => new ExerciseStepForReturnDto {
-                        ExerciseStepNumber = es.ExerciseStepNumber,
-                        Description = es.Description
-                    }).ToList()))
-                .ForMember(dto => dto.Equipment, opt => 
-                    opt.MapFrom(ex => ex.Equipment.Select(exEq => new EquipmentForReturnDto {
-                        Id = exEq.EquipmentId,
-                        Name = exEq.Equipment.Name
-                    }).ToList()))
-                .ForMember(dto => dto.ExerciseCategorys, opt =>
-                    opt.MapFrom(ex => ex.ExerciseCategorys.Select(ece => new ExerciseCategoryForReturnDto {
-                        Id = ece.ExerciseCategoryId,
-                        Name = ece.ExerciseCategory.Name
-                    }).ToList()));
+                .ForMember(dto => dto.Equipment, opts => 
+                    opts.MapFrom(e => e.Equipment.Select(e => e.Equipment)))
+                .ForMember(dto => dto.ExerciseCategorys, opts => 
+                    opts.MapFrom(ec => ec.ExerciseCategorys.Select(ec => ec.ExerciseCategory)));
+
             CreateMap<ExerciseStep, ExerciseStepForReturnDto>();
+
             CreateMap<ExerciseCategory, ExerciseCategoryForReturnDto>();
+            CreateMap<ExerciseCategory, ExerciseCategoryForReturnDetailedDto>()
+                .ForMember(dto => dto.Exercises, opts =>
+                    opts.MapFrom(e => e.Exercises.Select(e => e.Exercise)));
+            CreateMap<ExerciseCategoryForCreationDto, ExerciseCategory>();
+            
             CreateMap<ExerciseGroupForCreationDto, ExerciseGroup>();
 
             CreateMap<EquipmentForCreationDto, Equipment>();
-            // CreateMap<EquipmentExercise, EquipmentForReturnDto>()
-            //     .ForMember(dto => dto.Id, opts =>
-            //         opts.MapFrom(exEq => exEq.EquipmentId))
-            //     .ForMember(dto => dto.Name, opts => 
-            //         opts.MapFrom(exEq => exEq.Equipment.Name));
-            CreateMap<Equipment, EquipmentForReturnDto>().ReverseMap();
+            CreateMap<Equipment, EquipmentForReturnDto>();
+            CreateMap<Equipment, EquipmentForReturnDetailedDto>()
+                .ForMember(dto => dto.Exercises, opts =>
+                    opts.MapFrom(equipment => equipment.Exercises.Select(e => e.Exercise)));
         }
     }
 }

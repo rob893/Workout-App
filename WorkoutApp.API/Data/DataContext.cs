@@ -1,8 +1,7 @@
-using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
 
 namespace WorkoutApp.API.Data
 {
@@ -11,13 +10,16 @@ namespace WorkoutApp.API.Data
         IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public DbSet<Exercise> Exercises { get; set; }
-        public DbSet<ExerciseCategory> ExerciseCategorys { get; set; }
+        public DbSet<ExerciseCategory> ExerciseCategories { get; set; }
         public DbSet<ExerciseGroup> ExerciseGroups { get; set; }
         public DbSet<Equipment> Equipment { get; set; }
         public DbSet<Muscle> Muscles { get; set; }
         public DbSet<Workout> Workouts { get; set; }
-        public DbSet<ScheduledUserWorkout> ScheduledUserWorkouts { get; set; }
+        public DbSet<ScheduledWorkout> ScheduledWorkouts { get; set; }
         public DbSet<WorkoutInvitation> WorkoutInvitations { get; set; }
+        public DbSet<WorkoutCompletionRecord> WorkoutCompletionRecords { get; set; }
+        public DbSet<ExerciseGroupCompletionRecord> ExerciseGroupCompletionRecords { get; set; }
+        public DbSet<ExerciseSetCompletionRecord> ExerciseSetCompletionRecords { get; set; }
     
         public DataContext(DbContextOptions<DataContext> options) : base (options){}
 
@@ -63,20 +65,38 @@ namespace WorkoutApp.API.Data
                     .WithMany(ex => ex.FavoritedBy)
                     .HasForeignKey(fe => fe.ExerciseId);
             });
+
+            modelBuilder.Entity<ScheduledWorkout>(workout =>
+            {
+                workout.HasOne(wo => wo.ScheduledByUser)
+                    .WithMany(user => user.OwnedScheduledWorkouts)
+                    .HasForeignKey(wo => wo.ScheduledByUserId);
+            });
+
+            modelBuilder.Entity<ScheduledWorkoutUser>(sWoUser =>
+            {
+                sWoUser.HasKey(k => new { k.UserId, k.ScheduledWorkoutId });
+
+                sWoUser.HasOne(swu => swu.User)
+                    .WithMany(user => user.ScheduledWorkouts)
+                    .HasForeignKey(swu => swu.UserId);
+
+                sWoUser.HasOne(swu => swu.ScheduledWorkout)
+                    .WithMany(swo => swo.Attendees)
+                    .HasForeignKey(swu => swu.ScheduledWorkoutId);
+            });
+
+            modelBuilder.Entity<Exercise>(exercise =>
+            {
+                exercise.HasOne(e => e.PrimaryMuscle)
+                    .WithMany(m => m.PrimaryExercises);
+
+                exercise.HasOne(e => e.SecondaryMuscle)
+                    .WithMany(m => m.SecondaryExercises);
+            });
                 
             modelBuilder.Entity<ExerciseStep>()
                 .HasKey(k => new { k.ExerciseId, k.ExerciseStepNumber });
-            
-            modelBuilder.Entity<ExtraSchUsrWoAttendee>(extraSchUsrWoAttendee => 
-            {
-                extraSchUsrWoAttendee.HasKey(k => new { k.UserId, k.ScheduledUserWorkoutId });
-
-                extraSchUsrWoAttendee.HasOne(attendee => attendee.ScheduledUserWorkout)
-                    .WithMany(schUsrWo => schUsrWo.ExtraSchUsrWoAttendees)
-                    .HasForeignKey(attendee => attendee.ScheduledUserWorkoutId);
-
-                extraSchUsrWoAttendee.HasOne(attendee => attendee.User);
-            });
 
             modelBuilder.Entity<ExerciseCategoryExercise>(exCatEx => 
             {

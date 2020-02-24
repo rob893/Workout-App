@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
+using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Data
 {
@@ -17,20 +17,17 @@ namespace WorkoutApp.API.Data
         Task<User> GetUserAsync(int id);
 
         Task<Workout> GetWorkoutAsync(int id);
-        Task<PagedList<Workout>> GetWorkoutsAsync(WorkoutParams woParams);
+        Task<PagedList<Workout>> GetWorkoutsAsync(WorkoutSearchParams woParams);
 
-        Task<Muscle> GetMuscleAsync(int id);
-        Task<IEnumerable<Muscle>> GetMusclesAsync();
-
-        Task<ScheduledUserWorkout> GetScheduledUserWorkoutAsync(int id);
-        Task<PagedList<ScheduledUserWorkout>> GetScheduledUserWorkoutsAsync(SchUsrWoParams woParams);
+        Task<ScheduledWorkout> GetScheduledUserWorkoutAsync(int id);
+        Task<PagedList<ScheduledWorkout>> GetScheduledUserWorkoutsAsync(ScheduledWorkoutSearchParams woParams);
 
         Task<WorkoutInvitation> GetWorkoutInvitationAsync(int id);
 
-        Task<PagedList<Exercise>> GetExercisesAsync(ExerciseParams exParams);
+        Task<PagedList<Exercise>> GetExercisesAsync(ExerciseSearchParams exParams);
         Task<Exercise> GetExerciseAsync(int exerciseId);
 
-        Task<PagedList<Equipment>> GetExerciseEquipmentAsync(EquipmentParams eqParams);
+        Task<PagedList<Equipment>> GetExerciseEquipmentAsync(EquipmentSearchParams eqParams);
         Task<Equipment> GetSingleExerciseEquipmentAsync(int id);
     }
 }

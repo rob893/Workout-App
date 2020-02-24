@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutApp.API.Data;
+using WorkoutApp.API.Data.Repositories;
 using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
+using WorkoutApp.API.Models.Dtos;
+using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -12,35 +15,131 @@ namespace WorkoutApp.API.Controllers
     [ApiController]
     public class MusclesController : ControllerBase
     {
-        private readonly IWorkoutRepository repo;
+        private readonly MuscleRepository muscleRepository;
         private readonly IMapper mapper;
 
 
-        public MusclesController(IWorkoutRepository repo, IMapper mapper)
+        public MusclesController(MuscleRepository muscleRepository, IMapper mapper)
         {
-            this.repo = repo; 
+            this.muscleRepository = muscleRepository; 
             this.mapper = mapper;   
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Muscle>>> GetMuscles()
+        public async Task<ActionResult<IEnumerable<MuscleForReturnDto>>> GetMusclesAsync([FromQuery] PaginationParams searchParams)
         {
-            var muscles = await repo.GetMusclesAsync();
+            var muscles = await muscleRepository.GetMusclesAsync(searchParams);
+            Response.AddPagination(muscles);
+            var musclesToReturn = mapper.Map<IEnumerable<MuscleForReturnDto>>(muscles);
 
-            return Ok(muscles);
+            return Ok(musclesToReturn);
+        }
+
+        [HttpGet("detailed")]
+        public async Task<ActionResult<IEnumerable<MuscleForReturnDetailedDto>>> GetMusclesDetailedAsync([FromQuery] PaginationParams searchParams)
+        {
+            var muscles = await muscleRepository.GetMusclesDetailedAsync(searchParams);
+            Response.AddPagination(muscles);
+            var musclesToReturn = mapper.Map<IEnumerable<MuscleForReturnDetailedDto>>(muscles);
+
+            return Ok(musclesToReturn);
         }
 
         [HttpGet("{id}", Name = "GetMuscle")]
-        public async Task<ActionResult<Muscle>> GetMuscle(int id)
+        public async Task<ActionResult<MuscleForReturnDto>> GetMuscleAsync(int id)
         {
-            var muscle = await repo.GetMuscleAsync(id);
+            var muscle = await muscleRepository.GetMuscleAsync(id);
 
             if (muscle == null)
             {
                 return NotFound(new ProblemDetailsWithErrors($"Muscle with id {id} does not exist.", 404, Request));
             }
+
+            var muscleToReturn = mapper.Map<MuscleForReturnDto>(muscle);
             
-            return Ok(muscle);
+            return Ok(muscleToReturn);
+        }
+
+        [HttpGet("{id}/detailed")]
+        public async Task<ActionResult<MuscleForReturnDetailedDto>> GetMuscleDetailedAsync(int id)
+        {
+            var muscle = await muscleRepository.GetMuscleDetailedAsync(id);
+
+            if (muscle == null)
+            {
+                return NotFound(new ProblemDetailsWithErrors($"Muscle with id {id} does not exist.", 404, Request));
+            }
+
+            var muscleToReturn = mapper.Map<MuscleForReturnDetailedDto>(muscle);
+            
+            return Ok(muscleToReturn);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<MuscleForReturnDto>> CreateMuscleAsync([FromBody] MuscleForCreateDto muscleForCreate)
+        {
+            var newMuscle = mapper.Map<Muscle>(muscleForCreate);
+            muscleRepository.Add(newMuscle);
+
+            var saveResult = await muscleRepository.SaveAllAsync();
+
+            if (!saveResult)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Unable to create muscle.", 400, Request));
+            }
+
+            var muscleToReturn = mapper.Map<MuscleForReturnDto>(newMuscle);
+            
+            return CreatedAtRoute("GetMuscle", new { id = newMuscle.Id }, muscleToReturn);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteMuscleAsync(int id)
+        {
+            var muscle = await muscleRepository.GetMuscleAsync(id);
+
+            if (muscle == null)
+            {
+                return NoContent();
+            }
+
+            muscleRepository.Delete(muscle);
+
+            if (!await muscleRepository.SaveAllAsync())
+            {
+               return BadRequest(new ProblemDetailsWithErrors("Failed to delete the muscle.", 400, Request)); 
+            }
+            
+            return Ok();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<MuscleForReturnDto>> UpdateMuscleAsync(int id, [FromBody] JsonPatchDocument<Muscle> patchDoc)
+        {
+            if (patchDoc == null)
+            {
+                return BadRequest();
+            }
+
+            var muscle = await muscleRepository.GetMuscleAsync(id);
+
+            if (muscle == null)
+            {
+                return NotFound();
+            }
+
+            patchDoc.ApplyTo(muscle);
+
+            var saveResult = await muscleRepository.SaveAllAsync();
+
+            if (!saveResult)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Could not apply changes.", 400, Request));
+            }
+
+            var musclesToReturn = mapper.Map<MuscleForReturnDto>(muscle);
+
+            return Ok(musclesToReturn);
         }
     }
 }

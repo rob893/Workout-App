@@ -3,10 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using WorkoutApp.API.Dtos;
-using WorkoutApp.API.Helpers;
-using WorkoutApp.API.Helpers.QueryParams;
-using WorkoutApp.API.Models;
+using WorkoutApp.API.Models.Domain;
 
 namespace WorkoutApp.API.Data.Providers
 {
@@ -34,7 +31,7 @@ namespace WorkoutApp.API.Data.Providers
         {
             return await context.WorkoutInvitations
                 .AsNoTracking()
-                .Where(woInv => woInv.InviteeId == inviteeId && woInv.InviterId == inviterId && woInv.ScheduledUserWorkoutId == scheduledWorkoutId)
+                .Where(woInv => woInv.InviteeId == inviteeId && woInv.InviterId == inviterId && woInv.ScheduledWorkoutId == scheduledWorkoutId)
                 .FirstOrDefaultAsync();
         }
 
