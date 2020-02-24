@@ -11,7 +11,7 @@ namespace WorkoutApp.API.Helpers
     //These add functions to exsisting classes basically.
     public static class Extensions
     {
-        private static Random rng = new Random();
+        private static readonly Random rng = new Random();
 
 
         public static void AddApplicationError(this HttpResponse response, string message)
@@ -30,8 +30,10 @@ namespace WorkoutApp.API.Helpers
                 TotalItems = totalItems,
                 TotalPages = totalPages
             };
-            var camelCaseFormatter = new JsonSerializerSettings();
-            camelCaseFormatter.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            var camelCaseFormatter = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
             response.Headers.Add("Pagination", JsonConvert.SerializeObject(paginationHeader, camelCaseFormatter));
             response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
         }

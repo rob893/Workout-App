@@ -27,9 +27,10 @@ namespace WorkoutApp.API.Helpers
                 }
             }
 
-            var problemDetails = new ProblemDetailsWithErrors(errors, 400, context.HttpContext.Request);
-
-            problemDetails.Title = "One or more validation errors occurred.";
+            var problemDetails = new ProblemDetailsWithErrors(errors, 400, context.HttpContext.Request)
+            {
+                Title = "One or more validation errors occurred."
+            };
 
             context.HttpContext.Response.ContentType = "application/json";
             context.HttpContext.Response.StatusCode = 400;

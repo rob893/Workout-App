@@ -1,53 +1,21 @@
-using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models.Domain;
 using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Data.Repositories
 {
-    public class MuscleRepository : Repository<Muscle>
+    public class MuscleRepository : Repository<Muscle, PaginationParams>
     {
         public MuscleRepository(DataContext context) : base(context) { }
 
-        public async Task<Muscle> GetMuscleAsync(int id)
+        protected override IQueryable<Muscle> EntitySet => context.Muscles;
+
+        protected override IQueryable<Muscle> AddDetailedIncludes(IQueryable<Muscle> query)
         {
-            return await context.Muscles.FirstOrDefaultAsync(m => m.Id == id);
-        }
-
-        public async Task<Muscle> GetMuscleAsync(int id, params Expression<Func<Muscle, object>>[] includes)
-        {
-            IQueryable<Muscle> query = context.Muscles;
-            query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
-
-            return await query.FirstOrDefaultAsync(m => m.Id == id);
-        }
-
-        public async Task<Muscle> GetMuscleDetailedAsync(int id)
-        {
-            return await context.Muscles
-                .Include(m => m.PrimaryExercises)
-                .Include(m => m.SecondaryExercises)
-                .FirstOrDefaultAsync(m => m.Id == id);
-        }
-
-        public async Task<PagedList<Muscle>> GetMusclesAsync(PaginationParams searchParams)
-        {
-            IQueryable<Muscle> query = context.Muscles;
-
-            return await PagedList<Muscle>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
-        }
-
-        public async Task<PagedList<Muscle>> GetMusclesDetailedAsync(PaginationParams searchParams)
-        {
-            IQueryable<Muscle> query = context.Muscles
+            return query
                 .Include(m => m.PrimaryExercises)
                 .Include(m => m.SecondaryExercises);
-
-            return await PagedList<Muscle>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
         }
     }
 }
