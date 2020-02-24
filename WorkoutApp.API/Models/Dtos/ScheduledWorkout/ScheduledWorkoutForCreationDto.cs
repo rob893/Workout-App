@@ -5,7 +5,7 @@ using WorkoutApp.API.Models;
 
 namespace WorkoutApp.API.Models.Dtos
 {
-    public class ScheduledWoForCreationDto
+    public class ScheduledWorkoutForCreationDto
     {
         [Required]
         public int WorkoutId { get; set; }

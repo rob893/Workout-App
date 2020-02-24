@@ -8,7 +8,6 @@ using WorkoutApp.API.Models.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using WorkoutApp.API.Data.Providers;
 using WorkoutApp.API.Data.Repositories;
 using WorkoutApp.API.Models.Dtos;
 using WorkoutApp.API.Models.QueryParams;
@@ -19,18 +18,16 @@ namespace WorkoutApp.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IWorkoutRepository repo;
-        private readonly ExerciseProvider exerciseProvider;
-        private readonly IMapper mapper;
         private readonly UserRepository userRepository;
+        private readonly IWorkoutRepository repo;
+        private readonly IMapper mapper;
 
 
-        public UsersController(IWorkoutRepository repo, IMapper mapper, ExerciseProvider exerciseProvider, UserRepository userRepository)
+        public UsersController(UserRepository userRepository, IWorkoutRepository repo, IMapper mapper)
         {
+            this.userRepository = userRepository;
             this.repo = repo;
             this.mapper = mapper;
-            this.exerciseProvider = exerciseProvider;
-            this.userRepository = userRepository;
         }
 
         [HttpGet]
@@ -165,7 +162,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{userId}/scheduledWorkouts")]
-        public async Task<ActionResult<IEnumerable<ScheduledWoForReturnDto>>> GetScheduledWorkoutsForUserAsync(int userId, [FromQuery] ScheduledWorkoutSearchParams searchParams)
+        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDto>>> GetScheduledWorkoutsForUserAsync(int userId, [FromQuery] ScheduledWorkoutSearchParams searchParams)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -174,7 +171,7 @@ namespace WorkoutApp.API.Controllers
 
             var workouts = await userRepository.GetScheduledWorkoutsForUserAsync(userId, searchParams);
             Response.AddPagination(workouts);
-            var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWoForReturnDto>>(workouts);
+            var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDto>>(workouts);
 
             return Ok(workoutsForReturn);
         }
@@ -188,19 +185,19 @@ namespace WorkoutApp.API.Controllers
             return Ok(records);
         }
 
-        [HttpGet("{userId}/favorites/exercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> GetUserFavoriteExercisesAsync(int userId, [FromQuery] string exerciseCategory)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
+        // [HttpGet("{userId}/favorites/exercises")]
+        // public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> GetUserFavoriteExercisesAsync(int userId, [FromQuery] string exerciseCategory)
+        // {
+        //     if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+        //     {
+        //         return Unauthorized();
+        //     }
 
-            var exercises = await exerciseProvider.GetFavoriteExercisesForUserAsync(userId);
-            var dtos = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
+        //     var exercises = await exerciseProvider.GetFavoriteExercisesForUserAsync(userId);
+        //     var dtos = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
 
-            return Ok(dtos);
-        }
+        //     return Ok(dtos);
+        // }
 
         [HttpPost("{userId}/favorites/exercises/{exerciseId}")]
         public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> FavoriteAnExerciseAsync(int userId, int exerciseId)

@@ -9,24 +9,24 @@ using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Data.Repositories
 {
-    public class MuscleRepository : Repository<Muscle>
+    public class ExerciseGroupRepository : Repository<ExerciseGroup>
     {
-        public MuscleRepository(DataContext context) : base(context) { }
+        public ExerciseGroupRepository(DataContext context) : base(context) { }
 
-        public async Task<Muscle> GetMuscleAsync(int id)
+        public async Task<ExerciseGroup> GetExerciseGroupAsync(int id)
         {
-            return await context.Muscles.FirstOrDefaultAsync(m => m.Id == id);
+            return await context.ExerciseGroups.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<Muscle> GetMuscleAsync(int id, params Expression<Func<Muscle, object>>[] includes)
+        public async Task<ExerciseGroup> GetExerciseGroupAsync(int id, params Expression<Func<ExerciseGroup, object>>[] includes)
         {
-            IQueryable<Muscle> query = context.Muscles;
+            IQueryable<ExerciseGroup> query = context.ExerciseGroups;
             query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
 
             return await query.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<Muscle> GetMuscleDetailedAsync(int id)
+        public async Task<ExerciseGroup> GetMuscleDetailedAsync(int id)
         {
             return await context.Muscles
                 .Include(m => m.PrimaryExercises)

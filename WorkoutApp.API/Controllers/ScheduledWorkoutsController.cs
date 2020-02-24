@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models.Dtos;
+using WorkoutApp.API.Data.Repositories;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -15,18 +16,18 @@ namespace WorkoutApp.API.Controllers
     [ApiController]
     public class ScheduledWorkoutsController : ControllerBase
     {
+        private readonly ScheduledWorkoutRepository scheduledWorkoutRepository;
         private readonly IMapper mapper;
-        private readonly IWorkoutRepository repo;
 
         
-        public ScheduledWorkoutsController(IMapper mapper, IWorkoutRepository repo)
+        public ScheduledWorkoutsController(ScheduledWorkoutRepository scheduledWorkoutRepository, IMapper mapper)
         {
+            this.scheduledWorkoutRepository = scheduledWorkoutRepository;
             this.mapper = mapper;
-            this.repo = repo;
         }
 
         [HttpGet("{id}", Name = "GetScheduledWorkout")]
-        public async Task<ActionResult<ScheduledWoForReturnDto>> GetScheduledWorkout(int id)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> GetScheduledWorkout(int id)
         {
             var workout = await repo.GetScheduledUserWorkoutAsync(id);
 
@@ -35,13 +36,13 @@ namespace WorkoutApp.API.Controllers
                 return NotFound();
             }
 
-            var workoutToReturn = mapper.Map<ScheduledWoForReturnDto>(workout);
+            var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
 
             return Ok(workoutToReturn);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateScheduledWorkout([FromBody] ScheduledWoForCreationDto newWorkoutDto)
+        public async Task<IActionResult> CreateScheduledWorkout([FromBody] ScheduledWorkoutForCreationDto newWorkoutDto)
         {
             if (await repo.GetWorkoutAsync(newWorkoutDto.WorkoutId) == null)
             {
@@ -56,7 +57,7 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAllAsync())
             {
-                var workoutToReturn = mapper.Map<ScheduledWoForReturnDto>(newWorkout);
+                var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(newWorkout);
 
                 return CreatedAtAction(nameof(GetScheduledWorkout), new { id = newWorkout.Id }, workoutToReturn);
             }
@@ -65,9 +66,9 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSceduledWorkout(int id)
+        public async Task<ActionResult> DeleteSceduledWorkoutAsync(int id)
         {
-            var workout = await repo.GetScheduledUserWorkoutAsync(id);
+            var workout = await scheduledWorkoutRepository.GetScheduledWorkoutAsync(id, w => w.AdHocExercises);
 
             if (workout == null)
             {
@@ -80,7 +81,7 @@ namespace WorkoutApp.API.Controllers
             }
 
             repo.DeleteRange<ExerciseGroup>(workout.AdHocExercises);
-            repo.Delete<ScheduledWorkout>(workout);
+            scheduledWorkoutRepository.Delete(workout);
 
             if (await repo.SaveAllAsync())
             {
@@ -91,7 +92,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ScheduledWoForReturnDto>> UpdateScheduledWorkout(int id, [FromBody] JsonPatchDocument<ScheduledWorkout> patchDoc)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> UpdateScheduledWorkout(int id, [FromBody] JsonPatchDocument<ScheduledWorkout> patchDoc)
         {
             if (patchDoc == null)
             {
@@ -114,7 +115,7 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAllAsync())
             {
-                var workoutToReturn = mapper.Map<ScheduledWoForReturnDto>(workout);
+                var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
 
                 return Ok(workoutToReturn);
             }
@@ -123,7 +124,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPatch("{id}/startWorkout")]
-        public async Task<ActionResult<ScheduledWoForReturnDto>> StartWorkout(int id)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> StartWorkout(int id)
         {
             var workout = await repo.GetScheduledUserWorkoutAsync(id);
 
@@ -146,7 +147,7 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAllAsync())
             {
-                var workoutToReturn = mapper.Map<ScheduledWoForReturnDto>(workout);
+                var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
 
                 return Ok(workoutToReturn);
             }
@@ -155,7 +156,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPatch("{id}/completeWorkout")]
-        public async Task<ActionResult<ScheduledWoForReturnDto>> CompleteWorkout(int id)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> CompleteWorkout(int id)
         {
             var workout = await repo.GetScheduledUserWorkoutAsync(id);
 
@@ -183,7 +184,7 @@ namespace WorkoutApp.API.Controllers
 
             if (await repo.SaveAllAsync())
             {
-                var workoutToReturn = mapper.Map<ScheduledWoForReturnDto>(workout);
+                var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
 
                 return Ok(workoutToReturn);
             }

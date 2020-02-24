@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WorkoutApp.API.Models.Dtos
 {
-    public class MuscleForCreateDto
+    public class MuscleForUpdateDto
     {
         [Required]
         public string Name { get; set; }

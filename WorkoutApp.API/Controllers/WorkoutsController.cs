@@ -127,7 +127,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<WorkoutForReturnDetailedDto>> UpdateExerciseAsync(int id, [FromBody] JsonPatchDocument<Workout> patchDoc)
+        public async Task<ActionResult<WorkoutForReturnDetailedDto>> UpdateWorkoutAsync(int id, [FromBody] JsonPatchDocument<Workout> patchDoc)
         {
             if (patchDoc == null)
             {
@@ -156,7 +156,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<WorkoutForReturnDetailedDto>> UpdateExercisePutAsync(int id, [FromBody] WorkoutForUpdateDto updateDto)
+        public async Task<ActionResult<WorkoutForReturnDetailedDto>> UpdateWorkoutPutAsync(int id, [FromBody] WorkoutForUpdateDto updateDto)
         {
             var workout = await workoutRepository.GetWorkoutDetailedAsync(id);
             mapper.Map(updateDto, workout);

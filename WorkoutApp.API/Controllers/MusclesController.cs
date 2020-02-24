@@ -141,5 +141,29 @@ namespace WorkoutApp.API.Controllers
 
             return Ok(musclesToReturn);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<MuscleForReturnDto>> UpdateMusclePutAsync(int id, [FromBody] MuscleForUpdateDto updateDto)
+        {
+            var muscle = await muscleRepository.GetMuscleAsync(id);
+
+            if (muscle == null)
+            {
+                return NotFound();
+            }
+
+            mapper.Map(updateDto, muscle);
+
+            var saveResult = await muscleRepository.SaveAllAsync();
+
+            if (!saveResult)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Could not apply changes.", 400, Request));
+            }
+
+            var musclesToReturn = mapper.Map<MuscleForReturnDto>(muscle);
+
+            return Ok(musclesToReturn);
+        }
     }
 }

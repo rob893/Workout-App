@@ -2,7 +2,7 @@ using System;
 
 namespace WorkoutApp.API.Models.Domain
 {
-    public class WorkoutInvitation
+    public class WorkoutInvitation : IIdentifiable
     {
         public int Id { get; set; }
         public int InviterId { get; set; }

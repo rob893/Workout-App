@@ -93,7 +93,6 @@ namespace WorkoutApp.API
 
             //Must add repos here so they can be injected. Interface => concrete implementation
             services.AddScoped<IWorkoutRepository, WorkoutRepositoryOLD>();
-            services.AddScoped<ExerciseProvider>();
             services.AddScoped<WorkoutInvitationProvider>();
             services.AddScoped<UserRepository>();
             services.AddScoped<MuscleRepository>();
