@@ -2,13 +2,14 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using WorkoutApp.API.Data;
 using WorkoutApp.API.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models.Dtos;
 using WorkoutApp.API.Data.Repositories;
+using System.Collections.Generic;
+using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -27,8 +28,28 @@ namespace WorkoutApp.API.Controllers
             this.mapper = mapper;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDto>>> GetScheduledWorkoutsAsync([FromBody] ScheduledWorkoutSearchParams searchParams)
+        {
+            var workouts = await scheduledWorkoutRepository.SearchAsync(searchParams);
+            Response.AddPagination(workouts);
+            var workoutsToReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDto>>(workouts);
+
+            return Ok(workoutsToReturn);
+        }
+
+        [HttpGet("detailed")]
+        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>> GetScheduledWorkoutsDetailedAsync([FromBody] ScheduledWorkoutSearchParams searchParams)
+        {
+            var workouts = await scheduledWorkoutRepository.SearchDetailedAsync(searchParams);
+            Response.AddPagination(workouts);
+            var workoutsToReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>(workouts);
+
+            return Ok(workoutsToReturn);
+        }
+
         [HttpGet("{id}", Name = "GetScheduledWorkout")]
-        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> GetScheduledWorkout(int id)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> GetScheduledWorkoutAsync(int id)
         {
             var workout = await scheduledWorkoutRepository.GetAsync(id);
 
@@ -42,8 +63,23 @@ namespace WorkoutApp.API.Controllers
             return Ok(workoutToReturn);
         }
 
+        [HttpGet("{id}/detailed")]
+        public async Task<ActionResult<ScheduledWorkoutForReturnDetailedDto>> GetScheduledDetailedWorkoutAsync(int id)
+        {
+            var workout = await scheduledWorkoutRepository.GetDetailedAsync(id);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDetailedDto>(workout);
+
+            return Ok(workoutToReturn);
+        }
+
         [HttpPost]
-        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> CreateScheduledWorkout([FromBody] ScheduledWorkoutForCreationDto newWorkoutDto)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> CreateScheduledWorkoutAsync([FromBody] ScheduledWorkoutForCreationDto newWorkoutDto)
         {
             if (await workoutRepository.GetAsync(newWorkoutDto.WorkoutId) == null)
             {
@@ -94,7 +130,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> UpdateScheduledWorkout(int id, [FromBody] JsonPatchDocument<ScheduledWorkout> patchDoc)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> UpdateScheduledWorkoutAsync(int id, [FromBody] JsonPatchDocument<ScheduledWorkout> patchDoc)
         {
             if (patchDoc == null)
             {
@@ -127,7 +163,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPatch("{id}/startWorkout")]
-        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> StartWorkout(int id)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> StartWorkoutAsync(int id)
         {
             var workout = await scheduledWorkoutRepository.GetAsync(id);
 
@@ -160,7 +196,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPatch("{id}/completeWorkout")]
-        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> CompleteWorkout(int id)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> CompleteWorkoutAsync(int id)
         {
             var workout = await scheduledWorkoutRepository.GetAsync(id);
 

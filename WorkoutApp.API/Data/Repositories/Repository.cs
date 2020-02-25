@@ -85,6 +85,16 @@ namespace WorkoutApp.API.Data.Repositories
             return await PagedList<TEntity>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
         }
 
+        public async Task<PagedList<TEntity>> SearchAsync(RSearchParams searchParams, params Expression<Func<TEntity, object>>[] includes)
+        {
+            IQueryable<TEntity> query = EntitySet;
+
+            query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+            query = AddWhereClauses(query, searchParams);
+
+            return await PagedList<TEntity>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+        }
+
         public async Task<PagedList<TEntity>> SearchDetailedAsync(RSearchParams searchParams)
         {
             IQueryable<TEntity> query = EntitySet;
