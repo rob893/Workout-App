@@ -19,17 +19,20 @@ namespace WorkoutApp.API.Controllers
     {
         private readonly ScheduledWorkoutRepository scheduledWorkoutRepository;
         private readonly WorkoutRepository workoutRepository;
+        private readonly UserRepository userRepository;
         private readonly IMapper mapper;
 
-        
-        public ScheduledWorkoutsController(ScheduledWorkoutRepository scheduledWorkoutRepository, IMapper mapper)
+
+        public ScheduledWorkoutsController(ScheduledWorkoutRepository scheduledWorkoutRepository, WorkoutRepository workoutRepository, UserRepository userRepository, IMapper mapper)
         {
             this.scheduledWorkoutRepository = scheduledWorkoutRepository;
+            this.workoutRepository = workoutRepository;
+            this.userRepository = userRepository;
             this.mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDto>>> GetScheduledWorkoutsAsync([FromBody] ScheduledWorkoutSearchParams searchParams)
+        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDto>>> GetScheduledWorkoutsAsync([FromQuery] ScheduledWorkoutSearchParams searchParams)
         {
             var workouts = await scheduledWorkoutRepository.SearchAsync(searchParams);
             Response.AddPagination(workouts);
@@ -39,7 +42,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>> GetScheduledWorkoutsDetailedAsync([FromBody] ScheduledWorkoutSearchParams searchParams)
+        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>> GetScheduledWorkoutsDetailedAsync([FromQuery] ScheduledWorkoutSearchParams searchParams)
         {
             var workouts = await scheduledWorkoutRepository.SearchDetailedAsync(searchParams);
             Response.AddPagination(workouts);
@@ -51,7 +54,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetScheduledWorkout")]
         public async Task<ActionResult<ScheduledWorkoutForReturnDto>> GetScheduledWorkoutAsync(int id)
         {
-            var workout = await scheduledWorkoutRepository.GetAsync(id);
+            var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
 
             if (workout == null)
             {
@@ -66,7 +69,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<ScheduledWorkoutForReturnDetailedDto>> GetScheduledDetailedWorkoutAsync(int id)
         {
-            var workout = await scheduledWorkoutRepository.GetDetailedAsync(id);
+            var workout = await scheduledWorkoutRepository.GetByIdDetailedAsync(id);
 
             if (workout == null)
             {
@@ -81,14 +84,26 @@ namespace WorkoutApp.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ScheduledWorkoutForReturnDto>> CreateScheduledWorkoutAsync([FromBody] ScheduledWorkoutForCreationDto newWorkoutDto)
         {
-            if (await workoutRepository.GetAsync(newWorkoutDto.WorkoutId) == null)
+            var workoutToSchedule = await workoutRepository.GetByIdAsync(newWorkoutDto.WorkoutId);
+            if (workoutToSchedule == null)
             {
-                return BadRequest(new ProblemDetailsWithErrors("Invalid workout id!", 400, Request));
+                return BadRequest(new ProblemDetailsWithErrors("Invalid workout id.", 400, Request));
             }
 
-            var newWorkout = mapper.Map<ScheduledWorkout>(newWorkoutDto);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var user = await userRepository.GetByIdAsync(userId);
 
-            newWorkout.ScheduledByUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var newWorkout = mapper.Map<ScheduledWorkout>(newWorkoutDto);
+            newWorkout.Workout = workoutToSchedule;
+            newWorkout.ScheduledByUserId = userId;
+            newWorkout.ScheduledByUser = user;
+            newWorkout.Attendees = new List<ScheduledWorkoutUser>
+            {
+                new ScheduledWorkoutUser
+                {
+                    User = user
+                }
+            };
 
             scheduledWorkoutRepository.Add(newWorkout);
             var saveResults = await scheduledWorkoutRepository.SaveAllAsync();
@@ -100,13 +115,13 @@ namespace WorkoutApp.API.Controllers
 
             var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(newWorkout);
 
-            return CreatedAtRoute("GetScheduledWorkout", new { id = newWorkout.Id }, workoutToReturn);        
+            return CreatedAtRoute("GetScheduledWorkout", new { id = newWorkout.Id }, workoutToReturn);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSceduledWorkoutAsync(int id)
         {
-            var workout = await scheduledWorkoutRepository.GetAsync(id, w => w.AdHocExercises);
+            var workout = await scheduledWorkoutRepository.GetByIdAsync(id, w => w.AdHocExercises);
 
             if (workout == null)
             {
@@ -137,7 +152,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest();
             }
 
-            var workout = await scheduledWorkoutRepository.GetAsync(id);
+            var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
 
             if (workout == null)
             {
@@ -162,10 +177,10 @@ namespace WorkoutApp.API.Controllers
             return Ok(workoutToReturn);
         }
 
-        [HttpPatch("{id}/startWorkout")]
+        [HttpPut("{id}/startWorkout")]
         public async Task<ActionResult<ScheduledWorkoutForReturnDto>> StartWorkoutAsync(int id)
         {
-            var workout = await scheduledWorkoutRepository.GetAsync(id);
+            var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
 
             if (workout == null)
             {
@@ -195,10 +210,10 @@ namespace WorkoutApp.API.Controllers
             return Ok(workoutToReturn);
         }
 
-        [HttpPatch("{id}/completeWorkout")]
+        [HttpPut("{id}/completeWorkout")]
         public async Task<ActionResult<ScheduledWorkoutForReturnDto>> CompleteWorkoutAsync(int id)
         {
-            var workout = await scheduledWorkoutRepository.GetAsync(id);
+            var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
 
             if (workout == null)
             {

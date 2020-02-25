@@ -13,6 +13,7 @@ namespace WorkoutApp.API.Helpers
             CreateMuscleMaps();
             CreateWorkoutMaps();
             CreateScheduledWorkoutMaps();
+            CreateWorkoutInvitationMaps();
             CreateEquipmentMaps();
             CreateExerciseCategoryMaps();
             CreateExerciseMaps();
@@ -47,10 +48,18 @@ namespace WorkoutApp.API.Helpers
 
         private void CreateScheduledWorkoutMaps()
         {
+            CreateMap<ScheduledWorkout, ScheduledWorkoutForReturnDto>();
             CreateMap<ScheduledWorkout, ScheduledWorkoutForReturnDetailedDto>()
                 .ForMember(dto => dto.Attendees, opt =>
                     opt.MapFrom(wo => wo.Attendees.Select(x => x.User)));
             CreateMap<ScheduledWorkoutForCreationDto, ScheduledWorkout>();
+        }
+
+        private void CreateWorkoutInvitationMaps()
+        {
+            CreateMap<WorkoutInvitation, WorkoutInvitationForReturnDto>();
+            CreateMap<WorkoutInvitation, WorkoutInvitationForReturnDetailedDto>();
+            CreateMap<WorkoutInvitationForCreationDto, WorkoutInvitation>();
         }
 
         private void CreateEquipmentMaps()

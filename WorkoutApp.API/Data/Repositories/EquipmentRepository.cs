@@ -9,8 +9,6 @@ namespace WorkoutApp.API.Data.Repositories
     {
         public EquipmentRepository(DataContext context) : base(context) { }
 
-        protected override IQueryable<Equipment> EntitySet => context.Equipment;
-
         protected override IQueryable<Equipment> AddDetailedIncludes(IQueryable<Equipment> query)
         {
             return query.Include(e => e.Exercises).ThenInclude(e => e.Exercise);

@@ -30,23 +30,23 @@ namespace WorkoutApp.API.Data.Repositories
 
         public void Add(TEntity entity)
         {
-            context.Add(entity);
+            context.Set<TEntity>().Add(entity);
         }
 
         public void AddRange(IEnumerable<TEntity> entities)
         {
-            context.AddRange(entities);
+            context.Set<TEntity>().AddRange(entities);
         }
 
         public void Delete(TEntity entity)
         {
             BeforeDelete(entity);
-            context.Remove(entity);
+            context.Set<TEntity>().Remove(entity);
         }
 
         public void DeleteRange(IEnumerable<TEntity> entities)
         {
-            context.RemoveRange(entities);
+            context.Set<TEntity>().RemoveRange(entities);
         }
 
         public async Task<bool> SaveAllAsync()
@@ -54,22 +54,22 @@ namespace WorkoutApp.API.Data.Repositories
             return await context.SaveChangesAsync() > 0;
         }
 
-        public async Task<TEntity> GetAsync(int id)
+        public async Task<TEntity> GetByIdAsync(int id)
         {
-            return await EntitySet.FirstOrDefaultAsync(e => e.Id == id);
+            return await context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<TEntity> GetAsync(int id, params Expression<Func<TEntity, object>>[] includes)
+        public async Task<TEntity> GetByIdAsync(int id, params Expression<Func<TEntity, object>>[] includes)
         {
-            IQueryable<TEntity> query = EntitySet;
+            IQueryable<TEntity> query = context.Set<TEntity>();
             query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
 
             return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<TEntity> GetDetailedAsync(int id)
+        public async Task<TEntity> GetByIdDetailedAsync(int id)
         {
-            IQueryable<TEntity> query = EntitySet;
+            IQueryable<TEntity> query = context.Set<TEntity>();
 
             query = AddDetailedIncludes(query);
 
@@ -78,7 +78,7 @@ namespace WorkoutApp.API.Data.Repositories
 
         public async Task<PagedList<TEntity>> SearchAsync(RSearchParams searchParams)
         {
-            IQueryable<TEntity> query = EntitySet;
+            IQueryable<TEntity> query = context.Set<TEntity>();
 
             query = AddWhereClauses(query, searchParams);
 
@@ -87,7 +87,7 @@ namespace WorkoutApp.API.Data.Repositories
 
         public async Task<PagedList<TEntity>> SearchAsync(RSearchParams searchParams, params Expression<Func<TEntity, object>>[] includes)
         {
-            IQueryable<TEntity> query = EntitySet;
+            IQueryable<TEntity> query = context.Set<TEntity>();
 
             query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
             query = AddWhereClauses(query, searchParams);
@@ -97,7 +97,7 @@ namespace WorkoutApp.API.Data.Repositories
 
         public async Task<PagedList<TEntity>> SearchDetailedAsync(RSearchParams searchParams)
         {
-            IQueryable<TEntity> query = EntitySet;
+            IQueryable<TEntity> query = context.Set<TEntity>();
 
             query = AddDetailedIncludes(query);
             query = AddWhereClauses(query, searchParams);
@@ -111,8 +111,6 @@ namespace WorkoutApp.API.Data.Repositories
         }
 
         protected virtual void BeforeDelete(TEntity entity) { }
-
-        protected abstract IQueryable<TEntity> EntitySet { get; }
 
         protected abstract IQueryable<TEntity> AddDetailedIncludes(IQueryable<TEntity> query);
     }

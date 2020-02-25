@@ -9,8 +9,6 @@ namespace WorkoutApp.API.Data.Repositories
     {
         public MuscleRepository(DataContext context) : base(context) { }
 
-        protected override IQueryable<Muscle> EntitySet => context.Muscles;
-
         protected override IQueryable<Muscle> AddDetailedIncludes(IQueryable<Muscle> query)
         {
             return query

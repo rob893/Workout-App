@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using WorkoutApp.API.Data;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models.Domain;
 using Microsoft.AspNetCore.Authorization;
@@ -19,14 +18,12 @@ namespace WorkoutApp.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserRepository userRepository;
-        private readonly IWorkoutRepository repo;
         private readonly IMapper mapper;
 
 
-        public UsersController(UserRepository userRepository, IWorkoutRepository repo, IMapper mapper)
+        public UsersController(UserRepository userRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
-            this.repo = repo;
             this.mapper = mapper;
         }
 
@@ -54,7 +51,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetUserAsync")]
         public async Task<ActionResult<UserForReturnDto>> GetUserAsync(int id)
         {
-            var user = await userRepository.GetAsync(id);
+            var user = await userRepository.GetByIdAsync(id);
             var userToReturn = mapper.Map<UserForReturnDto>(user);
 
             return Ok(userToReturn);
@@ -64,7 +61,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<UserForReturnDetailedDto>> GetUserDetailedAsync(int id)
         {
-            var users = await userRepository.GetDetailedAsync(id);
+            var users = await userRepository.GetByIdDetailedAsync(id);
             var usersToReturn = mapper.Map<UserForReturnDetailedDto>(users);
 
             return Ok(usersToReturn);
@@ -90,7 +87,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("At least one role must be specified.", 400, Request));
             }
 
-            var user = await userRepository.GetDetailedAsync(id);
+            var user = await userRepository.GetByIdDetailedAsync(id);
             var roles = await userRepository.GetRolesAsync();
             var userRoles = user.UserRoles.Select(ur => ur.Role.Name.ToUpper()).ToHashSet();
             var selectedRoles = roleEditDto.RoleNames.Select(role => role.ToUpper()).ToHashSet();
@@ -132,7 +129,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("At least one role must be specified.", 400, Request));
             }
 
-            var user = await userRepository.GetDetailedAsync(id);
+            var user = await userRepository.GetByIdDetailedAsync(id);
             var roles = await userRepository.GetRolesAsync();
             var userRoles = user.UserRoles.Select(ur => ur.Role.Name.ToUpper()).ToHashSet();
             var selectedRoles = roleEditDto.RoleNames.Select(role => role.ToUpper()).ToHashSet();
@@ -199,60 +196,60 @@ namespace WorkoutApp.API.Controllers
         //     return Ok(dtos);
         // }
 
-        [HttpPost("{userId}/favorites/exercises/{exerciseId}")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> FavoriteAnExerciseAsync(int userId, int exerciseId)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
+        // [HttpPost("{userId}/favorites/exercises/{exerciseId}")]
+        // public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> FavoriteAnExerciseAsync(int userId, int exerciseId)
+        // {
+        //     if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+        //     {
+        //         return Unauthorized();
+        //     }
 
-            var user = await repo.GetUserAsync(userId);
-            var exercise = await repo.GetExerciseAsync(exerciseId);
+        //     var user = await repo.GetUserAsync(userId);
+        //     var exercise = await repo.GetExerciseAsync(exerciseId);
 
-            if (user.FavoriteExercises.Any(e => e.ExerciseId == exerciseId))
-            {
-                return BadRequest(new ProblemDetailsWithErrors("You cannot favorite the same exercise more than once.", 400, Request));
-            }
+        //     if (user.FavoriteExercises.Any(e => e.ExerciseId == exerciseId))
+        //     {
+        //         return BadRequest(new ProblemDetailsWithErrors("You cannot favorite the same exercise more than once.", 400, Request));
+        //     }
 
-            user.FavoriteExercises.Add(new UserFavoriteExercise
-            {
-                Exercise = exercise
-            });
+        //     user.FavoriteExercises.Add(new UserFavoriteExercise
+        //     {
+        //         Exercise = exercise
+        //     });
 
-            if (!await repo.SaveAllAsync())
-            {
-                return BadRequest(new ProblemDetailsWithErrors("Unable to favorite the exercise.", 400, Request));
-            }
+        //     if (!await repo.SaveAllAsync())
+        //     {
+        //         return BadRequest(new ProblemDetailsWithErrors("Unable to favorite the exercise.", 400, Request));
+        //     }
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
-        [HttpDelete("{userId}/favorites/exercises/{exerciseId}")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> UnfavoriteAnExerciseAsync(int userId, int exerciseId)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
+        // [HttpDelete("{userId}/favorites/exercises/{exerciseId}")]
+        // public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> UnfavoriteAnExerciseAsync(int userId, int exerciseId)
+        // {
+        //     if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+        //     {
+        //         return Unauthorized();
+        //     }
 
-            var user = await repo.GetUserAsync(userId);
-            var exercise = await repo.GetExerciseAsync(exerciseId);
-            var exerciseToRemove = user.FavoriteExercises.FirstOrDefault(fe => fe.ExerciseId == exerciseId);
+        //     var user = await repo.GetUserAsync(userId);
+        //     var exercise = await repo.GetExerciseAsync(exerciseId);
+        //     var exerciseToRemove = user.FavoriteExercises.FirstOrDefault(fe => fe.ExerciseId == exerciseId);
 
-            if (exerciseToRemove == null)
-            {
-                return BadRequest(new ProblemDetailsWithErrors("You cannot unfavorite an exercise you have not favorited.", 400, Request));
-            }
+        //     if (exerciseToRemove == null)
+        //     {
+        //         return BadRequest(new ProblemDetailsWithErrors("You cannot unfavorite an exercise you have not favorited.", 400, Request));
+        //     }
 
-            user.FavoriteExercises.Remove(exerciseToRemove);
+        //     user.FavoriteExercises.Remove(exerciseToRemove);
 
-            if (!await repo.SaveAllAsync())
-            {
-                return BadRequest(new ProblemDetailsWithErrors("Unable to favorite the exercise.", 400, Request));
-            }
+        //     if (!await repo.SaveAllAsync())
+        //     {
+        //         return BadRequest(new ProblemDetailsWithErrors("Unable to favorite the exercise.", 400, Request));
+        //     }
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
     }
 }

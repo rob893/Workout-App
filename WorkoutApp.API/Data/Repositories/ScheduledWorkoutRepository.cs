@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using WorkoutApp.API.Models.Domain;
@@ -8,8 +9,6 @@ namespace WorkoutApp.API.Data.Repositories
     public class ScheduledWorkoutRepository : Repository<ScheduledWorkout, ScheduledWorkoutSearchParams>
     {
         public ScheduledWorkoutRepository(DataContext context) : base(context) { }
-
-        protected override IQueryable<ScheduledWorkout> EntitySet => context.ScheduledWorkouts;
 
         protected override IQueryable<ScheduledWorkout> AddDetailedIncludes(IQueryable<ScheduledWorkout> query)
         {
@@ -38,6 +37,16 @@ namespace WorkoutApp.API.Data.Repositories
             }
 
             return query;
+        }
+
+        protected override void BeforeDelete(ScheduledWorkout entity)
+        {
+            if (entity.AdHocExercises == null)
+            {
+                throw new ArgumentNullException("AdHocExercises must be loaded before delete.");
+            }
+
+            context.ExerciseGroups.RemoveRange(entity.AdHocExercises);
         }
     }
 }

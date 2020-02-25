@@ -50,7 +50,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetWorkout")]
         public async Task<ActionResult<WorkoutForReturnDto>> GetWorkoutAsync(int id)
         {
-            var workout = await workoutRepository.GetAsync(id);
+            var workout = await workoutRepository.GetByIdAsync(id);
 
             if (workout == null)
             {
@@ -65,7 +65,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<WorkoutForReturnDetailedDto>> GetWorkoutDetailedAsync(int id)
         {
-            var workout = await workoutRepository.GetDetailedAsync(id);
+            var workout = await workoutRepository.GetByIdDetailedAsync(id);
 
             if (workout == null)
             {
@@ -103,7 +103,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteWorkoutAsync(int id)
         {
-            var workoutToDelete = await workoutRepository.GetAsync(id);
+            var workoutToDelete = await workoutRepository.GetByIdAsync(id);
 
             if (workoutToDelete == null)
             {
@@ -134,7 +134,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest();
             }
 
-            var workout = await workoutRepository.GetDetailedAsync(id);
+            var workout = await workoutRepository.GetByIdDetailedAsync(id);
 
             if (workout == null)
             {
@@ -158,7 +158,7 @@ namespace WorkoutApp.API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<WorkoutForReturnDetailedDto>> UpdateWorkoutPutAsync(int id, [FromBody] WorkoutForUpdateDto updateDto)
         {
-            var workout = await workoutRepository.GetAsync(id);
+            var workout = await workoutRepository.GetByIdAsync(id);
             mapper.Map(updateDto, workout);
 
             workout.LastModifiedDate = DateTime.Now;

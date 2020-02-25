@@ -13,8 +13,6 @@ namespace WorkoutApp.API.Data.Repositories
         // Perhaps use UserManager<User> in future?
         public UserRepository(DataContext context) : base(context) { }
 
-        protected override IQueryable<User> EntitySet => context.Users;
-
         protected override IQueryable<User> AddDetailedIncludes(IQueryable<User> query)
         {
             return query.Include(u => u.UserRoles).ThenInclude(r => r.Role);

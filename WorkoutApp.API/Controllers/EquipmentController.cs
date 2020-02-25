@@ -48,7 +48,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetSingleEquipment")]
         public async Task<ActionResult<EquipmentForReturnDto>> GetSingleEquipmentAsync(int id)
         {
-            var equipment = await equipmentRepository.GetAsync(id);
+            var equipment = await equipmentRepository.GetByIdAsync(id);
             var equipmentToReturn = mapper.Map<EquipmentForReturnDto>(equipment);
 
             return Ok(equipmentToReturn);
@@ -57,7 +57,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<EquipmentForReturnDetailedDto>> GetSingleEquipmentDetailedAsync(int id)
         {
-            var equipment = await equipmentRepository.GetDetailedAsync(id);
+            var equipment = await equipmentRepository.GetByIdDetailedAsync(id);
             var equipmentToReturn = mapper.Map<EquipmentForReturnDetailedDto>(equipment);
 
             return Ok(equipmentToReturn);
@@ -84,7 +84,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSingleEquipmentAsync(int id)
         {
-            var equipment = await equipmentRepository.GetAsync(id);
+            var equipment = await equipmentRepository.GetByIdAsync(id);
 
             if (equipment == null)
             {
@@ -110,7 +110,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest();
             }
 
-            var equipment = await equipmentRepository.GetAsync(id);
+            var equipment = await equipmentRepository.GetByIdAsync(id);
 
             if (equipment == null)
             {

@@ -48,7 +48,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetExerciseCategory")]
         public async Task<ActionResult<ExerciseCategoryForReturnDto>> GetExerciseCategoryAsync(int id)
         {
-            var category = await exerciseCategoryRepository.GetAsync(id);
+            var category = await exerciseCategoryRepository.GetByIdAsync(id);
 
             if (category == null)
             {
@@ -63,7 +63,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<ExerciseCategoryForReturnDetailedDto>> GetExerciseCategoryDetailedAsync(int id)
         {
-            var category = await exerciseCategoryRepository.GetDetailedAsync(id);
+            var category = await exerciseCategoryRepository.GetByIdDetailedAsync(id);
 
             if (category == null)
             {
@@ -96,7 +96,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteExerciseCategoryAsync(int id)
         {
-            var category = await exerciseCategoryRepository.GetAsync(id);
+            var category = await exerciseCategoryRepository.GetByIdAsync(id);
 
             if (category == null)
             {
@@ -122,7 +122,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest();
             }
 
-            var category = await exerciseCategoryRepository.GetAsync(id);
+            var category = await exerciseCategoryRepository.GetByIdAsync(id);
 
             if (category == null)
             {

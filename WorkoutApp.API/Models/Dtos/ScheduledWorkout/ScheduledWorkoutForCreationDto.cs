@@ -11,5 +11,6 @@ namespace WorkoutApp.API.Models.Dtos
         public int WorkoutId { get; set; }
         [Required]
         public DateTime ScheduledDateTime { get; set; }
+        public List<ExerciseGroupForCreationDto> AdHocExercises { get; set; }
     }
 }
