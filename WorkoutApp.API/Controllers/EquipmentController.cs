@@ -28,7 +28,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<ActionResult<EquipmentForReturnDto>> GetEquipmentAsync([FromQuery] EquipmentSearchParams searchParams)
         {
-            var equipment = await equipmentRepository.GetEquipmentAsync(searchParams);
+            var equipment = await equipmentRepository.SearchAsync(searchParams);
             Response.AddPagination(equipment.PageNumber, equipment.PageSize, equipment.TotalItems, equipment.TotalPages);
             var equipmentToReturn = mapper.Map<IEnumerable<EquipmentForReturnDto>>(equipment);
 
@@ -38,7 +38,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("detailed")]
         public async Task<ActionResult<EquipmentForReturnDetailedDto>> GetEquipmentDetailedAsync([FromQuery] EquipmentSearchParams searchParams)
         {
-            var equipment = await equipmentRepository.GetEquipmentDetailedAsync(searchParams);
+            var equipment = await equipmentRepository.SearchDetailedAsync(searchParams);
             Response.AddPagination(equipment.PageNumber, equipment.PageSize, equipment.TotalItems, equipment.TotalPages);
             var equipmentToReturn = mapper.Map<IEnumerable<EquipmentForReturnDetailedDto>>(equipment);
 
@@ -48,7 +48,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetSingleEquipment")]
         public async Task<ActionResult<EquipmentForReturnDto>> GetSingleEquipmentAsync(int id)
         {
-            var equipment = await equipmentRepository.GetSingleEquipmentAsync(id);
+            var equipment = await equipmentRepository.GetAsync(id);
             var equipmentToReturn = mapper.Map<EquipmentForReturnDto>(equipment);
 
             return Ok(equipmentToReturn);
@@ -57,7 +57,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<EquipmentForReturnDetailedDto>> GetSingleEquipmentDetailedAsync(int id)
         {
-            var equipment = await equipmentRepository.GetSingleEquipmentDetailedAsync(id);
+            var equipment = await equipmentRepository.GetDetailedAsync(id);
             var equipmentToReturn = mapper.Map<EquipmentForReturnDetailedDto>(equipment);
 
             return Ok(equipmentToReturn);
@@ -84,7 +84,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSingleEquipmentAsync(int id)
         {
-            var equipment = await equipmentRepository.GetSingleEquipmentAsync(id);
+            var equipment = await equipmentRepository.GetAsync(id);
 
             if (equipment == null)
             {
@@ -110,7 +110,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest();
             }
 
-            var equipment = await equipmentRepository.GetSingleEquipmentAsync(id);
+            var equipment = await equipmentRepository.GetAsync(id);
 
             if (equipment == null)
             {

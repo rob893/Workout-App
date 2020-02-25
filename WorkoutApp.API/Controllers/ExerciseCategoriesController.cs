@@ -28,7 +28,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExerciseCategoryForReturnDto>>> GetExerciseCategoriesAsync([FromQuery] PaginationParams searchParams)
         {
-            var categories = await exerciseCategoryRepository.GetExerciseCategoriesAsync(searchParams);
+            var categories = await exerciseCategoryRepository.SearchAsync(searchParams);
             Response.AddPagination(categories);
             var categoriesForReturn = mapper.Map<IEnumerable<ExerciseCategoryForReturnDto>>(categories);
 
@@ -38,7 +38,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("detailed")]
         public async Task<ActionResult<IEnumerable<ExerciseCategoryForReturnDetailedDto>>> GetExerciseCategoriesDetailedAsync([FromQuery] PaginationParams searchParams)
         {
-            var categories = await exerciseCategoryRepository.GetExerciseCategoriesDetailedAsync(searchParams);
+            var categories = await exerciseCategoryRepository.SearchDetailedAsync(searchParams);
             Response.AddPagination(categories);
             var categoriesForReturn = mapper.Map<IEnumerable<ExerciseCategoryForReturnDetailedDto>>(categories);
 
@@ -48,7 +48,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetExerciseCategory")]
         public async Task<ActionResult<ExerciseCategoryForReturnDto>> GetExerciseCategoryAsync(int id)
         {
-            var category = await exerciseCategoryRepository.GetExerciseCategoryAsync(id);
+            var category = await exerciseCategoryRepository.GetAsync(id);
 
             if (category == null)
             {
@@ -63,7 +63,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<ExerciseCategoryForReturnDetailedDto>> GetExerciseCategoryDetailedAsync(int id)
         {
-            var category = await exerciseCategoryRepository.GetExerciseCategoryDetailedAsync(id);
+            var category = await exerciseCategoryRepository.GetDetailedAsync(id);
 
             if (category == null)
             {
@@ -96,7 +96,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteExerciseCategoryAsync(int id)
         {
-            var category = await exerciseCategoryRepository.GetExerciseCategoryAsync(id);
+            var category = await exerciseCategoryRepository.GetAsync(id);
 
             if (category == null)
             {
@@ -122,7 +122,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest();
             }
 
-            var category = await exerciseCategoryRepository.GetExerciseCategoryAsync(id);
+            var category = await exerciseCategoryRepository.GetAsync(id);
 
             if (category == null)
             {

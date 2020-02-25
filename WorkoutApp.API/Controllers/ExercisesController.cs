@@ -32,7 +32,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetExercisesAsync([FromQuery] ExerciseSearchParams searchParams)
         {
-            var exercises = await exerciseRepository.GetExercisesAsync(searchParams);
+            var exercises = await exerciseRepository.SearchAsync(searchParams);
             Response.AddPagination(exercises);
             var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
 
@@ -42,7 +42,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("detailed")]
         public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> GetExercisesDetailedAsync([FromQuery] ExerciseSearchParams searchParams)
         {
-            var exercises = await exerciseRepository.GetExercisesDetailedAsync(searchParams);
+            var exercises = await exerciseRepository.SearchDetailedAsync(searchParams);
             Response.AddPagination(exercises);
             var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
 
@@ -61,7 +61,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetExercise")]
         public async Task<ActionResult<ExerciseForReturnDto>> GetExerciseAsync(int id)
         {
-            var exercise = await exerciseRepository.GetExerciseAsync(id);
+            var exercise = await exerciseRepository.GetAsync(id);
             var exerciseToReturn = mapper.Map<ExerciseForReturnDto>(exercise);
 
             return Ok(exerciseToReturn);
@@ -70,7 +70,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<ExerciseForReturnDetailedDto>> GetExerciseDetailedAsync(int id)
         {
-            var exercise = await exerciseRepository.GetExerciseDetailedAsync(id);
+            var exercise = await exerciseRepository.GetDetailedAsync(id);
             var exerciseToReturn = mapper.Map<ExerciseForReturnDetailedDto>(exercise);
 
             return Ok(exerciseToReturn);
@@ -83,13 +83,13 @@ namespace WorkoutApp.API.Controllers
 
             if (exercise.PrimaryMuscleId != null)
             {
-                var primaryMuscle = await muscleRepository.GetMuscleAsync(exercise.PrimaryMuscleId.Value);
+                var primaryMuscle = await muscleRepository.GetAsync(exercise.PrimaryMuscleId.Value);
                 newExercise.PrimaryMuscle = primaryMuscle;
             }
 
             if (exercise.SecondaryMuscleId != null)
             {
-                var secondaryMuscle = await muscleRepository.GetMuscleAsync(exercise.SecondaryMuscleId.Value);
+                var secondaryMuscle = await muscleRepository.GetAsync(exercise.SecondaryMuscleId.Value);
                 newExercise.SecondaryMuscle = secondaryMuscle;
             }
 
@@ -125,7 +125,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteExercise(int id)
         {
-            var exercise = await exerciseRepository.GetExerciseAsync(id);
+            var exercise = await exerciseRepository.GetAsync(id);
 
             if (exercise == null)
             {
@@ -151,7 +151,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest();
             }
 
-            var exercise = await exerciseRepository.GetExerciseDetailedAsync(id);
+            var exercise = await exerciseRepository.GetDetailedAsync(id);
 
             if (exercise == null)
             {

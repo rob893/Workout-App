@@ -33,7 +33,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetUsersAsync([FromQuery] PaginationParams searchParams)
         {
-            var users = await userRepository.GetUsersAsync(searchParams);
+            var users = await userRepository.SearchAsync(searchParams);
             var usersToReturn = mapper.Map<IEnumerable<UserForReturnDto>>(users);
             Response.AddPagination(users);
 
@@ -44,7 +44,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("detailed")]
         public async Task<ActionResult<IEnumerable<UserForReturnDetailedDto>>> GetUsersDetailedAsync([FromQuery] PaginationParams searchParams)
         {
-            var users = await userRepository.GetUsersDetailedAsync(searchParams);
+            var users = await userRepository.SearchDetailedAsync(searchParams);
             var usersToReturn = mapper.Map<IEnumerable<UserForReturnDetailedDto>>(users);
             Response.AddPagination(users);
 
@@ -54,7 +54,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetUserAsync")]
         public async Task<ActionResult<UserForReturnDto>> GetUserAsync(int id)
         {
-            var user = await userRepository.GetUserAsync(id);
+            var user = await userRepository.GetAsync(id);
             var userToReturn = mapper.Map<UserForReturnDto>(user);
 
             return Ok(userToReturn);
@@ -64,7 +64,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<UserForReturnDetailedDto>> GetUserDetailedAsync(int id)
         {
-            var users = await userRepository.GetUserDetailedAsync(id);
+            var users = await userRepository.GetDetailedAsync(id);
             var usersToReturn = mapper.Map<UserForReturnDetailedDto>(users);
 
             return Ok(usersToReturn);
@@ -90,7 +90,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("At least one role must be specified.", 400, Request));
             }
 
-            var user = await userRepository.GetUserDetailedAsync(id);
+            var user = await userRepository.GetDetailedAsync(id);
             var roles = await userRepository.GetRolesAsync();
             var userRoles = user.UserRoles.Select(ur => ur.Role.Name.ToUpper()).ToHashSet();
             var selectedRoles = roleEditDto.RoleNames.Select(role => role.ToUpper()).ToHashSet();
@@ -132,7 +132,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("At least one role must be specified.", 400, Request));
             }
 
-            var user = await userRepository.GetUserDetailedAsync(id);
+            var user = await userRepository.GetDetailedAsync(id);
             var roles = await userRepository.GetRolesAsync();
             var userRoles = user.UserRoles.Select(ur => ur.Role.Name.ToUpper()).ToHashSet();
             var selectedRoles = roleEditDto.RoleNames.Select(role => role.ToUpper()).ToHashSet();

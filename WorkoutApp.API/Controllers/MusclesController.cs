@@ -28,7 +28,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MuscleForReturnDto>>> GetMusclesAsync([FromQuery] PaginationParams searchParams)
         {
-            var muscles = await muscleRepository.GetMusclesAsync(searchParams);
+            var muscles = await muscleRepository.SearchAsync(searchParams);
             Response.AddPagination(muscles);
             var musclesToReturn = mapper.Map<IEnumerable<MuscleForReturnDto>>(muscles);
 
@@ -38,7 +38,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("detailed")]
         public async Task<ActionResult<IEnumerable<MuscleForReturnDetailedDto>>> GetMusclesDetailedAsync([FromQuery] PaginationParams searchParams)
         {
-            var muscles = await muscleRepository.GetMusclesDetailedAsync(searchParams);
+            var muscles = await muscleRepository.SearchDetailedAsync(searchParams);
             Response.AddPagination(muscles);
             var musclesToReturn = mapper.Map<IEnumerable<MuscleForReturnDetailedDto>>(muscles);
 
@@ -48,7 +48,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetMuscle")]
         public async Task<ActionResult<MuscleForReturnDto>> GetMuscleAsync(int id)
         {
-            var muscle = await muscleRepository.GetMuscleAsync(id);
+            var muscle = await muscleRepository.GetAsync(id);
 
             if (muscle == null)
             {
@@ -63,7 +63,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<MuscleForReturnDetailedDto>> GetMuscleDetailedAsync(int id)
         {
-            var muscle = await muscleRepository.GetMuscleDetailedAsync(id);
+            var muscle = await muscleRepository.GetDetailedAsync(id);
 
             if (muscle == null)
             {
@@ -96,7 +96,7 @@ namespace WorkoutApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMuscleAsync(int id)
         {
-            var muscle = await muscleRepository.GetMuscleAsync(id);
+            var muscle = await muscleRepository.GetAsync(id);
 
             if (muscle == null)
             {
@@ -121,7 +121,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest();
             }
 
-            var muscle = await muscleRepository.GetMuscleAsync(id);
+            var muscle = await muscleRepository.GetAsync(id);
 
             if (muscle == null)
             {
@@ -145,7 +145,7 @@ namespace WorkoutApp.API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<MuscleForReturnDto>> UpdateMusclePutAsync(int id, [FromBody] MuscleForUpdateDto updateDto)
         {
-            var muscle = await muscleRepository.GetMuscleAsync(id);
+            var muscle = await muscleRepository.GetAsync(id);
 
             if (muscle == null)
             {

@@ -17,6 +17,7 @@ namespace WorkoutApp.API.Controllers
     public class ScheduledWorkoutsController : ControllerBase
     {
         private readonly ScheduledWorkoutRepository scheduledWorkoutRepository;
+        private readonly WorkoutRepository workoutRepository;
         private readonly IMapper mapper;
 
         
@@ -29,7 +30,7 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}", Name = "GetScheduledWorkout")]
         public async Task<ActionResult<ScheduledWorkoutForReturnDto>> GetScheduledWorkout(int id)
         {
-            var workout = await repo.GetScheduledUserWorkoutAsync(id);
+            var workout = await scheduledWorkoutRepository.GetAsync(id);
 
             if (workout == null)
             {
@@ -42,9 +43,9 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateScheduledWorkout([FromBody] ScheduledWorkoutForCreationDto newWorkoutDto)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDto>> CreateScheduledWorkout([FromBody] ScheduledWorkoutForCreationDto newWorkoutDto)
         {
-            if (await repo.GetWorkoutAsync(newWorkoutDto.WorkoutId) == null)
+            if (await workoutRepository.GetAsync(newWorkoutDto.WorkoutId) == null)
             {
                 return BadRequest(new ProblemDetailsWithErrors("Invalid workout id!", 400, Request));
             }
@@ -53,22 +54,23 @@ namespace WorkoutApp.API.Controllers
 
             newWorkout.ScheduledByUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            repo.Add<ScheduledWorkout>(newWorkout);
+            scheduledWorkoutRepository.Add(newWorkout);
+            var saveResults = await scheduledWorkoutRepository.SaveAllAsync();
 
-            if (await repo.SaveAllAsync())
+            if (!saveResults)
             {
-                var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(newWorkout);
-
-                return CreatedAtAction(nameof(GetScheduledWorkout), new { id = newWorkout.Id }, workoutToReturn);
+                return BadRequest(new ProblemDetailsWithErrors("Could not save the new workout.", 400, Request));
             }
 
-            return BadRequest(new ProblemDetailsWithErrors("Could not save the new workout.", 400, Request));
+            var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(newWorkout);
+
+            return CreatedAtRoute("GetScheduledWorkout", new { id = newWorkout.Id }, workoutToReturn);        
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSceduledWorkoutAsync(int id)
         {
-            var workout = await scheduledWorkoutRepository.GetScheduledWorkoutAsync(id, w => w.AdHocExercises);
+            var workout = await scheduledWorkoutRepository.GetAsync(id, w => w.AdHocExercises);
 
             if (workout == null)
             {
@@ -80,15 +82,15 @@ namespace WorkoutApp.API.Controllers
                 return Unauthorized();
             }
 
-            repo.DeleteRange<ExerciseGroup>(workout.AdHocExercises);
             scheduledWorkoutRepository.Delete(workout);
+            var saveResults = await scheduledWorkoutRepository.SaveAllAsync();
 
-            if (await repo.SaveAllAsync())
+            if (!saveResults)
             {
-                return Ok();
+                return BadRequest(new ProblemDetailsWithErrors("Could not delete scheduled workout!", 400, Request));
             }
 
-            return BadRequest(new ProblemDetailsWithErrors("Could not delete scheduled workout!", 400, Request));
+            return NoContent();
         }
 
         [HttpPatch("{id}")]
@@ -99,7 +101,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest();
             }
 
-            var workout = await repo.GetScheduledUserWorkoutAsync(id);
+            var workout = await scheduledWorkoutRepository.GetAsync(id);
 
             if (workout == null)
             {
@@ -112,21 +114,22 @@ namespace WorkoutApp.API.Controllers
             }
 
             patchDoc.ApplyTo(workout);
+            var saveResults = await scheduledWorkoutRepository.SaveAllAsync();
 
-            if (await repo.SaveAllAsync())
+            if (!saveResults)
             {
-                var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
-
-                return Ok(workoutToReturn);
+                return BadRequest(new ProblemDetailsWithErrors("Could not apply changes.", 400, Request));
             }
 
-            return BadRequest(new ProblemDetailsWithErrors("Could not apply changes.", 400, Request));
+            var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
+
+            return Ok(workoutToReturn);
         }
 
         [HttpPatch("{id}/startWorkout")]
         public async Task<ActionResult<ScheduledWorkoutForReturnDto>> StartWorkout(int id)
         {
-            var workout = await repo.GetScheduledUserWorkoutAsync(id);
+            var workout = await scheduledWorkoutRepository.GetAsync(id);
 
             if (workout == null)
             {
@@ -144,21 +147,22 @@ namespace WorkoutApp.API.Controllers
             }
 
             workout.StartedDateTime = DateTime.Now;
+            var saveResults = await scheduledWorkoutRepository.SaveAllAsync();
 
-            if (await repo.SaveAllAsync())
+            if (!saveResults)
             {
-                var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
-
-                return Ok(workoutToReturn);
+                return BadRequest(new ProblemDetailsWithErrors("Could not start workout.", 400, Request));
             }
 
-            return BadRequest(new ProblemDetailsWithErrors("Could not start workout.", 400, Request));
+            var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
+
+            return Ok(workoutToReturn);
         }
 
         [HttpPatch("{id}/completeWorkout")]
         public async Task<ActionResult<ScheduledWorkoutForReturnDto>> CompleteWorkout(int id)
         {
-            var workout = await repo.GetScheduledUserWorkoutAsync(id);
+            var workout = await scheduledWorkoutRepository.GetAsync(id);
 
             if (workout == null)
             {
@@ -182,14 +186,16 @@ namespace WorkoutApp.API.Controllers
                 workout.StartedDateTime = DateTime.Now;
             }
 
-            if (await repo.SaveAllAsync())
-            {
-                var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
+            var saveResults = await scheduledWorkoutRepository.SaveAllAsync();
 
-                return Ok(workoutToReturn);
+            if (!saveResults)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Could not complete workout.", 400, Request));
             }
 
-            return BadRequest(new ProblemDetailsWithErrors("Could not complete workout.", 400, Request));
+            var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
+
+            return Ok(workoutToReturn);
         }
     }
 }
