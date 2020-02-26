@@ -1,5 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from './_services/auth.service';
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
+
+const login = gql`
+    mutation Login($userCredentials: UserLogin!) {
+        login(userCredentials: $userCredentials) {
+            token
+            user {
+                firstName
+                email
+            }
+        }
+    }
+`;
 
 @Component({
     selector: 'app-root',
@@ -7,17 +20,24 @@ import { AuthService } from './_services/auth.service';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-    title = 'Workout Helper';
+    title = 'WorkoutApp-SPA';
+    private readonly apollo: Apollo;
 
-    private authService: AuthService;
-
-
-    public constructor(authService: AuthService) {
-        this.authService = authService;
+    public constructor(apollo: Apollo) {
+        this.apollo = apollo;
     }
 
-    public ngOnInit(): void {
-        this.authService.decodeToken();
-        this.authService.setUser();
+    public ngOnInit() {
+        this.apollo.mutate({
+            mutation: login,
+            variables: {
+                userCredentials: {
+                    username: 'robert',
+                    password: 'password'
+                }
+            }
+        }).subscribe(({ data }) => {
+            console.log(data);
+        });
     }
 }
