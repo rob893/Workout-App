@@ -11,6 +11,8 @@ type Query {
     muscle(id: Int!): Muscle
     allEquipment: [Equipment]
     equipment(id: Int!): Equipment
+    workouts: [Workout]!
+    workout(id: Int!): Workout!
     me: User
 }
 
@@ -52,8 +54,10 @@ type User {
 type Workout {
     id: Int!
     label: String!
+    description: String
     color: String
     createdByUserId: Int!
+    createdByUser: User
     createdOnDate: String
     lastModifiedDate: String
     shareable: Boolean
@@ -91,7 +95,9 @@ type Exercise {
 type Muscle {
     id: Int!
     name: String!
-    exercises: [Exercise]
+    description: String
+    primaryExercises: [Exercise]
+    secondaryExercises: [Exercise]
 }
 
 type ExerciseStep {

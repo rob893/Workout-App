@@ -11,6 +11,7 @@ export interface Exercise {
 export interface Muscle {
     id: string;
     name: string;
+    description?: string;
 }
 
 export interface ExerciseStep {
