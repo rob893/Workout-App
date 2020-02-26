@@ -2,6 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 
+type LoginResponse = {
+    login: {
+        token?: string;
+        user?: {
+            username?: string;
+            firstName?: string;
+            lastName?: string;
+            email?: string;
+        } 
+    }
+};
+
 const login = gql`
     mutation Login($userCredentials: UserLogin!) {
         login(userCredentials: $userCredentials) {
@@ -27,8 +39,8 @@ export class AppComponent implements OnInit {
         this.apollo = apollo;
     }
 
-    public ngOnInit() {
-        this.apollo.mutate({
+    public async ngOnInit() {
+        const res = await this.apollo.mutate<LoginResponse>({
             mutation: login,
             variables: {
                 userCredentials: {
@@ -36,8 +48,8 @@ export class AppComponent implements OnInit {
                     password: 'password'
                 }
             }
-        }).subscribe(({ data }) => {
-            console.log(data);
-        });
+        }).toPromise();
+
+        console.log(res.data.login.token);
     }
 }
