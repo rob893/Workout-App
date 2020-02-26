@@ -20,7 +20,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using WorkoutApp.API.Data;
-using WorkoutApp.API.Data.Providers;
 using WorkoutApp.API.Data.Repositories;
 using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models.Domain;
@@ -92,24 +91,24 @@ namespace WorkoutApp.API
             services.AddAutoMapper(typeof(Startup));
 
             //Must add repos here so they can be injected. Interface => concrete implementation
-            services.AddScoped<IWorkoutRepository, WorkoutRepositoryOLD>();
-            services.AddScoped<ExerciseProvider>();
-            services.AddScoped<WorkoutInvitationProvider>();
             services.AddScoped<UserRepository>();
             services.AddScoped<MuscleRepository>();
             services.AddScoped<EquipmentRepository>();
             services.AddScoped<ExerciseCategoryRepository>();
             services.AddScoped<ExerciseRepository>();
             services.AddScoped<WorkoutRepository>();
+            services.AddScoped<ExerciseGroupRepository>();
+            services.AddScoped<ScheduledWorkoutRepository>();
+            services.AddScoped<WorkoutInvitationRepository>();
 
-            services.AddTransient<Seed>();
+            services.AddLogging();
+
+            services.AddTransient<Seeder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, Seed seeder)
+        public void Configure(IApplicationBuilder app)
         {
-            // seeder.SeedDatabase(true);
-
             app.UseSwagger();
 
             if (AppEnvironment.IsDevelopment())
@@ -133,7 +132,7 @@ namespace WorkoutApp.API
             app.UseCors(header => header.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders(new string[] { "Token-Expired" }));
             app.UseGlobalExceptionHandler();
             app.UseHsts();
-            //app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints =>
             {
@@ -147,7 +146,7 @@ namespace WorkoutApp.API
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    //Set token validation options. These will be used when validating all tokens.
+                    // Set token validation options. These will be used when validating all tokens.
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ClockSkew = TimeSpan.Zero,
@@ -164,7 +163,7 @@ namespace WorkoutApp.API
 
                     options.Events = new JwtBearerEvents
                     {
-                        //Add custom responses when token validation fails.
+                        // Add custom responses when token validation fails.
                         OnChallenge = context =>
                         {
                             // Skip the default logic.
@@ -197,7 +196,7 @@ namespace WorkoutApp.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Workout App API", Version = "v1" });
 
-                //Add the security token option to swagger
+                // Add the security token option to swagger
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",

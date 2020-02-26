@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace WorkoutApp.API.Models.Domain
 {
-    public class Muscle
+    public class Muscle : IIdentifiable
     {
         public int Id { get; set; }
         public string Name { get; set; }

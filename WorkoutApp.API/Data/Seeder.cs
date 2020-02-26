@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutApp.API.Data
 {
-    public class Seed
+    public class Seeder
     {
         private readonly DataContext context;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<Role> roleManager;
 
 
-        public Seed(DataContext context, UserManager<User> userManager, RoleManager<Role> roleManager)
+        public Seeder(DataContext context, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             this.context = context;
             this.userManager = userManager;

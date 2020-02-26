@@ -1,6 +1,6 @@
 namespace WorkoutApp.API.Models.Domain
 {
-    public class ExerciseGroup
+    public class ExerciseGroup : IIdentifiable
     {
         public int Id { get; set; }
         public Exercise Exercise { get; set; }

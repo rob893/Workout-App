@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WorkoutApp.API.Models.Domain
 {
-    public class ScheduledWorkout
+    public class ScheduledWorkout : IIdentifiable
     {
         public int Id { get; set; }
         public User ScheduledByUser { get; set; }

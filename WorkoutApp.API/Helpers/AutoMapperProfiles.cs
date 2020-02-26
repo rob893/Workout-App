@@ -9,52 +9,91 @@ namespace WorkoutApp.API.Helpers
     {
         public AutoMapperProfiles()
         {
+            CreateUserMaps();
+            CreateMuscleMaps();
+            CreateWorkoutMaps();
+            CreateScheduledWorkoutMaps();
+            CreateWorkoutInvitationMaps();
+            CreateEquipmentMaps();
+            CreateExerciseCategoryMaps();
+            CreateExerciseMaps();
+        }
+
+        private void CreateUserMaps()
+        {
             CreateMap<User, UserForReturnDto>();
             CreateMap<User, UserForReturnDetailedDto>()
                 .ForMember(dto => dto.Roles, opt =>
                     opt.MapFrom(u => u.UserRoles.Select(ur => ur.Role.Name)));
-
             CreateMap<UserForRegisterDto, User>();
+            
             CreateMap<Role, RoleForReturnDto>();
+        }
 
+        private void CreateMuscleMaps()
+        {
             CreateMap<Muscle, MuscleForReturnDto>();
             CreateMap<Muscle, MuscleForReturnDetailedDto>();
             CreateMap<MuscleForCreateDto, Muscle>();
+            CreateMap<MuscleForUpdateDto, Muscle>();
+        }
 
-            CreateMap<Workout, WorkoutForReturnDetailedDto>();
+        private void CreateWorkoutMaps()
+        {
             CreateMap<Workout, WorkoutForReturnDto>();
+            CreateMap<Workout, WorkoutForReturnDetailedDto>();
             CreateMap<WorkoutForCreationDto, Workout>();
             CreateMap<WorkoutForUpdateDto, Workout>();
-            CreateMap<ScheduledWoForCreationDto, ScheduledWorkout>();
-            CreateMap<ScheduledWorkout, ScheduledWoForReturnDto>()
+        }
+
+        private void CreateScheduledWorkoutMaps()
+        {
+            CreateMap<ScheduledWorkout, ScheduledWorkoutForReturnDto>();
+            CreateMap<ScheduledWorkout, ScheduledWorkoutForReturnDetailedDto>()
                 .ForMember(dto => dto.Attendees, opt =>
                     opt.MapFrom(wo => wo.Attendees.Select(x => x.User)));
+            CreateMap<ScheduledWorkoutForCreationDto, ScheduledWorkout>();
+        }
 
-            CreateMap<ExerciseGroup, ExerciseGroupForReturnDto>();
+        private void CreateWorkoutInvitationMaps()
+        {
+            CreateMap<WorkoutInvitation, WorkoutInvitationForReturnDto>();
+            CreateMap<WorkoutInvitation, WorkoutInvitationForReturnDetailedDto>();
+            CreateMap<WorkoutInvitationForCreationDto, WorkoutInvitation>();
+        }
 
-            CreateMap<ExerciseForCreationDto, Exercise>();
-            CreateMap<Exercise, ExerciseForReturnDto>();
-            CreateMap<Exercise, ExerciseForReturnDetailedDto>()
-                .ForMember(dto => dto.Equipment, opts => 
-                    opts.MapFrom(e => e.Equipment.Select(e => e.Equipment)))
-                .ForMember(dto => dto.ExerciseCategorys, opts => 
-                    opts.MapFrom(ec => ec.ExerciseCategorys.Select(ec => ec.ExerciseCategory)));
+        private void CreateEquipmentMaps()
+        {
+            CreateMap<Equipment, EquipmentForReturnDto>();
+            CreateMap<Equipment, EquipmentForReturnDetailedDto>()
+                .ForMember(dto => dto.Exercises, opts =>
+                    opts.MapFrom(equipment => equipment.Exercises.Select(e => e.Exercise)));
+            CreateMap<EquipmentForCreationDto, Equipment>();
+        }
 
-            CreateMap<ExerciseStep, ExerciseStepForReturnDto>();
-
+        private void CreateExerciseCategoryMaps()
+        {
             CreateMap<ExerciseCategory, ExerciseCategoryForReturnDto>();
             CreateMap<ExerciseCategory, ExerciseCategoryForReturnDetailedDto>()
                 .ForMember(dto => dto.Exercises, opts =>
                     opts.MapFrom(e => e.Exercises.Select(e => e.Exercise)));
             CreateMap<ExerciseCategoryForCreationDto, ExerciseCategory>();
-            
-            CreateMap<ExerciseGroupForCreationDto, ExerciseGroup>();
+        }
 
-            CreateMap<EquipmentForCreationDto, Equipment>();
-            CreateMap<Equipment, EquipmentForReturnDto>();
-            CreateMap<Equipment, EquipmentForReturnDetailedDto>()
-                .ForMember(dto => dto.Exercises, opts =>
-                    opts.MapFrom(equipment => equipment.Exercises.Select(e => e.Exercise)));
+        private void CreateExerciseMaps()
+        {
+            CreateMap<Exercise, ExerciseForReturnDto>();
+            CreateMap<Exercise, ExerciseForReturnDetailedDto>()
+                .ForMember(dto => dto.Equipment, opts =>
+                    opts.MapFrom(e => e.Equipment.Select(e => e.Equipment)))
+                .ForMember(dto => dto.ExerciseCategorys, opts =>
+                    opts.MapFrom(ec => ec.ExerciseCategorys.Select(ec => ec.ExerciseCategory)));
+            CreateMap<ExerciseForCreationDto, Exercise>();
+            
+            CreateMap<ExerciseStep, ExerciseStepForReturnDto>();
+
+            CreateMap<ExerciseGroup, ExerciseGroupForReturnDto>();
+            CreateMap<ExerciseGroupForCreationDto, ExerciseGroup>();
         }
     }
 }

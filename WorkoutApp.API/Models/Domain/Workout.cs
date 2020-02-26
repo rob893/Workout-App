@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WorkoutApp.API.Models.Domain
 {
-    public class Workout
+    public class Workout : IIdentifiable
     {
         public int Id { get; set; }
         public string Label { get; set; }

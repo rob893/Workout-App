@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutApp.API.Models.Domain
 {
-    public class User : IdentityUser<int>
+    public class User : IdentityUser<int>, IIdentifiable
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

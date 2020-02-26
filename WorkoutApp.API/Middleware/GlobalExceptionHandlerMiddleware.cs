@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using WorkoutApp.API.Helpers;
 
 namespace WorkoutApp.API.Middleware
@@ -11,16 +12,20 @@ namespace WorkoutApp.API.Middleware
     public class GlobalExceptionHandlerMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly ILogger<GlobalExceptionHandlerMiddleware> logger;
 
 
-        public GlobalExceptionHandlerMiddleware(RequestDelegate next)
+        public GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
         {
             this.next = next;
+            this.logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            IExceptionHandlerFeature error = context.Features.Get<IExceptionHandlerFeature>();
+            logger.LogDebug(next.Method.Name);
+
+            var error = context.Features.Get<IExceptionHandlerFeature>();
 
             if (error != null)
             {

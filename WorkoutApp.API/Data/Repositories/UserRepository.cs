@@ -8,36 +8,14 @@ using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Data.Repositories
 {
-    public class UserRepository : Repository<User>
+    public class UserRepository : Repository<User, PaginationParams>
     {
         // Perhaps use UserManager<User> in future?
         public UserRepository(DataContext context) : base(context) { }
 
-        public async Task<User> GetUserAsync(int id)
+        protected override IQueryable<User> AddDetailedIncludes(IQueryable<User> query)
         {
-            return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-        }
-
-        public async Task<User> GetUserDetailedAsync(int id)
-        {
-            return await context.Users
-                .Include(u => u.UserRoles).ThenInclude(r => r.Role)
-                .FirstOrDefaultAsync(u => u.Id == id);
-        }
-
-        public async Task<PagedList<User>> GetUsersAsync(PaginationParams searchParams)
-        {
-            IQueryable<User> query = context.Users;
-
-            return await PagedList<User>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
-        }
-
-        public async Task<PagedList<User>> GetUsersDetailedAsync(PaginationParams searchParams)
-        {
-            IQueryable<User> query = context.Users
-                .Include(u => u.UserRoles).ThenInclude(r => r.Role);
-
-            return await PagedList<User>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return query.Include(u => u.UserRoles).ThenInclude(r => r.Role);
         }
 
         public async Task<PagedList<Role>> GetRolesAsync(PaginationParams searchParams)

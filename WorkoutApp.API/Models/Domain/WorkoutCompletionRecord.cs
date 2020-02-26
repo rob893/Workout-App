@@ -2,7 +2,7 @@ using System;
 
 namespace WorkoutApp.API.Models.Domain
 {
-    public class WorkoutCompletionRecord
+    public class WorkoutCompletionRecord : IIdentifiable
     {
         public int Id { get; set; }
         public int UserId { get; set; }
