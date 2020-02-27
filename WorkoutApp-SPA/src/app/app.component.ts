@@ -1,18 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Apollo } from 'apollo-angular';
-import { GraphQLQueries } from './queries';
-
-type LoginResponse = {
-    login: {
-        token?: string;
-        user?: {
-            username?: string;
-            firstName?: string;
-            lastName?: string;
-            email?: string;
-        } 
-    }
-};
+import { AuthService } from './auth/auth.service';
 
 @Component({
     selector: 'app-root',
@@ -21,23 +8,15 @@ type LoginResponse = {
 })
 export class AppComponent implements OnInit {
     title = 'WorkoutApp-SPA';
-    private readonly apollo: Apollo;
+    private readonly authService: AuthService;
 
-    public constructor(apollo: Apollo) {
-        this.apollo = apollo;
+    public constructor(authService: AuthService) {
+        this.authService = authService;
     }
 
     public async ngOnInit() {
-        const res = await this.apollo.mutate<LoginResponse>({
-            mutation: GraphQLQueries.login,
-            variables: {
-                userCredentials: {
-                    username: 'robert',
-                    password: 'password'
-                }
-            }
-        }).toPromise();
-
-        console.log(res.data.login.token);
+        this.authService.login('robert', 'jj').subscribe(res => {
+            console.log(res);
+        });
     }
 }
