@@ -36,6 +36,8 @@ export class AuthService {
                     password
                 }
             }
-        }).pipe(map(({ data: { login } }) =>  login));
+        }).pipe(
+            map(({ data: { login } }) =>  login)
+        );
     }
 }
