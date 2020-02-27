@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
+import { GraphQLQueries } from './queries';
 
 type LoginResponse = {
     login: {
@@ -13,18 +13,6 @@ type LoginResponse = {
         } 
     }
 };
-
-const login = gql`
-    mutation Login($userCredentials: UserLogin!) {
-        login(userCredentials: $userCredentials) {
-            token
-            user {
-                firstName
-                email
-            }
-        }
-    }
-`;
 
 @Component({
     selector: 'app-root',
@@ -41,7 +29,7 @@ export class AppComponent implements OnInit {
 
     public async ngOnInit() {
         const res = await this.apollo.mutate<LoginResponse>({
-            mutation: login,
+            mutation: GraphQLQueries.login,
             variables: {
                 userCredentials: {
                     username: 'robert',
