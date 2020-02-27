@@ -8,7 +8,11 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
-import { AuthService } from './auth/auth.service';
+import { JwtModule } from '@auth0/angular-jwt';
+
+export function tokenGetter(): string {
+    return localStorage.getItem('access_token');
+}
 
 @NgModule({
     declarations: [
@@ -20,7 +24,14 @@ import { AuthService } from './auth/auth.service';
         BrowserAnimationsModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
         GraphQLModule,
-        HttpClientModule
+        HttpClientModule,
+        JwtModule.forRoot({
+            config: {
+                tokenGetter,
+                whitelistedDomains: ['localhost:5003', 'localhost:4000', 'rwherber.com'],
+                blacklistedRoutes: []
+            }
+        })
     ],
     providers: [],
     bootstrap: [AppComponent]

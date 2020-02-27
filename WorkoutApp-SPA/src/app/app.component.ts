@@ -15,8 +15,9 @@ export class AppComponent implements OnInit {
     }
 
     public async ngOnInit() {
-        this.authService.login('robert', 'jj').subscribe(res => {
+        this.authService.login('admin', 'password').subscribe(res => {
             console.log(res);
+            console.log(this.authService.decodedToken);
         });
     }
 }

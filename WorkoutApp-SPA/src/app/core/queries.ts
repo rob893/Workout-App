@@ -6,8 +6,12 @@ export class GraphQLQueries {
             login(userCredentials: $userCredentials) {
                 token
                 user {
+                    id
+                    userName
                     firstName
+                    lastName
                     email
+                    created
                 }
             }
         }`;
