@@ -1,41 +1,24 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Apollo } from 'apollo-angular';
-import { login } from './auth.queries';
+import { login, registerUser } from './auth.queries';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Observable } from 'rxjs';
+import { User } from '../shared/models/user.model';
+import { TokenClaims } from '../shared/models/token-claims.model';
+import { LoginResponse } from './models/login-response.model';
+import { UserCredentials } from './models/user-credentials.model';
+import { RegisterUser } from './models/register-user.model';
 
-interface LoginResponse {
-    login: {
-        token: string;
-        user: User;
-    }
-}
-
-interface User {
-    id: string;
-    userName: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    created: string;
-}
-
-interface TokenClaims {
-    nameid: string;
-    unique_name: string;
-    role: string | string[];
-    nbf: number;
-    exp: number;
-    iat: number;
-    iss: string;
-    aud: string;
-}
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
 
+    private static readonly accessTokenKey = 'access_token';
+    private static readonly userKey = 'user';
+    
     private readonly apollo: Apollo;
     private readonly jwtHelper: JwtHelperService;
 
@@ -46,11 +29,11 @@ export class AuthService {
     }
 
     public get user(): User | undefined {
-        return JSON.parse(localStorage.getItem('user'));
+        return JSON.parse(localStorage.getItem(AuthService.userKey));
     }
 
     public get token(): string | undefined {
-        return localStorage.getItem('access_token');
+        return localStorage.getItem(AuthService.accessTokenKey);
     }
 
     public get decodedToken(): TokenClaims {
@@ -65,8 +48,8 @@ export class AuthService {
         return token ? !this.jwtHelper.isTokenExpired(token) : false;
     }
 
-    public login(username: string, password: string) {
-        return this.apollo.mutate<LoginResponse, { userCredentials: { username: string; password: string; } }>({
+    public login(username: string, password: string): Observable<LoginResponse> {
+        return this.apollo.mutate<{ login: LoginResponse }, { userCredentials: UserCredentials }>({
             mutation: login,
             variables: {
                 userCredentials: {
@@ -79,8 +62,8 @@ export class AuthService {
                 const { data: { login } } = response;
 
                 if (login && login.token && login.user) {
-                    localStorage.setItem('access_token', login.token);
-                    localStorage.setItem('user', JSON.stringify(login.user));
+                    localStorage.setItem(AuthService.accessTokenKey, login.token);
+                    localStorage.setItem(AuthService.userKey, JSON.stringify(login.user));
                 }
 
                 return login;
@@ -88,8 +71,23 @@ export class AuthService {
         );
     }
 
+    public register(userToRegister: RegisterUser): Observable<User> {
+        return this.apollo.mutate<{ registerUser: { user: User } }, { user: RegisterUser }>({
+            mutation: registerUser,
+            variables: {
+                user: userToRegister
+            }
+        }).pipe(
+            map(response => {
+                const { data: { registerUser: { user } } } = response;
+
+                return user;
+            })
+        );
+    }
+
     public logout(): void {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user');
+        localStorage.removeItem(AuthService.accessTokenKey);
+        localStorage.removeItem(AuthService.userKey);
     }
 }

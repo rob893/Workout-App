@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 
 export function tokenGetter(): string {
     return localStorage.getItem('access_token');
@@ -24,8 +26,10 @@ export function tokenGetter(): string {
     ],
     imports: [
         MatToolbarModule,
-        BrowserModule,
+        MatButtonModule,
+        MatInputModule,
         MatIconModule,
+        BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
