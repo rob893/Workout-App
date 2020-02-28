@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Apollo } from 'apollo-angular';
-import { GraphQLQueries } from '../core/queries';
+import { login } from './auth.queries';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 interface LoginResponse {
@@ -67,7 +67,7 @@ export class AuthService {
 
     public login(username: string, password: string) {
         return this.apollo.mutate<LoginResponse, { userCredentials: { username: string; password: string; } }>({
-            mutation: GraphQLQueries.login,
+            mutation: login,
             variables: {
                 userCredentials: {
                     username,
