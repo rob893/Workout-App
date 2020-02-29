@@ -14,6 +14,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 
 export function tokenGetter(): string {
     return localStorage.getItem('access_token');
@@ -27,7 +29,9 @@ export function tokenGetter(): string {
     imports: [
         MatToolbarModule,
         MatButtonModule,
+        MatListModule,
         MatInputModule,
+        MatSidenavModule,
         MatIconModule,
         BrowserModule,
         AppRoutingModule,
