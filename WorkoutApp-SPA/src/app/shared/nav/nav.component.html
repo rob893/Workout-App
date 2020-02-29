@@ -1,9 +1,9 @@
-<mat-toolbar color="primary">
+<mat-toolbar>
     <mat-toolbar-row>
-        <button mat-icon-button>
+        <button mat-icon-button color="accent">
             <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
         </button>
-        <h1>SimpleCRM</h1>
+        <h1 class="accent-color">SimpleCRM</h1>
         <span class="menu-spacer"></span>
         <div>
             <a mat-button [routerLink]="'/accounts'"> Accounts </a>

@@ -9,8 +9,8 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$anms-black-primary: mat-palette($mat-grey, 700, 300, 900);
-$anms-black-accent: mat-palette($mat-blue-grey, 400);
+$anms-black-primary: mat-palette($mat-blue-grey, 900);
+$anms-black-accent: mat-palette($mat-amber, 600);
 $anms-black-warn: mat-palette($mat-red, 500);
 
 // Create the theme object (a Sass map containing all of the palettes).

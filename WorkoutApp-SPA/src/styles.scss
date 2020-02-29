@@ -1,5 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import '@angular/material/prebuilt-themes/deeppurple-amber.css'; */
+@import '~@angular/material/theming';
+@import './themes/dark.theme.scss';
+
+.accent-color {
+  color: mat-color($anms-black-accent) !important;
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
