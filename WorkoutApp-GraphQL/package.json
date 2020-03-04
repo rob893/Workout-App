@@ -15,8 +15,8 @@
     "license": "ISC",
     "dependencies": {
         "apollo-datasource": "^0.7.0",
-        "apollo-datasource-rest": "^0.7.0",
-        "apollo-server": "^2.10.1",
+        "apollo-datasource-rest": "^0.8.0",
+        "apollo-server": "^2.11.0",
         "dotenv": "^8.2.0",
         "graphql": "^14.5.8",
         "jwt-decode": "^2.2.0"
