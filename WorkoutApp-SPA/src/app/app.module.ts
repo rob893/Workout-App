@@ -3,19 +3,16 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavComponent } from './shared/nav/nav.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
+import { MaterialModule } from './material.module';
+import { AuthService } from './auth/auth.service';
+import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
+import { HeaderComponent } from './navigation/header/header.component';
 
 export function tokenGetter(): string {
     return localStorage.getItem('access_token');
@@ -24,15 +21,11 @@ export function tokenGetter(): string {
 @NgModule({
     declarations: [
         AppComponent,
-        NavComponent
+        HeaderComponent,
+        SidenavListComponent
     ],
     imports: [
-        MatToolbarModule,
-        MatButtonModule,
-        MatListModule,
-        MatInputModule,
-        MatSidenavModule,
-        MatIconModule,
+        MaterialModule,
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
@@ -47,7 +40,9 @@ export function tokenGetter(): string {
             }
         })
     ],
-    providers: [],
+    providers: [
+        AuthService
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
