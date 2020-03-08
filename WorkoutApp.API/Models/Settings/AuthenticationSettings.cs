@@ -23,5 +23,7 @@ namespace WorkoutApp.API.Models.Settings
         /// to call the TokensController with to generate a token for its use.
         /// </summary>
         public int TokenExpirationTimeInMinutes { get; set; }
+
+        public int RefreshTokenExpirationTimeInMinutes { get; set; }
     }
 }

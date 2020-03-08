@@ -359,6 +359,31 @@ namespace WorkoutApp.API.Migrations
                     b.ToTable("Muscles");
                 });
 
+            modelBuilder.Entity("WorkoutApp.API.Models.Domain.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Expiration")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("WorkoutApp.API.Models.Domain.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -796,6 +821,15 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.Domain.Exercise", "Exercise")
                         .WithMany("ExerciseSteps")
                         .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WorkoutApp.API.Models.Domain.RefreshToken", b =>
+                {
+                    b.HasOne("WorkoutApp.API.Models.Domain.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

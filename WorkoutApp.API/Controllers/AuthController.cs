@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using WorkoutApp.API.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Options;
 using WorkoutApp.API.Helpers;
 using System.Linq;
 using WorkoutApp.API.Models.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -38,7 +40,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
+        public async Task<ActionResult<UserForReturnDto>> Register([FromBody] UserForRegisterDto userForRegisterDto)
         {
             User userToCreate = mapper.Map<User>(userForRegisterDto);
 
@@ -60,31 +62,122 @@ namespace WorkoutApp.API.Controllers
         /// <param name="userForLoginDto"></param>
         /// <returns>200 with user object on success. 401 on failure.</returns>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
+        public async Task<ActionResult<LoginForReturnDto>> Login([FromBody] UserForLoginDto userForLoginDto)
         {
-            User userFromRepo = await userManager.FindByNameAsync(userForLoginDto.Username);
+            var user = await userManager.Users.Include(u => u.RefreshTokens).FirstOrDefaultAsync(u => u.UserName == userForLoginDto.Username);
 
-            if (userFromRepo == null)
+            if (user == null)
             {
                 return Unauthorized(new ProblemDetailsWithErrors("Invalid username or password.", 401, Request));
             }
 
-            var result = await signInManager.CheckPasswordSignInAsync(userFromRepo, userForLoginDto.Password, false);
+            var result = await signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
 
             if (!result.Succeeded)
             {
                 return Unauthorized(new ProblemDetailsWithErrors("Invalid username or password.", 401, Request));
             }
 
-            UserForReturnDto user = mapper.Map<UserForReturnDto>(userFromRepo);
+            var token = await GenerateJwtToken(user);
+            var refreshToken = GenerateRefreshToken();
 
-            string token = await GenerateJwtToken(userFromRepo);
+            user.RefreshTokens.RemoveAll(token => token.Source == userForLoginDto.Source || token.Expiration < DateTime.Now);
+
+            user.RefreshTokens.Add(new RefreshToken
+            {
+                Token = refreshToken,
+                Source = userForLoginDto.Source,
+                Expiration = DateTime.Now.AddMinutes(authSettings.RefreshTokenExpirationTimeInMinutes)
+            });
+
+            await userManager.UpdateAsync(user);
+
+            var userToReturn = mapper.Map<UserForReturnDto>(user);
+
+            return Ok(new LoginForReturnDto
+            {
+                Token = token,
+                RefreshToken = refreshToken,
+                User = userToReturn
+            });
+        }
+
+        [HttpPost("refreshToken")]
+        public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
+        {
+            // Still validate the passed in token, but ignore its expiration date by setting validate lifetime to false
+            var validationParameters = new TokenValidationParameters
+            {
+                ClockSkew = TimeSpan.Zero,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(authSettings.APISecrect)),
+                RequireSignedTokens = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                RequireExpirationTime = true,
+                ValidateLifetime = false,
+                ValidAudience = authSettings.TokenAudience,
+                ValidIssuer = authSettings.TokenIssuer
+            };
+
+            ClaimsPrincipal tokenClaims;
+
+            try
+            {
+                tokenClaims = new JwtSecurityTokenHandler().ValidateToken(refreshTokenDto.Token, validationParameters, out var rawValidatedToken);
+            }
+            catch (Exception e)
+            {
+                return Unauthorized(new ProblemDetailsWithErrors(e.Message, 401, Request));
+            }
+
+            var userIdClaim = tokenClaims.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new ProblemDetailsWithErrors("Invalid token.", 401, Request));
+            }
+
+            var user = await userManager.Users.Include(u => u.RefreshTokens).FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return Unauthorized(new ProblemDetailsWithErrors("Invalid token.", 401, Request));
+            }
+
+            if (user.RefreshTokens.FirstOrDefault(rToken => rToken.Token == refreshTokenDto.RefreshToken && rToken.Source == refreshTokenDto.Source && rToken.Expiration >= DateTime.Now) == null)
+            {
+                return Unauthorized(new ProblemDetailsWithErrors("Invalid token.", 401, Request));
+            }
+
+            var token = await GenerateJwtToken(user);
+            var refreshToken = GenerateRefreshToken();
+
+            user.RefreshTokens.RemoveAll(rToken => rToken.Token == refreshTokenDto.RefreshToken || rToken.Source == refreshTokenDto.Source || rToken.Expiration < DateTime.Now);
+
+            user.RefreshTokens.Add(new RefreshToken
+            {
+                Token = refreshToken,
+                Source = refreshTokenDto.Source,
+                Expiration = DateTime.Now.AddMinutes(authSettings.RefreshTokenExpirationTimeInMinutes)
+            });
+
+            await userManager.UpdateAsync(user);
 
             return Ok(new
             {
                 token,
-                user
+                refreshToken
             });
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+
+            return Convert.ToBase64String(randomNumber);
         }
 
         private async Task<string> GenerateJwtToken(User user)

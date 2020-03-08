@@ -2,12 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WorkoutApp.API.Models.Dtos
 {
-    public class UserForLoginDto
+    public class RefreshTokenDto
     {
         [Required]
-        public string Username { get; set; }
+        public string Token { get; set; }
         [Required]
-        public string Password { get; set; }
+        public string RefreshToken { get; set; }
         public string Source { get; set; }
     }
 }

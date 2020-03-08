@@ -9,8 +9,8 @@ using WorkoutApp.API.Data;
 namespace WorkoutApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200224031400_AddedFields")]
-    partial class AddedFields
+    [Migration("20200308174925_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -359,6 +359,31 @@ namespace WorkoutApp.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Muscles");
+                });
+
+            modelBuilder.Entity("WorkoutApp.API.Models.Domain.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Expiration")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("WorkoutApp.API.Models.Domain.Role", b =>
@@ -798,6 +823,15 @@ namespace WorkoutApp.API.Migrations
                     b.HasOne("WorkoutApp.API.Models.Domain.Exercise", "Exercise")
                         .WithMany("ExerciseSteps")
                         .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WorkoutApp.API.Models.Domain.RefreshToken", b =>
+                {
+                    b.HasOne("WorkoutApp.API.Models.Domain.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

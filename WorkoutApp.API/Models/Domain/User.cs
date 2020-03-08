@@ -9,6 +9,7 @@ namespace WorkoutApp.API.Models.Domain
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime Created { get; set; }
+        public List<RefreshToken> RefreshTokens { get; set; }
         public List<UserFavoriteExercise> FavoriteExercises { get; set; }
         public List<Workout> CreatedWorkouts { get; set; }
         public List<ScheduledWorkout> OwnedScheduledWorkouts { get; set; }
