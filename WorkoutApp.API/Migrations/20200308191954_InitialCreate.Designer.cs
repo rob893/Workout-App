@@ -9,7 +9,7 @@ using WorkoutApp.API.Data;
 namespace WorkoutApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200308174925_InitialCreate")]
+    [Migration("20200308191954_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -363,25 +363,19 @@ namespace WorkoutApp.API.Migrations
 
             modelBuilder.Entity("WorkoutApp.API.Models.Domain.RefreshToken", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("Expiration")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
                     b.Property<string>("Token")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId", "Source");
 
                     b.ToTable("RefreshTokens");
                 });

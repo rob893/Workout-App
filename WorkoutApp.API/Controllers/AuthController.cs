@@ -9,14 +9,13 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using WorkoutApp.API.Models.Settings;
 using Microsoft.Extensions.Options;
 using WorkoutApp.API.Helpers;
 using System.Linq;
 using WorkoutApp.API.Models.Dtos;
-using Microsoft.EntityFrameworkCore;
+using WorkoutApp.API.Data.Repositories;
 
 namespace WorkoutApp.API.Controllers
 {
@@ -25,35 +24,33 @@ namespace WorkoutApp.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<User> userManager;
-        private readonly SignInManager<User> signInManager;
+        private readonly UserRepository userRepository;
         private readonly AuthenticationSettings authSettings;
         private readonly IMapper mapper;
 
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IOptions<AuthenticationSettings> authSettings, IMapper mapper)
+        public AuthController(UserRepository userRepository, IOptions<AuthenticationSettings> authSettings, IMapper mapper)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+            this.userRepository = userRepository;
             this.authSettings = authSettings.Value;
             this.mapper = mapper;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserForReturnDto>> Register([FromBody] UserForRegisterDto userForRegisterDto)
+        public async Task<ActionResult<UserForReturnDto>> RegisterAsync([FromBody] UserForRegisterDto userForRegisterDto)
         {
-            User userToCreate = mapper.Map<User>(userForRegisterDto);
+            var userToCreate = mapper.Map<User>(userForRegisterDto);
 
-            var result = await userManager.CreateAsync(userToCreate, userForRegisterDto.Password);
+            var result = await userRepository.CreateUserWithPasswordAsync(userToCreate, userForRegisterDto.Password);
 
-            UserForReturnDto userToReturn = mapper.Map<UserForReturnDto>(userToCreate);
+            var userToReturn = mapper.Map<UserForReturnDto>(userToCreate);
 
             if (!result.Succeeded)
             {
                 return BadRequest(new ProblemDetailsWithErrors(result.Errors.Select(e => e.Description).ToList(), 400, Request));
             }
 
-            return CreatedAtRoute("GetUser", new { controller = "Users", id = userToCreate.Id }, userToReturn);
+            return CreatedAtRoute("GetUserAsync", new { controller = "Users", id = userToCreate.Id }, userToReturn);
         }
 
         /// <summary>
@@ -62,23 +59,23 @@ namespace WorkoutApp.API.Controllers
         /// <param name="userForLoginDto"></param>
         /// <returns>200 with user object on success. 401 on failure.</returns>
         [HttpPost("login")]
-        public async Task<ActionResult<LoginForReturnDto>> Login([FromBody] UserForLoginDto userForLoginDto)
+        public async Task<ActionResult<LoginForReturnDto>> LoginAsync([FromBody] UserForLoginDto userForLoginDto)
         {
-            var user = await userManager.Users.Include(u => u.RefreshTokens).FirstOrDefaultAsync(u => u.UserName == userForLoginDto.Username);
+            var user = await userRepository.GetByUsernameDetailedAsync(userForLoginDto.Username);
 
             if (user == null)
             {
                 return Unauthorized(new ProblemDetailsWithErrors("Invalid username or password.", 401, Request));
             }
 
-            var result = await signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
+            var result = await userRepository.CheckPasswordAsync(user, userForLoginDto.Password);
 
-            if (!result.Succeeded)
+            if (!result)
             {
                 return Unauthorized(new ProblemDetailsWithErrors("Invalid username or password.", 401, Request));
             }
 
-            var token = await GenerateJwtToken(user);
+            var token = GenerateJwtToken(user);
             var refreshToken = GenerateRefreshToken();
 
             user.RefreshTokens.RemoveAll(token => token.Source == userForLoginDto.Source || token.Expiration < DateTime.Now);
@@ -90,7 +87,7 @@ namespace WorkoutApp.API.Controllers
                 Expiration = DateTime.Now.AddMinutes(authSettings.RefreshTokenExpirationTimeInMinutes)
             });
 
-            await userManager.UpdateAsync(user);
+            await userRepository.SaveAllAsync();
 
             var userToReturn = mapper.Map<UserForReturnDto>(user);
 
@@ -103,7 +100,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPost("refreshToken")]
-        public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
+        public async Task<ActionResult> RefreshTokenAsync([FromBody] RefreshTokenDto refreshTokenDto)
         {
             // Still validate the passed in token, but ignore its expiration date by setting validate lifetime to false
             var validationParameters = new TokenValidationParameters
@@ -138,7 +135,7 @@ namespace WorkoutApp.API.Controllers
                 return Unauthorized(new ProblemDetailsWithErrors("Invalid token.", 401, Request));
             }
 
-            var user = await userManager.Users.Include(u => u.RefreshTokens).FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await userRepository.GetByIdDetailedAsync(userId);
 
             if (user == null)
             {
@@ -150,7 +147,7 @@ namespace WorkoutApp.API.Controllers
                 return Unauthorized(new ProblemDetailsWithErrors("Invalid token.", 401, Request));
             }
 
-            var token = await GenerateJwtToken(user);
+            var token = GenerateJwtToken(user);
             var refreshToken = GenerateRefreshToken();
 
             user.RefreshTokens.RemoveAll(rToken => rToken.Token == refreshTokenDto.RefreshToken || rToken.Source == refreshTokenDto.Source || rToken.Expiration < DateTime.Now);
@@ -162,7 +159,7 @@ namespace WorkoutApp.API.Controllers
                 Expiration = DateTime.Now.AddMinutes(authSettings.RefreshTokenExpirationTimeInMinutes)
             });
 
-            await userManager.UpdateAsync(user);
+            await userRepository.SaveAllAsync();
 
             return Ok(new
             {
@@ -180,31 +177,29 @@ namespace WorkoutApp.API.Controllers
             return Convert.ToBase64String(randomNumber);
         }
 
-        private async Task<string> GenerateJwtToken(User user)
+        private string GenerateJwtToken(User user)
         {
-            List<Claim> claims = new List<Claim>
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
             };
 
-            IList<string> roles = await userManager.GetRolesAsync(user);
-
-            foreach (string role in roles)
+            foreach (string role in user.UserRoles.Select(r => r.Role.Name))
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.APISecrect));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.APISecrect));
 
             if (key.KeySize < 128)
             {
                 throw new Exception("API Secret must be longer");
             }
 
-            SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddMinutes(authSettings.TokenExpirationTimeInMinutes),
@@ -214,9 +209,9 @@ namespace WorkoutApp.API.Controllers
                 Issuer = authSettings.TokenIssuer
             };
 
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
 
-            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
         }

@@ -8,6 +8,7 @@ namespace WorkoutApp.API.Models.Dtos
         public string Username { get; set; }
         [Required]
         public string Password { get; set; }
+        [Required]
         public string Source { get; set; }
     }
 }

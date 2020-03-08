@@ -54,6 +54,11 @@ namespace WorkoutApp.API.Data
                     .HasForeignKey(inv => inv.InviterId);
             });
 
+            modelBuilder.Entity<RefreshToken>(rToken =>
+            {
+                rToken.HasKey(k => new { k.UserId, k.Source });
+            });
+
             modelBuilder.Entity<UserFavoriteExercise>(favEx => 
             {
                 favEx.HasKey(k => new { k.UserId, k.ExerciseId });

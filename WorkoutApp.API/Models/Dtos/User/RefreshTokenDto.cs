@@ -8,6 +8,7 @@ namespace WorkoutApp.API.Models.Dtos
         public string Token { get; set; }
         [Required]
         public string RefreshToken { get; set; }
+        [Required]
         public string Source { get; set; }
     }
 }

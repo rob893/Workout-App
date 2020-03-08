@@ -18,6 +18,7 @@ export interface UserToRegister {
 export interface UserLogin {
     username: string;
     password: string;
+    source: string;
 }
 
 export interface UserLoginResponse {

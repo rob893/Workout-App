@@ -17,26 +17,27 @@ type Query {
 }
 
 type Mutation {
-    registerUser(user: RegisterUser!): RegisterUserPayload!
-    login(userCredentials: UserLogin!): UserLoginPayload!
-    createScheduledWorkout(newWorkout: NewScheduledWorkout!): CreateScheduledWorkoutPayload!
-    startScheduledWorkout(id: Int!): StartScheduledWorkoutPayload!
+    registerUser(user: RegisterUser!): RegisterUserResponse!
+    login(userCredentials: UserLogin!): UserLoginResponse!
+    createScheduledWorkout(newWorkout: NewScheduledWorkout!): CreateScheduledWorkoutResponse!
+    startScheduledWorkout(id: Int!): StartScheduledWorkoutResponse!
 }
 
-type RegisterUserPayload {
+type RegisterUserResponse {
     user: User!
 }
 
-type UserLoginPayload {
+type UserLoginResponse {
     token: String!
+    refreshToken: String!
     user: User!
 }
 
-type CreateScheduledWorkoutPayload {
+type CreateScheduledWorkoutResponse {
     scheduledWorkout: ScheduledWorkout!
 }
 
-type StartScheduledWorkoutPayload {
+type StartScheduledWorkoutResponse {
     scheduledWorkout: ScheduledWorkout!
 }
 
@@ -44,8 +45,8 @@ type User {
     id: Int!
     userName: String!
     firstName: String!
-    lastName: String!,
-    email: String!,
+    lastName: String!
+    email: String!
     created: String!
     createdWorkouts: [Workout]
     scheduledWorkouts: [ScheduledWorkout]
@@ -128,6 +129,7 @@ input RegisterUser {
 input UserLogin {
     username: String!
     password: String!
+    source: String!
 }
 
 input NewScheduledWorkout {

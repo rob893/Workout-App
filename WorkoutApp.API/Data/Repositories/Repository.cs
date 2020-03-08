@@ -54,55 +54,55 @@ namespace WorkoutApp.API.Data.Repositories
             return await context.SaveChangesAsync() > 0;
         }
 
-        public async Task<TEntity> GetByIdAsync(int id)
+        public Task<TEntity> GetByIdAsync(int id)
         {
-            return await context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
+            return context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<TEntity> GetByIdAsync(int id, params Expression<Func<TEntity, object>>[] includes)
+        public Task<TEntity> GetByIdAsync(int id, params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
             query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
 
-            return await query.FirstOrDefaultAsync(e => e.Id == id);
+            return query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<TEntity> GetByIdDetailedAsync(int id)
+        public Task<TEntity> GetByIdDetailedAsync(int id)
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
 
             query = AddDetailedIncludes(query);
 
-            return await query.FirstOrDefaultAsync(m => m.Id == id);
+            return query.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<PagedList<TEntity>> SearchAsync(RSearchParams searchParams)
+        public Task<PagedList<TEntity>> SearchAsync(RSearchParams searchParams)
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
 
             query = AddWhereClauses(query, searchParams);
 
-            return await PagedList<TEntity>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return PagedList<TEntity>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
         }
 
-        public async Task<PagedList<TEntity>> SearchAsync(RSearchParams searchParams, params Expression<Func<TEntity, object>>[] includes)
+        public Task<PagedList<TEntity>> SearchAsync(RSearchParams searchParams, params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
 
             query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
             query = AddWhereClauses(query, searchParams);
 
-            return await PagedList<TEntity>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return PagedList<TEntity>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
         }
 
-        public async Task<PagedList<TEntity>> SearchDetailedAsync(RSearchParams searchParams)
+        public Task<PagedList<TEntity>> SearchDetailedAsync(RSearchParams searchParams)
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
 
             query = AddDetailedIncludes(query);
             query = AddWhereClauses(query, searchParams);
 
-            return await PagedList<TEntity>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return PagedList<TEntity>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
         }
 
         protected virtual IQueryable<TEntity> AddWhereClauses(IQueryable<TEntity> query, RSearchParams searchParams)

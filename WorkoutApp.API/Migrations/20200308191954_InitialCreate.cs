@@ -202,16 +202,14 @@ namespace WorkoutApp.API.Migrations
                 name: "RefreshTokens",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
-                    Source = table.Column<string>(nullable: true),
+                    Source = table.Column<string>(nullable: false),
                     Token = table.Column<string>(nullable: true),
                     Expiration = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.PrimaryKey("PK_RefreshTokens", x => new { x.UserId, x.Source });
                     table.ForeignKey(
                         name: "FK_RefreshTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -729,11 +727,6 @@ namespace WorkoutApp.API.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ExerciseSetCompletionRecords_UserId",
                 table: "ExerciseSetCompletionRecords",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_UserId",
-                table: "RefreshTokens",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
