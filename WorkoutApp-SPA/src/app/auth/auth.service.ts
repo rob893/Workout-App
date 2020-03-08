@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { Apollo } from 'apollo-angular';
 import { login, registerUser } from './auth.queries';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { User } from '../shared/models/user.model';
 import { TokenClaims } from '../shared/models/token-claims.model';
 import { LoginResponse } from './models/login-response.model';
@@ -16,6 +16,8 @@ import { RegisterUser } from './models/register-user.model';
 })
 export class AuthService {
 
+    public authChange = new Subject<boolean>();
+    
     private static readonly accessTokenKey = 'access_token';
     private static readonly userKey = 'user';
     
@@ -62,6 +64,7 @@ export class AuthService {
                 const { data: { login } } = response;
 
                 if (login && login.token && login.user) {
+                    this.authChange.next(true);
                     localStorage.setItem(AuthService.accessTokenKey, login.token);
                     localStorage.setItem(AuthService.userKey, JSON.stringify(login.user));
                 }
@@ -80,6 +83,7 @@ export class AuthService {
         }).pipe(
             map(response => {
                 const { data: { registerUser: { user } } } = response;
+                this.authChange.next(true);
 
                 return user;
             })
@@ -89,5 +93,6 @@ export class AuthService {
     public logout(): void {
         localStorage.removeItem(AuthService.accessTokenKey);
         localStorage.removeItem(AuthService.userKey);
+        this.authChange.next(false);
     }
 }
