@@ -1,23 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from './auth/auth.service';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
     title = 'WorkoutApp-SPA';
-    private readonly authService: AuthService;
-
-    public constructor(authService: AuthService) {
-        this.authService = authService;
-    }
-
-    public async ngOnInit() {
-        this.authService.login('admin', 'password').subscribe(res => {
-            console.log(res);
-            console.log(this.authService.decodedToken);
-        });
-    }
 }

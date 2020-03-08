@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -13,6 +13,10 @@ import { MaterialModule } from './material.module';
 import { AuthService } from './auth/auth.service';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { HeaderComponent } from './navigation/header/header.component';
+import { WelcomeComponent } from './welcome/welcome.component';
+import { LoginComponent } from './auth/login/login.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SignupComponent } from './auth/signup/signup.component';
 
 export function tokenGetter(): string {
     return localStorage.getItem('access_token');
@@ -22,11 +26,17 @@ export function tokenGetter(): string {
     declarations: [
         AppComponent,
         HeaderComponent,
-        SidenavListComponent
+        SidenavListComponent,
+        WelcomeComponent,
+        LoginComponent,
+        SignupComponent
     ],
     imports: [
         MaterialModule,
+        FlexLayoutModule,
         BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
