@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Apollo } from 'apollo-angular';
-import { login, registerUser } from './auth.queries';
+import { login, registerUser, getUser } from './auth.queries';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable, Subject } from 'rxjs';
 import { User } from '../shared/models/user.model';
@@ -56,7 +56,8 @@ export class AuthService {
             variables: {
                 userCredentials: {
                     username,
-                    password
+                    password,
+                    source: 'web'
                 }
             }
         }).pipe(
@@ -84,6 +85,21 @@ export class AuthService {
             map(response => {
                 const { data: { registerUser: { user } } } = response;
                 this.authChange.next(true);
+
+                return user;
+            })
+        );
+    }
+
+    public getUser(userId: number): Observable<any> {
+        return this.apollo.query<{ user: { firstName: string; lastName: string } }, { userId: number }>({
+            query: getUser,
+            variables: {
+                userId
+            }
+        }).pipe(
+            map(response => {
+                const { data: { user } } = response;
 
                 return user;
             })

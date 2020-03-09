@@ -1,16 +1,26 @@
-import { RESTDataSource, RequestOptions } from "apollo-datasource-rest";
+import { RESTDataSource, RequestOptions, Response, Request } from "apollo-datasource-rest";
 import { Exercise } from "../entities/Exercise";
+import { WorkoutAppContext } from "..";
 
-export class ExerciseAPI extends RESTDataSource {
+export class ExerciseAPI extends RESTDataSource<WorkoutAppContext> {
     public constructor() {
         super();
         this.baseURL = process.env.WORKOUT_APP_API_URL || 'http://localhost:5002';
     }
 
-    public willSendRequest(request: RequestOptions): void {
+    protected willSendRequest(request: RequestOptions): void {
         if (this.context && this.context.token) {
             request.headers.set('authorization', this.context.token);
         }
+    }
+
+    protected didReceiveResponse<TResult = any>(response: Response, request: Request): Promise<TResult> {
+        if (response.status === 401 && response.headers.has('token-expired')) {
+            console.log(response.headers);
+            this.context.response.setHeader('token-expired', 'true');
+        }
+
+        return super.didReceiveResponse(response, request);
     }
 
     public async getExercises(): Promise<Exercise[]> {

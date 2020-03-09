@@ -1,4 +1,4 @@
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest';
+import { RESTDataSource, RequestOptions, Response, Request } from 'apollo-datasource-rest';
 import { User, UserToRegister, UserLogin, UserLoginResponse } from "../entities/User";
 
 export class UserAPI extends RESTDataSource {
@@ -12,6 +12,15 @@ export class UserAPI extends RESTDataSource {
         if (this.context && this.context.token) {
             request.headers.set('authorization', this.context.token);
         }
+    }
+
+    protected didReceiveResponse<TResult = any>(response: Response, request: Request): Promise<TResult> {
+        if (response.status === 401 && response.headers.has('token-expired')) {
+            console.log(response.headers);
+            this.context.response.setHeader('token-expired', 'true');
+        }
+
+        return super.didReceiveResponse(response, request);
     }
 
     public async getAllUsers(): Promise<User[]> {

@@ -9,10 +9,14 @@ import { EquipmentAPI } from './datasources/EquipmentAPI';
 import jwt_decode from 'jwt-decode';
 import { JwtClaims } from './entities/User';
 import { WorkoutAPI } from './datasources/WorkoutAPI';
+import { ApolloServerPlugin } from 'apollo-server-plugin-base';
+import { Request, Response } from 'express';
 
 export interface WorkoutAppContext {
     token: string;
     claims: JwtClaims;
+    request: Request;
+    response: Response
     dataSources: {
         userAPI: UserAPI;
         exerciseAPI: ExerciseAPI;
@@ -26,7 +30,7 @@ async function start(): Promise<void> {
     dotenv.config();
     
     const server = new ApolloServer({
-        context: ({ req }) => {
+        context: ({ req, res }) => {
             const token = req.headers && req.headers.authorization || '';
             let claims;
 
@@ -38,11 +42,29 @@ async function start(): Promise<void> {
 
             return {
                 token,
-                claims
+                claims,
+                request: req,
+                response: res
             };
         },
         typeDefs,
         resolvers,
+        cors: {
+            exposedHeaders: [
+                'token-expired'
+            ]
+        },
+        plugins: [
+            {
+                requestDidStart(context) {
+                    return {
+                        didEncounterErrors(context) {
+                            
+                        }
+                    }
+                }
+            }
+        ],
         dataSources: () => ({
             userAPI: new UserAPI(),
             exerciseAPI: new ExerciseAPI(),

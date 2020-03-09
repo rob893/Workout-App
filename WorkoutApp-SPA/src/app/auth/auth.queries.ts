@@ -5,6 +5,7 @@ export const login = gql`
     mutation Login($userCredentials: UserLogin!) {
         login(userCredentials: $userCredentials) {
             token
+            refreshToken
             user {
                 id
                 userName
@@ -28,6 +29,17 @@ export const registerUser = gql`
                 email
                 created
             }
+        }
+    }
+`;
+
+export const getUser = gql`
+    query GetUser($userId: Int!) {
+        user(id: $userId) {
+            firstName
+            lastName
+            userName
+            email
         }
     }
 `;
