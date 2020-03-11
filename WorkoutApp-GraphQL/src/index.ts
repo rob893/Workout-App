@@ -54,6 +54,15 @@ async function start(): Promise<void> {
                 'token-expired'
             ]
         },
+        formatError: error => {
+            if (error.extensions && error.originalError) {
+                delete error.extensions.response;
+                error.extensions.errorType = error.originalError.constructor.name;
+            }
+            
+            return error;
+        },
+        debug: false,
         plugins: [
             {
                 requestDidStart(context) {
