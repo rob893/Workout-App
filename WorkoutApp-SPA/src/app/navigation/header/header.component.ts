@@ -8,7 +8,6 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-
     @Output()
     public sidenavToggle = new EventEmitter<void>();
 
@@ -16,8 +15,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     private authSubscription: Subscription;
 
-
-    public constructor(private readonly authService: AuthService) { }
+    public constructor(private readonly authService: AuthService) {}
 
     public ngOnInit(): void {
         this.authSubscription = this.authService.authChange.subscribe(authStatus => {

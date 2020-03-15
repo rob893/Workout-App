@@ -1,5 +1,5 @@
-import { RESTDataSource, RequestOptions } from "apollo-datasource-rest";
-import { Exercise, Muscle, Equipment } from "../entities/Exercise";
+import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest';
+import { Equipment } from '../entities/Exercise';
 
 export class EquipmentAPI extends RESTDataSource {
     public constructor() {

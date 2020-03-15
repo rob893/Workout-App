@@ -6,36 +6,35 @@ import dotenv from 'dotenv';
 import { ExerciseAPI } from './datasources/ExerciseAPI';
 import { MuscleAPI } from './datasources/MuscleAPI';
 import { EquipmentAPI } from './datasources/EquipmentAPI';
-import jwt_decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 import { JwtClaims } from './entities/User';
 import { WorkoutAPI } from './datasources/WorkoutAPI';
-import { ApolloServerPlugin } from 'apollo-server-plugin-base';
 import { Request, Response } from 'express';
 
 export interface WorkoutAppContext {
     token: string;
     claims: JwtClaims;
     request: Request;
-    response: Response
+    response: Response;
     dataSources: {
         userAPI: UserAPI;
         exerciseAPI: ExerciseAPI;
         muscleAPI: MuscleAPI;
         equipmentAPI: EquipmentAPI;
         workoutAPI: WorkoutAPI;
-    }
+    };
 }
 
 async function start(): Promise<void> {
     dotenv.config();
-    
+
     const server = new ApolloServer({
         context: ({ req, res }) => {
-            const token = req.headers && req.headers.authorization || '';
+            const token = (req.headers && req.headers.authorization) || '';
             let claims;
 
             try {
-                claims = jwt_decode<JwtClaims>(token);
+                claims = jwtDecode<JwtClaims>(token);
             } catch {
                 claims = {};
             }
@@ -50,30 +49,17 @@ async function start(): Promise<void> {
         typeDefs,
         resolvers,
         cors: {
-            exposedHeaders: [
-                'token-expired'
-            ]
+            exposedHeaders: ['token-expired']
         },
         formatError: error => {
             if (error.extensions && error.originalError) {
                 delete error.extensions.response;
                 error.extensions.errorType = error.originalError.constructor.name;
             }
-            
+
             return error;
         },
-        debug: false,
-        plugins: [
-            {
-                requestDidStart(context) {
-                    return {
-                        didEncounterErrors(context) {
-                            
-                        }
-                    }
-                }
-            }
-        ],
+        debug: true,
         dataSources: () => ({
             userAPI: new UserAPI(),
             exerciseAPI: new ExerciseAPI(),

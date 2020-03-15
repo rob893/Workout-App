@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
 
-
 export const login = gql`
     mutation Login($userCredentials: UserLogin!) {
         login(userCredentials: $userCredentials) {

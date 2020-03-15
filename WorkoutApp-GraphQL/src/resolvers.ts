@@ -1,7 +1,7 @@
-import { IResolvers } from "apollo-server";
-import { UserToRegister, UserLogin, User, UserLoginResponse } from "./entities/User";
-import { Exercise, Muscle, Equipment, ExerciseCategory } from "./entities/Exercise";
-import { WorkoutAppContext } from ".";
+import { IResolvers } from 'apollo-server';
+import { UserToRegister, UserLogin, User, UserLoginResponse } from './entities/User';
+import { Exercise, Muscle, Equipment, ExerciseCategory } from './entities/Exercise';
+import { WorkoutAppContext } from '.';
 
 export const resolvers: IResolvers<any, WorkoutAppContext> = {
     Query: {
@@ -14,7 +14,7 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         },
 
         user(root, { id }, { dataSources: { userAPI } }): Promise<User | null> {
-            return userAPI.getUserById(id)
+            return userAPI.getUserById(id);
         },
 
         exercises(root, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
@@ -54,12 +54,20 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         }
     },
     Mutation: {
-        async registerUser(root, { user }: { user: UserToRegister }, { dataSources: { userAPI } }): Promise<{ user: User }> {
+        async registerUser(
+            root,
+            { user }: { user: UserToRegister },
+            { dataSources: { userAPI } }
+        ): Promise<{ user: User }> {
             const newUser = await userAPI.registerUser(user);
             return { user: newUser };
         },
 
-        login(root, { userCredentials }: { userCredentials: UserLogin }, { dataSources: { userAPI } }): Promise<UserLoginResponse> {
+        login(
+            root,
+            { userCredentials }: { userCredentials: UserLogin },
+            { dataSources: { userAPI } }
+        ): Promise<UserLoginResponse> {
             return userAPI.login(userCredentials);
         },
 
@@ -89,7 +97,9 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         async primaryExercises(root: Muscle, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
             const exercises = await exerciseAPI.getExercises();
 
-            const exercisesForMuscle = exercises.filter(exercise => exercise.primaryMuscle && exercise.primaryMuscle.id === root.id);
+            const exercisesForMuscle = exercises.filter(
+                exercise => exercise.primaryMuscle && exercise.primaryMuscle.id === root.id
+            );
 
             return exercisesForMuscle;
         },
@@ -97,7 +107,9 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         async secondaryExercises(root: Muscle, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
             const exercises = await exerciseAPI.getExercises();
 
-            const exercisesForMuscle = exercises.filter(exercise => exercise.secondaryMuscle && exercise.secondaryMuscle.id === root.id);
+            const exercisesForMuscle = exercises.filter(
+                exercise => exercise.secondaryMuscle && exercise.secondaryMuscle.id === root.id
+            );
 
             return exercisesForMuscle;
         }
@@ -106,7 +118,9 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         async exercises(root: Equipment, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
             const exercises = await exerciseAPI.getExercises();
 
-            const exercisesForEquipment = exercises.filter(exercise => exercise.equipment.some(equipment => equipment.id === root.id));
+            const exercisesForEquipment = exercises.filter(exercise =>
+                exercise.equipment.some(equipment => equipment.id === root.id)
+            );
 
             return exercisesForEquipment;
         }
@@ -115,9 +129,11 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         async exercises(root: ExerciseCategory, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
             const exercises = await exerciseAPI.getExercises();
 
-            const exercisesForCategory = exercises.filter(exercise => exercise.exerciseCategorys.some(category => category.id === root.id));
+            const exercisesForCategory = exercises.filter(exercise =>
+                exercise.exerciseCategorys.some(category => category.id === root.id)
+            );
 
             return exercisesForCategory;
         }
     }
-}
+};

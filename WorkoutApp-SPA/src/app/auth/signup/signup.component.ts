@@ -8,11 +8,9 @@ import { AuthService } from '../auth.service';
     styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent implements OnInit {
-
     public maxDate: Date;
-    
 
-    public constructor(private readonly authService: AuthService) { }
+    public constructor(private readonly authService: AuthService) {}
 
     public ngOnInit(): void {
         this.maxDate = new Date();

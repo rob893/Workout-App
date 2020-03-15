@@ -7,11 +7,9 @@ import { AuthService } from '../auth/auth.service';
     styleUrls: ['./welcome.component.scss']
 })
 export class WelcomeComponent implements OnInit {
+    constructor(private readonly authService: AuthService) {}
 
-    constructor(private readonly authService: AuthService) { }
-
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     test() {
         this.authService.getUser(3).subscribe(res => console.log(res));

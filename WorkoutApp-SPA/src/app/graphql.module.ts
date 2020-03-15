@@ -9,7 +9,11 @@ import { ApolloLink } from 'apollo-link';
 const uri = 'http://localhost:4000';
 
 function isServerError(error: Error | ServerError | ServerParseError): error is ServerError {
-    return (error as ServerError).statusCode !== undefined && (error as ServerError).response !== undefined && (error as ServerError).result !== undefined;
+    return (
+        (error as ServerError).statusCode !== undefined &&
+        (error as ServerError).response !== undefined &&
+        (error as ServerError).result !== undefined
+    );
 }
 
 export function createApollo(httpLink: HttpLink) {
@@ -27,7 +31,7 @@ export function createApollo(httpLink: HttpLink) {
             }
 
             return response;
-        })
+        });
     });
 
     const logoutLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
@@ -52,7 +56,7 @@ export function createApollo(httpLink: HttpLink) {
 
     return {
         link: afterwareLink.concat(logoutLink).concat(http),
-        cache: new InMemoryCache(),
+        cache: new InMemoryCache()
     };
 }
 
@@ -62,8 +66,8 @@ export function createApollo(httpLink: HttpLink) {
         {
             provide: APOLLO_OPTIONS,
             useFactory: createApollo,
-            deps: [HttpLink],
-        },
-    ],
+            deps: [HttpLink]
+        }
+    ]
 })
-export class GraphQLModule { }
+export class GraphQLModule {}
