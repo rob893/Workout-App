@@ -19,6 +19,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using WorkoutApp.API.Data;
 using WorkoutApp.API.Data.Repositories;
 using WorkoutApp.API.Helpers;
@@ -173,9 +174,14 @@ namespace WorkoutApp.API
 
                             string errorMessage = string.IsNullOrWhiteSpace(context.ErrorDescription) ? context.Error : $"{context.Error}. {context.ErrorDescription}.";
 
-                            var problem = new ProblemDetailsWithErrors(errorMessage, 401, context.Request);
+                            var problem = new ProblemDetailsWithErrors(errorMessage ?? "Invalid token", 401, context.Request);
 
-                            return context.Response.WriteAsync(JsonConvert.SerializeObject(problem));
+                            var settings = new JsonSerializerSettings 
+                            {
+                                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                            };
+
+                            return context.Response.WriteAsync(JsonConvert.SerializeObject(problem, settings));
                         },
                         OnAuthenticationFailed = context =>
                         {

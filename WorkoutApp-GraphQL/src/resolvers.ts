@@ -1,7 +1,7 @@
 import { IResolvers } from 'apollo-server';
 import { UserToRegister, UserLogin, User, UserLoginResponse } from './entities/User';
 import { Exercise, Muscle, Equipment, ExerciseCategory } from './entities/Exercise';
-import { WorkoutAppContext } from '.';
+import { WorkoutAppContext } from './entities/WorkoutAppContext';
 
 export const resolvers: IResolvers<any, WorkoutAppContext> = {
     Query: {

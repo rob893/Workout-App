@@ -1,23 +1,9 @@
-import { RESTDataSource, RequestOptions, Response, Request } from 'apollo-datasource-rest';
 import { User, UserToRegister, UserLogin, UserLoginResponse } from '../entities/User';
-import { ApolloError } from 'apollo-server';
+import { WorkoutAppAPI } from './WorkoutAppAPI';
 
-export class UserAPI extends RESTDataSource {
-    public constructor() {
-        super();
-        this.baseURL = process.env.WORKOUT_APP_API_URL || 'http://localhost:5002';
-    }
-
-    public willSendRequest(request: RequestOptions): void {
-        if (this.context && this.context.token) {
-            request.headers.set('authorization', this.context.token);
-        }
-    }
-
-    public async getAllUsers(): Promise<User[]> {
-        const users = await this.get<User[]>('users');
-
-        return users;
+export class UserAPI extends WorkoutAppAPI {
+    public getAllUsers(): Promise<User[]> {
+        return this.get<User[]>('users');
     }
 
     public async getUserById(id: string): Promise<User | null> {
@@ -30,50 +16,15 @@ export class UserAPI extends RESTDataSource {
         return user;
     }
 
-    public async registerUser(userToCreate: UserToRegister): Promise<User> {
-        const res = await this.post<User>('auth/register', new Object({ ...userToCreate }));
-
-        return res;
+    public registerUser(userToCreate: UserToRegister): Promise<User> {
+        return this.post<User>('auth/register', { ...userToCreate });
     }
 
-    public async login(userLogin: UserLogin): Promise<UserLoginResponse> {
-        const res = await this.post<UserLoginResponse>('auth/login', new Object({ ...userLogin }));
-
-        return res;
+    public login(userLogin: UserLogin): Promise<UserLoginResponse> {
+        return this.post<UserLoginResponse>('auth/login', { ...userLogin });
     }
 
     public getScheduledWorkoutsForUser(userId: string): Promise<any[]> {
         return this.get(`users/${userId}/scheduledWorkouts`);
-    }
-
-    protected didReceiveResponse<TResult = any>(response: Response, request: Request): Promise<TResult> {
-        if (response.status === 401 && response.headers.has('token-expired')) {
-            console.log(response.headers);
-            this.context.response.setHeader('token-expired', 'true');
-        }
-
-        return super.didReceiveResponse(response, request);
-    }
-
-    protected async errorFromResponse(response: Response): Promise<ApolloError> {
-        const error = await super.errorFromResponse(response);
-
-        if (response.headers.has('token-expired') && response.status === 401) {
-            error.extensions.tokenExpired = true;
-        }
-
-        return error;
-    }
-
-    protected didEncounterError(error: Error, request: Request): void {
-        if (this.isApolloError(error) && error.extensions.response) {
-            //error.extensions.token
-        }
-
-        super.didEncounterError(error, request);
-    }
-
-    private isApolloError(error: Error): error is ApolloError {
-        return (error as ApolloError).extensions !== undefined;
     }
 }

@@ -1,38 +1,19 @@
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest';
+import { WorkoutAppAPI } from './WorkoutAppAPI';
 
-export class WorkoutAPI extends RESTDataSource {
-    public constructor() {
-        super();
-        this.baseURL = process.env.WORKOUT_APP_API_URL || 'http://localhost:5002';
+export class WorkoutAPI extends WorkoutAppAPI {
+    public createScheduledWorkout(newWorkout: { workoutId: number; scheduledDateTime: string }): Promise<any> {
+        return this.post('scheduledWorkouts', { ...newWorkout });
     }
 
-    public willSendRequest(request: RequestOptions): void {
-        if (this.context && this.context.token) {
-            request.headers.set('authorization', this.context.token);
-        }
+    public startScheduledWorkout(id: number): Promise<any> {
+        return this.patch(`scheduledWorkouts/${id}/startWorkout`);
     }
 
-    public async createScheduledWorkout(newWorkout: { workoutId: number; scheduledDateTime: string }): Promise<any> {
-        const res = await this.post('scheduledWorkouts', new Object({ ...newWorkout }));
-
-        return res;
-    }
-
-    public async startScheduledWorkout(id: number): Promise<any> {
-        const res = await this.patch(`scheduledWorkouts/${id}/startWorkout`);
-
-        return res;
-    }
-
-    public async getWorkoutsDetailed(): Promise<any> {
-        const workouts = await this.get('workouts/detailed');
-
-        return workouts;
+    public getWorkoutsDetailed(): Promise<any> {
+        return this.get('workouts/detailed');
     }
 
     public async getWorkoutDetailed(id: number): Promise<any> {
-        const workouts = await this.get(`workouts/${id}/detailed`);
-
-        return workouts;
+        return this.get(`workouts/${id}/detailed`);
     }
 }

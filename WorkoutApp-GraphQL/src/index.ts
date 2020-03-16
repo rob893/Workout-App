@@ -9,24 +9,13 @@ import { EquipmentAPI } from './datasources/EquipmentAPI';
 import jwtDecode from 'jwt-decode';
 import { JwtClaims } from './entities/User';
 import { WorkoutAPI } from './datasources/WorkoutAPI';
-import { Request, Response } from 'express';
-
-export interface WorkoutAppContext {
-    token: string;
-    claims: JwtClaims;
-    request: Request;
-    response: Response;
-    dataSources: {
-        userAPI: UserAPI;
-        exerciseAPI: ExerciseAPI;
-        muscleAPI: MuscleAPI;
-        equipmentAPI: EquipmentAPI;
-        workoutAPI: WorkoutAPI;
-    };
-}
+import { TypeGuards } from './helpers/TypeGuards';
 
 async function start(): Promise<void> {
     dotenv.config();
+
+    const debugEnabled = process.env.DEBUG === 'true';
+    const enabledErrorExtensions = new Set<string>(process.env.ALLOWED_ERROR_EXTENSIONS?.split(',') || []);
 
     const server = new ApolloServer({
         context: ({ req, res }) => {
@@ -48,18 +37,30 @@ async function start(): Promise<void> {
         },
         typeDefs,
         resolvers,
-        cors: {
-            exposedHeaders: ['token-expired']
-        },
         formatError: error => {
             if (error.extensions && error.originalError) {
-                delete error.extensions.response;
-                error.extensions.errorType = error.originalError.constructor.name;
+                error.extensions.originalErrorType = error.originalError.constructor.name;
+            }
+
+            if (error.extensions?.response?.body) {
+                const { body } = error.extensions.response;
+
+                if (TypeGuards.isWorkoutAppAPIError(body)) {
+                    error.message = body.errors.reduce((accumulator, curr) => `${accumulator} ${curr}`);
+                }
+            }
+
+            if (!debugEnabled) {
+                for (const key in error.extensions) {
+                    if (!enabledErrorExtensions.has(key)) {
+                        delete error.extensions[key];
+                    }
+                }
             }
 
             return error;
         },
-        debug: true,
+        debug: debugEnabled,
         dataSources: () => ({
             userAPI: new UserAPI(),
             exerciseAPI: new ExerciseAPI(),
