@@ -19,8 +19,14 @@ export const typeDefs = gql`
     type Mutation {
         registerUser(user: RegisterUser!): RegisterUserResponse!
         login(userCredentials: UserLogin!): UserLoginResponse!
+        refreshToken(input: RefreshTokenInput!): RefreshTokenResponse!
         createScheduledWorkout(newWorkout: NewScheduledWorkout!): CreateScheduledWorkoutResponse!
         startScheduledWorkout(id: Int!): StartScheduledWorkoutResponse!
+    }
+
+    type RefreshTokenResponse {
+        token: String!
+        refreshToken: String!
     }
 
     type RegisterUserResponse {
@@ -135,5 +141,11 @@ export const typeDefs = gql`
     input NewScheduledWorkout {
         workoutId: Int!
         scheduledDateTime: String!
+    }
+
+    input RefreshTokenInput {
+        token: String!
+        refreshToken: String!
+        source: String!
     }
 `;

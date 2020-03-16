@@ -40,11 +40,7 @@ export function createApollo(httpLink: HttpLink) {
         if (graphQLErrors) {
             for (const error of graphQLErrors) {
                 if (error.extensions.code === 'UNAUTHENTICATED') {
-                    const {
-                        response: { headers }
-                    } = context;
-
-                    if (headers && headers.has('token-expired')) {
+                    if (error.message === 'token-expired') {
                         console.log('refreshToken');
                     } else {
                         console.log('log the dude out');
