@@ -42,3 +42,12 @@ export const getUser = gql`
         }
     }
 `;
+
+export const refreshToken = gql`
+    mutation RefreshToken($refreshTokenInput: RefreshTokenInput!) {
+        refreshToken(input: $refreshTokenInput) {
+            refreshToken
+            token
+        }
+    }
+`;

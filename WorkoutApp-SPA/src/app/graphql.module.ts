@@ -4,7 +4,8 @@ import { HttpLinkModule, HttpLink } from 'apollo-angular-link-http';
 import { onError } from 'apollo-link-error';
 import { ServerError, ServerParseError } from 'apollo-link-http-common';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloLink } from 'apollo-link';
+import { ApolloLink, execute } from 'apollo-link';
+import { refreshToken } from './auth/auth.queries';
 
 const uri = 'http://localhost:4000';
 
@@ -34,14 +35,33 @@ export function createApollo(httpLink: HttpLink) {
         });
     });
 
-    const logoutLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
-        const context = operation.getContext();
-
+    const logoutLink = onError(({ graphQLErrors, operation, forward }) => {
         if (graphQLErrors) {
             for (const error of graphQLErrors) {
                 if (error.extensions.code === 'UNAUTHENTICATED') {
                     if (error.message === 'token-expired') {
-                        console.log('refreshToken');
+                        execute(http, {
+                            query: refreshToken,
+                            variables: {
+                                refreshTokenInput: {
+                                    token: '',
+                                    refreshToken: '',
+                                    source: 'web'
+                                }
+                            }
+                        }).subscribe(res => {
+                            const token = res.data.token;
+                            const oldHeaders = operation.getContext().headers;
+
+                            operation.setContext({
+                                headers: {
+                                    ...oldHeaders,
+                                    authorization: `Bearer ${token}`
+                                }
+                            });
+
+                            return forward(operation);
+                        });
                     } else {
                         console.log('log the dude out');
                     }
