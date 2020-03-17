@@ -16,7 +16,8 @@ import { RegisterUser } from './models/register-user.model';
 export class AuthService {
     public authChange = new Subject<boolean>();
 
-    private static readonly accessTokenKey = 'access_token';
+    private static readonly accessTokenKey = 'access-token';
+    private static readonly refreshTokenKey = 'refresh-token';
     private static readonly userKey = 'user';
 
     private readonly apollo: Apollo;
@@ -68,6 +69,7 @@ export class AuthService {
                     if (login && login.token && login.user) {
                         this.authChange.next(true);
                         localStorage.setItem(AuthService.accessTokenKey, login.token);
+                        localStorage.setItem(AuthService.refreshTokenKey, login.refreshToken);
                         localStorage.setItem(AuthService.userKey, JSON.stringify(login.user));
                     }
 

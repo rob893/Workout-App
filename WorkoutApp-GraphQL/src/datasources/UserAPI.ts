@@ -27,4 +27,12 @@ export class UserAPI extends WorkoutAppAPI {
     public getScheduledWorkoutsForUser(userId: string): Promise<any[]> {
         return this.get(`users/${userId}/scheduledWorkouts`);
     }
+
+    public refreshToken(refreshTokenInput: {
+        token: string;
+        refreshToken: string;
+        source: string;
+    }): Promise<{ token: string; refreshToken: string }> {
+        return this.post('auth/refreshToken', { ...refreshTokenInput });
+    }
 }

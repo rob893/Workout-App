@@ -44,13 +44,18 @@ export function createApollo(httpLink: HttpLink) {
                             query: refreshToken,
                             variables: {
                                 refreshTokenInput: {
-                                    token: '',
-                                    refreshToken: '',
+                                    token: localStorage.getItem('access-token'),
+                                    refreshToken: localStorage.getItem('refresh-token'),
                                     source: 'web'
                                 }
                             }
                         }).subscribe(res => {
-                            const token = res.data.token;
+                            const token = res.data.refreshToken.token;
+                            const refreshToken = res.data.refreshToken.refreshToken;
+                            
+                            localStorage.setItem('access-token', token);
+                            localStorage.setItem('refresh-token', refreshToken);
+
                             const oldHeaders = operation.getContext().headers;
 
                             operation.setContext({

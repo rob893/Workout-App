@@ -71,6 +71,10 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
             return userAPI.login(userCredentials);
         },
 
+        refreshToken(root, { input }, { dataSources: { userAPI } }) {
+            return userAPI.refreshToken(input);
+        },
+
         async createScheduledWorkout(root, { newWorkout }, { dataSources: { workoutAPI } }) {
             const createdWorkout = await workoutAPI.createScheduledWorkout(newWorkout);
             return { scheduledWorkout: createdWorkout };

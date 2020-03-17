@@ -19,7 +19,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SignupComponent } from './auth/signup/signup.component';
 
 export function tokenGetter(): string {
-    return localStorage.getItem('access_token');
+    return localStorage.getItem('access-token');
 }
 
 @NgModule({
