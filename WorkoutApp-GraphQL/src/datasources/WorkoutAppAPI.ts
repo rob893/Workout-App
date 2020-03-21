@@ -22,7 +22,7 @@ export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
             response.headers.set('Content-Type', 'application/json');
         }
 
-        if (response.status === 401 && response.headers.has('token-expired')) {
+        if (response.status === 401 && response.headers.has('x-token-expired')) {
             throw new AuthenticationError('token-expired');
         }
 
