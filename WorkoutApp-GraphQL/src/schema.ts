@@ -56,6 +56,8 @@ export const typeDefs = gql`
         created: String!
         createdWorkouts: [Workout]
         scheduledWorkouts: [ScheduledWorkout]
+        ownedScheduledWorkouts: [ScheduledWorkout]
+        favoriteExercises: [Exercise]
     }
 
     type Workout {
@@ -80,13 +82,13 @@ export const typeDefs = gql`
 
     type ScheduledWorkout {
         id: Int!
-        user: User!
+        scheduledByUser: User!
         workout: Workout!
         startedDateTime: String
         completedDateTime: String
         scheduledDateTime: String!
         adHocExercises: [ExerciseGroup]
-        extraSchUsrWoAttendees: [User]
+        attendees: [User]
     }
 
     type Exercise {

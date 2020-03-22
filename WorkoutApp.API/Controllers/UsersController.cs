@@ -15,7 +15,7 @@ namespace WorkoutApp.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public partial class UsersController : ControllerBase
     {
         private readonly UserRepository userRepository;
         private readonly IMapper mapper;
@@ -37,7 +37,6 @@ namespace WorkoutApp.API.Controllers
             return Ok(usersToReturn);
         }
 
-        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("detailed")]
         public async Task<ActionResult<IEnumerable<UserForReturnDetailedDto>>> GetUsersDetailedAsync([FromQuery] PaginationParams searchParams)
         {
@@ -57,7 +56,6 @@ namespace WorkoutApp.API.Controllers
             return Ok(userToReturn);
         }
 
-        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<UserForReturnDetailedDto>> GetUserDetailedAsync(int id)
         {
@@ -169,6 +167,21 @@ namespace WorkoutApp.API.Controllers
             var workouts = await userRepository.GetScheduledWorkoutsForUserAsync(userId, searchParams);
             Response.AddPagination(workouts);
             var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDto>>(workouts);
+
+            return Ok(workoutsForReturn);
+        }
+
+        [HttpGet("{userId}/scheduledWorkouts/detailed")]
+        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>> GetScheduledWorkoutsForUserDetailedAsync(int userId, [FromQuery] ScheduledWorkoutSearchParams searchParams)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var workouts = await userRepository.GetScheduledWorkoutsForUserDetailedAsync(userId, searchParams);
+            Response.AddPagination(workouts);
+            var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>(workouts);
 
             return Ok(workoutsForReturn);
         }
