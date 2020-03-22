@@ -1,8 +1,11 @@
 namespace WorkoutApp.API.Models.Dtos
 {
-    public class ExerciseForReturnDto
+    public class ExerciseForReturnDto : BaseDtoForReturn
     {
-        public int Id { get; set; }
+        public string EquipmentUrl { get => $"{Url}/equipment"; }
         public string Name { get; set; }
+
+
+        public ExerciseForReturnDto(string baseUrl) : base(baseUrl, "exercises") { }
     }
 }

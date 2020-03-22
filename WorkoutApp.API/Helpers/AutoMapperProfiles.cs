@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using AutoMapper;
 using WorkoutApp.API.Models.Domain;
@@ -38,24 +37,24 @@ namespace WorkoutApp.API.Helpers
 
         private void CreateMuscleMaps()
         {
-            CreateMap<Muscle, MuscleForReturnDto>();
-            CreateMap<Muscle, MuscleForReturnDetailedDto>();
+            CreateMap<Muscle, MuscleForReturnDto>().ConstructUsing(x => new MuscleForReturnDto(baseUrl));
+            CreateMap<Muscle, MuscleForReturnDetailedDto>().ConstructUsing(x => new MuscleForReturnDetailedDto(baseUrl));
             CreateMap<MuscleForCreateDto, Muscle>();
             CreateMap<MuscleForUpdateDto, Muscle>();
         }
 
         private void CreateWorkoutMaps()
         {
-            CreateMap<Workout, WorkoutForReturnDto>();
-            CreateMap<Workout, WorkoutForReturnDetailedDto>();
+            CreateMap<Workout, WorkoutForReturnDto>().ConstructUsing(x => new WorkoutForReturnDto(baseUrl));
+            CreateMap<Workout, WorkoutForReturnDetailedDto>().ConstructUsing(x => new WorkoutForReturnDetailedDto(baseUrl));
             CreateMap<WorkoutForCreationDto, Workout>();
             CreateMap<WorkoutForUpdateDto, Workout>();
         }
 
         private void CreateScheduledWorkoutMaps()
         {
-            CreateMap<ScheduledWorkout, ScheduledWorkoutForReturnDto>();
-            CreateMap<ScheduledWorkout, ScheduledWorkoutForReturnDetailedDto>()
+            CreateMap<ScheduledWorkout, ScheduledWorkoutForReturnDto>().ConstructUsing(x => new ScheduledWorkoutForReturnDto(baseUrl));
+            CreateMap<ScheduledWorkout, ScheduledWorkoutForReturnDetailedDto>().ConstructUsing(x => new ScheduledWorkoutForReturnDetailedDto(baseUrl))
                 .ForMember(dto => dto.Attendees, opt =>
                     opt.MapFrom(wo => wo.Attendees.Select(x => x.User)));
             CreateMap<ScheduledWorkoutForCreationDto, ScheduledWorkout>();
@@ -63,15 +62,15 @@ namespace WorkoutApp.API.Helpers
 
         private void CreateWorkoutInvitationMaps()
         {
-            CreateMap<WorkoutInvitation, WorkoutInvitationForReturnDto>();
-            CreateMap<WorkoutInvitation, WorkoutInvitationForReturnDetailedDto>();
+            CreateMap<WorkoutInvitation, WorkoutInvitationForReturnDto>().ConstructUsing(x => new WorkoutInvitationForReturnDto(baseUrl));
+            CreateMap<WorkoutInvitation, WorkoutInvitationForReturnDetailedDto>().ConstructUsing(x => new WorkoutInvitationForReturnDetailedDto(baseUrl));
             CreateMap<WorkoutInvitationForCreationDto, WorkoutInvitation>();
         }
 
         private void CreateEquipmentMaps()
         {
-            CreateMap<Equipment, EquipmentForReturnDto>();
-            CreateMap<Equipment, EquipmentForReturnDetailedDto>()
+            CreateMap<Equipment, EquipmentForReturnDto>().ConstructUsing(x => new EquipmentForReturnDto(baseUrl));
+            CreateMap<Equipment, EquipmentForReturnDetailedDto>().ConstructUsing(x => new EquipmentForReturnDetailedDto(baseUrl))
                 .ForMember(dto => dto.Exercises, opts =>
                     opts.MapFrom(equipment => equipment.Exercises.Select(e => e.Exercise)));
             CreateMap<EquipmentForCreationDto, Equipment>();
@@ -79,8 +78,8 @@ namespace WorkoutApp.API.Helpers
 
         private void CreateExerciseCategoryMaps()
         {
-            CreateMap<ExerciseCategory, ExerciseCategoryForReturnDto>();
-            CreateMap<ExerciseCategory, ExerciseCategoryForReturnDetailedDto>()
+            CreateMap<ExerciseCategory, ExerciseCategoryForReturnDto>().ConstructUsing(x => new ExerciseCategoryForReturnDto(baseUrl));
+            CreateMap<ExerciseCategory, ExerciseCategoryForReturnDetailedDto>().ConstructUsing(x => new ExerciseCategoryForReturnDetailedDto(baseUrl))
                 .ForMember(dto => dto.Exercises, opts =>
                     opts.MapFrom(e => e.Exercises.Select(e => e.Exercise)));
             CreateMap<ExerciseCategoryForCreationDto, ExerciseCategory>();
@@ -88,8 +87,8 @@ namespace WorkoutApp.API.Helpers
 
         private void CreateExerciseMaps()
         {
-            CreateMap<Exercise, ExerciseForReturnDto>();
-            CreateMap<Exercise, ExerciseForReturnDetailedDto>()
+            CreateMap<Exercise, ExerciseForReturnDto>().ConstructUsing(x => new ExerciseForReturnDto(baseUrl));
+            CreateMap<Exercise, ExerciseForReturnDetailedDto>().ConstructUsing(x => new ExerciseForReturnDetailedDto(baseUrl))
                 .ForMember(dto => dto.Equipment, opts =>
                     opts.MapFrom(e => e.Equipment.Select(e => e.Equipment)))
                 .ForMember(dto => dto.ExerciseCategorys, opts =>

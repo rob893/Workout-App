@@ -67,7 +67,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/detailed")]
-        public async Task<ActionResult<ScheduledWorkoutForReturnDetailedDto>> GetScheduledDetailedWorkoutAsync(int id)
+        public async Task<ActionResult<ScheduledWorkoutForReturnDetailedDto>> GetScheduledWorkoutDetailedAsync(int id)
         {
             var workout = await scheduledWorkoutRepository.GetByIdDetailedAsync(id);
 
@@ -79,6 +79,23 @@ namespace WorkoutApp.API.Controllers
             var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDetailedDto>(workout);
 
             return Ok(workoutToReturn);
+        }
+
+        [HttpGet("{id}/attendees")]
+        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetScheduledWorkoutAttendeesAsync(int id, [FromQuery] PaginationParams searchParams)
+        {
+            var workout = await scheduledWorkoutRepository.GetByIdDetailedAsync(id);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            var attendees = await scheduledWorkoutRepository.GetScheduledWorkoutAttendeesAsync(id, searchParams);
+            Response.AddPagination(attendees);
+            var attendeesToReturn = mapper.Map<IEnumerable<UserForReturnDto>>(attendees);
+
+            return Ok(attendeesToReturn);
         }
 
         [HttpPost]

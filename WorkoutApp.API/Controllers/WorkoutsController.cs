@@ -54,7 +54,7 @@ namespace WorkoutApp.API.Controllers
 
             if (workout == null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             var workoutToReturn = mapper.Map<WorkoutForReturnDto>(workout);
@@ -69,7 +69,7 @@ namespace WorkoutApp.API.Controllers
 
             if (workout == null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             var workoutToReturn = mapper.Map<WorkoutForReturnDetailedDto>(workout);
@@ -107,7 +107,7 @@ namespace WorkoutApp.API.Controllers
 
             if (workoutToDelete == null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             if (workoutToDelete.CreatedByUserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -123,7 +123,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("Unable to delete workout.", 400, Request));
             }
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpPatch("{id}")]

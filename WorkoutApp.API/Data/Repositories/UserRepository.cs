@@ -15,12 +15,18 @@ namespace WorkoutApp.API.Data.Repositories
     {
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
+        private readonly ExerciseRepository exerciseRepository;
+        private readonly ScheduledWorkoutRepository scheduledWorkoutRepository;
 
 
-        public UserRepository(DataContext context, UserManager<User> userManager, SignInManager<User> signInManager) : base(context) 
+        public UserRepository(DataContext context, UserManager<User> userManager, SignInManager<User> signInManager,
+            ExerciseRepository exerciseRepository, ScheduledWorkoutRepository scheduledWorkoutRepository
+            ) : base(context)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.exerciseRepository = exerciseRepository;
+            this.scheduledWorkoutRepository = scheduledWorkoutRepository;
         }
 
         public Task<IdentityResult> CreateUserWithPasswordAsync(User user, string password)
@@ -55,78 +61,45 @@ namespace WorkoutApp.API.Data.Repositories
             return context.Roles.ToListAsync();
         }
 
-        public Task<PagedList<Exercise>> GetFavoriteExercisesForUserAsync(int userId, PaginationParams searchParams)
+        public Task<PagedList<Exercise>> GetFavoriteExercisesForUserAsync(int userId, ExerciseSearchParams searchParams)
         {
             IQueryable<Exercise> query = context.Users
                 .Where(u => u.Id == userId)
                 .SelectMany(u => u.FavoriteExercises.Select(fe => fe.Exercise));
 
-                
-            return PagedList<Exercise>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return exerciseRepository.SearchAsync(query, searchParams);
         }
 
-        public Task<PagedList<Exercise>> GetFavoriteExercisesForUserDetailedAsync(int userId, PaginationParams searchParams)
+        public Task<PagedList<Exercise>> GetFavoriteExercisesForUserDetailedAsync(int userId, ExerciseSearchParams searchParams)
         {
             IQueryable<Exercise> query = context.Users
                 .Where(u => u.Id == userId)
-                .SelectMany(u => u.FavoriteExercises.Select(fe => fe.Exercise))
-                .Include(e => e.PrimaryMuscle)
-                .Include(e => e.SecondaryMuscle)
-                .Include(e => e.ExerciseSteps)
-                .Include(e => e.Equipment).ThenInclude(e => e.Equipment)
-                .Include(e => e.ExerciseCategorys).ThenInclude(e => e.ExerciseCategory);
+                .SelectMany(u => u.FavoriteExercises.Select(fe => fe.Exercise));
 
-                
-            return PagedList<Exercise>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return exerciseRepository.SearchDetailedAsync(query, searchParams);
         }
 
         public Task<PagedList<ScheduledWorkout>> GetScheduledWorkoutsForUserAsync(int userId, ScheduledWorkoutSearchParams searchParams)
         {
             IQueryable<ScheduledWorkout> query = context.ScheduledWorkouts
                 .Where(wo => wo.Attendees.Any(attendee => attendee.UserId == userId));
-            
-            if (searchParams.MinDate != null)
-            {
-                query = query.Where(wo => wo.ScheduledDateTime >= searchParams.MinDate.Value);
-            }
 
-            if (searchParams.MaxDate != null)
-            {
-                query = query.Where(wo => wo.ScheduledDateTime <= searchParams.MaxDate.Value);
-            }
-                
-            return PagedList<ScheduledWorkout>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return scheduledWorkoutRepository.SearchAsync(query, searchParams);
         }
 
         public Task<PagedList<ScheduledWorkout>> GetScheduledWorkoutsForUserDetailedAsync(int userId, ScheduledWorkoutSearchParams searchParams)
         {
             IQueryable<ScheduledWorkout> query = context.ScheduledWorkouts
-                .Include(wo => wo.ScheduledByUser)
-                .Include(wo => wo.Attendees).ThenInclude(attendee => attendee.User)
-                .Include(wo => wo.Workout).ThenInclude(wo => wo.CreatedByUser)
-                .Include(wo => wo.Workout).ThenInclude(wo => wo.WorkoutCopiedFrom)
-                .Include(wo => wo.Workout).ThenInclude(wo => wo.ExerciseGroups).ThenInclude(eg => eg.Exercise)
-                .Include(wo => wo.AdHocExercises).ThenInclude(ex => ex.Exercise)
                 .Where(wo => wo.Attendees.Any(attendee => attendee.UserId == userId));
-            
-            if (searchParams.MinDate != null)
-            {
-                query = query.Where(wo => wo.ScheduledDateTime >= searchParams.MinDate.Value);
-            }
 
-            if (searchParams.MaxDate != null)
-            {
-                query = query.Where(wo => wo.ScheduledDateTime <= searchParams.MaxDate.Value);
-            }
-                
-            return PagedList<ScheduledWorkout>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return scheduledWorkoutRepository.SearchDetailedAsync(query, searchParams);
         }
 
         public Task<PagedList<WorkoutCompletionRecord>> GetWorkoutCompletionRecordsForUserAsync(int userId, CompletionRecordSearchParams searchParams)
         {
             IQueryable<WorkoutCompletionRecord> query = context.WorkoutCompletionRecords
                 .Where(record => record.UserId == userId);
-            
+
             return PagedList<WorkoutCompletionRecord>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
         }
 

@@ -1,8 +1,10 @@
 namespace WorkoutApp.API.Models.Dtos
 {
-    public class ExerciseCategoryForReturnDto
+    public class ExerciseCategoryForReturnDto : BaseDtoForReturn
     {
-        public int Id { get; set; }
         public string Name { get; set; }
+
+
+        public ExerciseCategoryForReturnDto(string baseUrl) : base(baseUrl, "exerciseCategories") { }
     }
 }

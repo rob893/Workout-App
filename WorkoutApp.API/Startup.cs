@@ -135,7 +135,7 @@ namespace WorkoutApp.API
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors(header => header.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders(new string[] { "x-token-expired" }));
+            app.UseCors(header => header.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders(new string[] { "X-Token-Expired" }));
             app.UseGlobalExceptionHandler();
             app.UseHsts();
             // app.UseHttpsRedirection();
@@ -192,7 +192,7 @@ namespace WorkoutApp.API
                         {
                             if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                             {
-                                context.Response.Headers.Add("x-token-expired", "true");
+                                context.Response.Headers.Add("X-Token-Expired", "true");
                             }
 
                             return Task.CompletedTask;

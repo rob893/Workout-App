@@ -18,12 +18,14 @@ namespace WorkoutApp.API.Controllers
     public partial class UsersController : ControllerBase
     {
         private readonly UserRepository userRepository;
+        private readonly ExerciseRepository exerciseRepository;
         private readonly IMapper mapper;
 
 
-        public UsersController(UserRepository userRepository, IMapper mapper)
+        public UsersController(UserRepository userRepository, ExerciseRepository exerciseRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
+            this.exerciseRepository = exerciseRepository;
             this.mapper = mapper;
         }
 
@@ -194,75 +196,5 @@ namespace WorkoutApp.API.Controllers
 
             return Ok(records);
         }
-
-        // [HttpGet("{userId}/favorites/exercises")]
-        // public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> GetUserFavoriteExercisesAsync(int userId, [FromQuery] string exerciseCategory)
-        // {
-        //     if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-        //     {
-        //         return Unauthorized();
-        //     }
-
-        //     var exercises = await exerciseProvider.GetFavoriteExercisesForUserAsync(userId);
-        //     var dtos = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
-
-        //     return Ok(dtos);
-        // }
-
-        // [HttpPost("{userId}/favorites/exercises/{exerciseId}")]
-        // public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> FavoriteAnExerciseAsync(int userId, int exerciseId)
-        // {
-        //     if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-        //     {
-        //         return Unauthorized();
-        //     }
-
-        //     var user = await repo.GetUserAsync(userId);
-        //     var exercise = await repo.GetExerciseAsync(exerciseId);
-
-        //     if (user.FavoriteExercises.Any(e => e.ExerciseId == exerciseId))
-        //     {
-        //         return BadRequest(new ProblemDetailsWithErrors("You cannot favorite the same exercise more than once.", 400, Request));
-        //     }
-
-        //     user.FavoriteExercises.Add(new UserFavoriteExercise
-        //     {
-        //         Exercise = exercise
-        //     });
-
-        //     if (!await repo.SaveAllAsync())
-        //     {
-        //         return BadRequest(new ProblemDetailsWithErrors("Unable to favorite the exercise.", 400, Request));
-        //     }
-
-        //     return NoContent();
-        // }
-
-        // [HttpDelete("{userId}/favorites/exercises/{exerciseId}")]
-        // public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> UnfavoriteAnExerciseAsync(int userId, int exerciseId)
-        // {
-        //     if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-        //     {
-        //         return Unauthorized();
-        //     }
-
-        //     var user = await repo.GetUserAsync(userId);
-        //     var exercise = await repo.GetExerciseAsync(exerciseId);
-        //     var exerciseToRemove = user.FavoriteExercises.FirstOrDefault(fe => fe.ExerciseId == exerciseId);
-
-        //     if (exerciseToRemove == null)
-        //     {
-        //         return BadRequest(new ProblemDetailsWithErrors("You cannot unfavorite an exercise you have not favorited.", 400, Request));
-        //     }
-
-        //     user.FavoriteExercises.Remove(exerciseToRemove);
-
-        //     if (!await repo.SaveAllAsync())
-        //     {
-        //         return BadRequest(new ProblemDetailsWithErrors("Unable to favorite the exercise.", 400, Request));
-        //     }
-
-        //     return NoContent();
-        // }
     }
 }

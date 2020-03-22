@@ -2,10 +2,11 @@ using System.Collections.Generic;
 
 namespace WorkoutApp.API.Models.Dtos
 {
-    public class ExerciseCategoryForReturnDetailedDto
+    public class ExerciseCategoryForReturnDetailedDto : ExerciseCategoryForReturnDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
         public IEnumerable<ExerciseForReturnDto> Exercises { get; set; }
+
+
+        public ExerciseCategoryForReturnDetailedDto(string baseUrl) : base(baseUrl) { }
     }
 }

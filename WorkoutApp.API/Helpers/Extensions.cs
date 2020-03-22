@@ -2,40 +2,29 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Microsoft.Extensions.Primitives;
 using WorkoutApp.API.Middleware;
 
 namespace WorkoutApp.API.Helpers
 {
-    //These add functions to exsisting classes basically.
     public static class Extensions
     {
         private static readonly Random rng = new Random();
 
 
-        public static void AddApplicationError(this HttpResponse response, string message)
-        {
-            response.Headers.Add("Application-Error", message);
-            response.Headers.Add("Access-Control-Expose-Headers", "Application-Error"); //prevents cors
-            response.Headers.Add("Access-Control-Allow-Origin", "*");
-        }
-
         public static void AddPagination(this HttpResponse response, int pageNumber, int pageSize, int totalItems, int totalPages)
         {
-            var paginationHeader = new PaginationHeader
+            response.Headers.Add("X-Pagination-PageNumber", pageNumber.ToString());
+            response.Headers.Add("X-Pagination-PageSize", pageSize.ToString());
+            response.Headers.Add("X-Pagination-TotalItems", totalItems.ToString());
+            response.Headers.Add("X-Pagination-TotalPages", totalPages.ToString());
+            response.Headers.Add("Access-Control-Expose-Headers", new StringValues(new string[] 
             {
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                TotalItems = totalItems,
-                TotalPages = totalPages
-            };
-            var camelCaseFormatter = new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
-            response.Headers.Add("Pagination", JsonConvert.SerializeObject(paginationHeader, camelCaseFormatter));
-            response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
+                "X-Pagination-PageNumber",
+                "X-Pagination-PageSize",
+                "X-Pagination-TotalItems",
+                "X-Pagination-TotalPages"
+            }));
         }
 
         public static void AddPagination<T>(this HttpResponse response, PagedList<T> pagedList)

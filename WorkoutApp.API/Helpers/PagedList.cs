@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Helpers
 {
@@ -30,6 +31,11 @@ namespace WorkoutApp.API.Helpers
             List<T> items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return new PagedList<T>(items, totalItems, pageNumber, pageSize);
+        }
+
+        public static Task<PagedList<T>> CreateAsync(IQueryable<T> source, PaginationParams searchParams)
+        {
+            return CreateAsync(source, searchParams.PageNumber, searchParams.PageSize);
         }
     }
 }

@@ -100,7 +100,7 @@ namespace WorkoutApp.API.Controllers
 
             if (category == null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             exerciseCategoryRepository.Delete(category);
@@ -111,7 +111,7 @@ namespace WorkoutApp.API.Controllers
                return BadRequest(new ProblemDetailsWithErrors("Failed to delete the category.", 400, Request)); 
             }
             
-            return Ok();
+            return NoContent();
         }
 
         [HttpPatch("{id}")]

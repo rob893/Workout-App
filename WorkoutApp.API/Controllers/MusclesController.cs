@@ -75,6 +75,26 @@ namespace WorkoutApp.API.Controllers
             return Ok(muscleToReturn);
         }
 
+        [HttpGet("{id}/primaryExercises")]
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetPrimaryExercisesForMuscleAsync(int id, [FromQuery] ExerciseSearchParams searchParams)
+        {
+            var exercises = await muscleRepository.GetPrimaryExercisesForMuscleAsync(id, searchParams);
+            Response.AddPagination(exercises);
+            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
+            
+            return Ok(exercisesToReturn);
+        }
+
+        [HttpGet("{id}/secondaryExercises")]
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetSecondaryExercisesForMuscleAsync(int id, [FromQuery] ExerciseSearchParams searchParams)
+        {
+            var exercises = await muscleRepository.GetSecondaryExercisesForMuscleAsync(id, searchParams);
+            Response.AddPagination(exercises);
+            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
+            
+            return Ok(exercisesToReturn);
+        }
+
         [HttpPost]
         public async Task<ActionResult<MuscleForReturnDto>> CreateMuscleAsync([FromBody] MuscleForCreateDto muscleForCreate)
         {
@@ -100,7 +120,7 @@ namespace WorkoutApp.API.Controllers
 
             if (muscle == null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             muscleRepository.Delete(muscle);
@@ -110,7 +130,7 @@ namespace WorkoutApp.API.Controllers
                return BadRequest(new ProblemDetailsWithErrors("Failed to delete the muscle.", 400, Request)); 
             }
             
-            return Ok();
+            return NoContent();
         }
 
         [HttpPatch("{id}")]

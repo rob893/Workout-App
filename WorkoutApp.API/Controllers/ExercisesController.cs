@@ -19,13 +19,15 @@ namespace WorkoutApp.API.Controllers
     {
         private readonly ExerciseRepository exerciseRepository;
         private readonly MuscleRepository muscleRepository;
+        private readonly EquipmentRepository equipmentRepository;
         private readonly IMapper mapper;
 
 
-        public ExercisesController(ExerciseRepository exerciseRepository, MuscleRepository muscleRepository, IMapper mapper)
+        public ExercisesController(ExerciseRepository exerciseRepository, MuscleRepository muscleRepository, EquipmentRepository equipmentRepository, IMapper mapper)
         {
             this.exerciseRepository = exerciseRepository;
             this.muscleRepository = muscleRepository;
+            this.equipmentRepository = equipmentRepository;
             this.mapper = mapper;
         }
 
@@ -74,6 +76,23 @@ namespace WorkoutApp.API.Controllers
             var exerciseToReturn = mapper.Map<ExerciseForReturnDetailedDto>(exercise);
 
             return Ok(exerciseToReturn);
+        }
+
+        [HttpGet("{id}/equipment")]
+        public async Task<ActionResult<IEnumerable<EquipmentForReturnDto>>> GetEquipmentForExerciseAsync(int id, [FromQuery] PaginationParams searchParams)
+        {
+            var equipmentSearchParams = new EquipmentSearchParams
+            {
+                PageNumber = searchParams.PageNumber,
+                PageSize = searchParams.PageSize,
+                ExerciseIds = new List<int> { id }
+            };
+
+            var equipment = await equipmentRepository.SearchAsync(equipmentSearchParams);
+            Response.AddPagination(equipment);
+            var equipmentToReturn = mapper.Map<IEnumerable<EquipmentForReturnDto>>(equipment);
+
+            return Ok(equipmentToReturn);
         }
 
         [HttpPost]
@@ -140,7 +159,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("Unable to delete exercise.", 400, Request));
             }
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpPatch("{id}")]

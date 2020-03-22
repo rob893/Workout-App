@@ -16,12 +16,14 @@ namespace WorkoutApp.API.Controllers
     public class EquipmentController : ControllerBase
     {
         private readonly EquipmentRepository equipmentRepository;
+        private readonly ExerciseRepository exerciseRepository;
         private readonly IMapper mapper;
 
 
-        public EquipmentController(EquipmentRepository equipmentRepository, IMapper mapper)
+        public EquipmentController(EquipmentRepository equipmentRepository, ExerciseRepository exerciseRepository, IMapper mapper)
         {
             this.equipmentRepository = equipmentRepository;
+            this.exerciseRepository = exerciseRepository;
             this.mapper = mapper;
         }
 
@@ -63,6 +65,23 @@ namespace WorkoutApp.API.Controllers
             return Ok(equipmentToReturn);
         }
 
+        [HttpGet("{id}/exercises")]
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetExercisesForEquipmentAsync(int id, [FromQuery] PaginationParams searchParams)
+        {
+            var exerciseSearchParams = new ExerciseSearchParams
+            {
+                PageNumber = searchParams.PageNumber,
+                PageSize = searchParams.PageSize,
+                EquipmentId = new List<int> { id }
+            };
+
+            var exercises = await exerciseRepository.SearchAsync(exerciseSearchParams);
+            Response.AddPagination(exercises);
+            var exercisesForReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
+
+            return Ok(exercisesForReturn);
+        }
+
         [HttpPost]
         public async Task<ActionResult<EquipmentForReturnDto>> CreateNewEquipmentAsync([FromBody] EquipmentForCreationDto equipmentCreationDto)
         {
@@ -88,7 +107,7 @@ namespace WorkoutApp.API.Controllers
 
             if (equipment == null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             equipmentRepository.Delete(equipment);
@@ -99,7 +118,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("Failed to delete the equipment.", 400, Request));
             }
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpPatch("{id}")]

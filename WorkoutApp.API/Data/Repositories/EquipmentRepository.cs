@@ -13,5 +13,15 @@ namespace WorkoutApp.API.Data.Repositories
         {
             return query.Include(e => e.Exercises).ThenInclude(e => e.Exercise);
         }
+
+        protected override IQueryable<Equipment> AddWhereClauses(IQueryable<Equipment> query, EquipmentSearchParams searchParams)
+        {
+            if (searchParams.ExerciseIds != null && searchParams.ExerciseIds.Count > 0)
+            {
+                query = query.Where(equipment => searchParams.ExerciseIds.Contains(equipment.Id));
+            }
+
+            return query;
+        }
     }
 }
