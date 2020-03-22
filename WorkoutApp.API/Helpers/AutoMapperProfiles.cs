@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using AutoMapper;
 using WorkoutApp.API.Models.Domain;
@@ -7,8 +8,13 @@ namespace WorkoutApp.API.Helpers
 {
     public class AutoMapperProfiles : Profile
     {
-        public AutoMapperProfiles()
+        private readonly string baseUrl;
+
+
+        public AutoMapperProfiles(string baseUrl)
         {
+            this.baseUrl = baseUrl;
+
             CreateUserMaps();
             CreateMuscleMaps();
             CreateWorkoutMaps();

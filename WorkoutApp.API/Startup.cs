@@ -54,7 +54,7 @@ namespace WorkoutApp.API
             {
                 options.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult();
             })
-            .AddNewtonsoftJson(options => 
+            .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
@@ -89,7 +89,12 @@ namespace WorkoutApp.API
             ConfigureSwagger(services);
 
             services.AddCors();
-            services.AddAutoMapper(typeof(Startup));
+
+            var mapperConfiguration = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapperProfiles(Configuration["BaseUrl"]));
+            });
+            services.AddSingleton(mapperConfiguration.CreateMapper());
 
             //Must add repos here so they can be injected. Interface => concrete implementation
             services.AddScoped<UserRepository>();
@@ -176,7 +181,7 @@ namespace WorkoutApp.API
 
                             var problem = new ProblemDetailsWithErrors(errorMessage ?? "Invalid token", 401, context.Request);
 
-                            var settings = new JsonSerializerSettings 
+                            var settings = new JsonSerializerSettings
                             {
                                 ContractResolver = new CamelCasePropertyNamesContractResolver()
                             };
