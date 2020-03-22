@@ -27,8 +27,8 @@ namespace WorkoutApp.API.Helpers
 
         private void CreateUserMaps()
         {
-            CreateMap<User, UserForReturnDto>();
-            CreateMap<User, UserForReturnDetailedDto>()
+            CreateMap<User, UserForReturnDto>().ConstructUsing(x => new UserForReturnDto(baseUrl));
+            CreateMap<User, UserForReturnDetailedDto>().ConstructUsing(x => new UserForReturnDetailedDto(baseUrl))
                 .ForMember(dto => dto.Roles, opt =>
                     opt.MapFrom(u => u.UserRoles.Select(ur => ur.Role.Name)));
             CreateMap<UserForRegisterDto, User>();
