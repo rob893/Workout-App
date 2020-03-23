@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using WorkoutApp.API.Models.Domain;
 
 namespace WorkoutApp.API.Models.Dtos
 {

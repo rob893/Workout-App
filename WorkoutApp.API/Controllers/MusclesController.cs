@@ -16,12 +16,14 @@ namespace WorkoutApp.API.Controllers
     public class MusclesController : ControllerBase
     {
         private readonly MuscleRepository muscleRepository;
+        private readonly ExerciseRepository exerciseRepository;
         private readonly IMapper mapper;
 
 
-        public MusclesController(MuscleRepository muscleRepository, IMapper mapper)
+        public MusclesController(MuscleRepository muscleRepository, ExerciseRepository exerciseRepository, IMapper mapper)
         {
             this.muscleRepository = muscleRepository; 
+            this.exerciseRepository = exerciseRepository;
             this.mapper = mapper;   
         }
 
@@ -76,9 +78,16 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/primaryExercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetPrimaryExercisesForMuscleAsync(int id, [FromQuery] ExerciseSearchParams searchParams)
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetPrimaryExercisesForMuscleAsync(int id, [FromQuery] PaginationParams searchParams)
         {
-            var exercises = await muscleRepository.GetPrimaryExercisesForMuscleAsync(id, searchParams);
+            var exerciseSearchParams = new ExerciseSearchParams
+            {
+                PageNumber = searchParams.PageNumber,
+                PageSize = searchParams.PageSize,
+                PrimaryMuscleId = new List<int> { id }
+            };
+
+            var exercises = await exerciseRepository.SearchAsync(exerciseSearchParams);
             Response.AddPagination(exercises);
             var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
             
@@ -86,9 +95,16 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/secondaryExercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetSecondaryExercisesForMuscleAsync(int id, [FromQuery] ExerciseSearchParams searchParams)
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetSecondaryExercisesForMuscleAsync(int id, [FromQuery] PaginationParams searchParams)
         {
-            var exercises = await muscleRepository.GetSecondaryExercisesForMuscleAsync(id, searchParams);
+            var exerciseSearchParams = new ExerciseSearchParams
+            {
+                PageNumber = searchParams.PageNumber,
+                PageSize = searchParams.PageSize,
+                SecondaryMuscleId = new List<int> { id }
+            };
+
+            var exercises = await exerciseRepository.SearchAsync(exerciseSearchParams);
             Response.AddPagination(exercises);
             var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
             

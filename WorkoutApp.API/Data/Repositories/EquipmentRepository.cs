@@ -18,7 +18,7 @@ namespace WorkoutApp.API.Data.Repositories
         {
             if (searchParams.ExerciseIds != null && searchParams.ExerciseIds.Count > 0)
             {
-                query = query.Where(equipment => searchParams.ExerciseIds.Contains(equipment.Id));
+                query = query.Where(equipment => equipment.Exercises.Any(exercise => searchParams.ExerciseIds.Contains(exercise.ExerciseId)));
             }
 
             return query;

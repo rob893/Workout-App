@@ -7,6 +7,8 @@ namespace WorkoutApp.API.Models.QueryParams
     {
         public List<int> ExerciseCategoryId { get; set; } = new List<int>();
         public List<int> EquipmentId { get; set; } = new List<int>();
+        public List<int> PrimaryMuscleId { get; set; } = new List<int>();
+        public List<int> SecondaryMuscleId { get; set; } = new List<int>();
     }
 
     public class RandomExerciseSearchParams : ExerciseSearchParams

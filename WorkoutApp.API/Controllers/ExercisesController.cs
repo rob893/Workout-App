@@ -20,14 +20,17 @@ namespace WorkoutApp.API.Controllers
         private readonly ExerciseRepository exerciseRepository;
         private readonly MuscleRepository muscleRepository;
         private readonly EquipmentRepository equipmentRepository;
+        private readonly ExerciseCategoryRepository exerciseCategoryRepository;
         private readonly IMapper mapper;
 
 
-        public ExercisesController(ExerciseRepository exerciseRepository, MuscleRepository muscleRepository, EquipmentRepository equipmentRepository, IMapper mapper)
+        public ExercisesController(ExerciseRepository exerciseRepository, MuscleRepository muscleRepository, 
+            EquipmentRepository equipmentRepository, ExerciseCategoryRepository exerciseCategoryRepository, IMapper mapper)
         {
             this.exerciseRepository = exerciseRepository;
             this.muscleRepository = muscleRepository;
             this.equipmentRepository = equipmentRepository;
+            this.exerciseCategoryRepository = exerciseCategoryRepository;
             this.mapper = mapper;
         }
 
@@ -93,6 +96,23 @@ namespace WorkoutApp.API.Controllers
             var equipmentToReturn = mapper.Map<IEnumerable<EquipmentForReturnDto>>(equipment);
 
             return Ok(equipmentToReturn);
+        }
+
+        [HttpGet("{id}/exerciseCategories")]
+        public async Task<ActionResult<IEnumerable<ExerciseCategoryForReturnDto>>> GetExerciseCategoriesForExerciseAsync(int id, [FromQuery] PaginationParams searchParams)
+        {
+            var categorySearchParams = new ExerciseCategorySearchParams
+            {
+                PageNumber = searchParams.PageNumber,
+                PageSize = searchParams.PageSize,
+                ExerciseId = new List<int> { id }
+            };
+
+            var categories = await exerciseCategoryRepository.SearchAsync(categorySearchParams);
+            Response.AddPagination(categories);
+            var categoriesToReturn = mapper.Map<IEnumerable<ExerciseCategoryForReturnDto>>(categories);
+
+            return Ok(categoriesToReturn);
         }
 
         [HttpPost]

@@ -18,12 +18,14 @@ namespace WorkoutApp.API.Controllers
     public class WorkoutsController : ControllerBase
     {
         private readonly WorkoutRepository workoutRepository;
+        private readonly ExerciseGroupRepository exerciseGroupRepository;
         private readonly IMapper mapper;
 
 
-        public WorkoutsController(WorkoutRepository workoutRepository, IMapper mapper)
+        public WorkoutsController(WorkoutRepository workoutRepository, ExerciseGroupRepository exerciseGroupRepository, IMapper mapper)
         {
             this.workoutRepository = workoutRepository;
+            this.exerciseGroupRepository = exerciseGroupRepository;
             this.mapper = mapper;
         }
 
@@ -75,6 +77,23 @@ namespace WorkoutApp.API.Controllers
             var workoutToReturn = mapper.Map<WorkoutForReturnDetailedDto>(workout);
 
             return Ok(workoutToReturn);
+        }
+
+        [HttpGet("{id}/exerciseGroups")]
+        public async Task<ActionResult<IEnumerable<ExerciseGroupForReturnDto>>> GetExerciseGroupsForWorkoutAsync(int id, [FromQuery] PaginationParams searchParams)
+        {
+            var exerciseGroupSearchParams = new ExerciseGroupSearchParams
+            {
+                PageNumber = searchParams.PageNumber,
+                PageSize = searchParams.PageSize,
+                WorkoutId = new List<int> { id }
+            };
+
+            var groups = await exerciseGroupRepository.SearchDetailedAsync(exerciseGroupSearchParams);
+            Response.AddPagination(groups);
+            var groupsToReturn = mapper.Map<IEnumerable<ExerciseGroupForReturnDto>>(groups);
+
+            return Ok(groupsToReturn);
         }
 
         [HttpPost]

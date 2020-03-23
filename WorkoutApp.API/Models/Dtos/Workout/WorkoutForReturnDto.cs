@@ -6,6 +6,7 @@ namespace WorkoutApp.API.Models.Dtos
     {
         public string Label { get; set; }
         public string Description { get; set; }
+        public string ExerciseGroupsUrl { get => $"{Url}/exerciseGroups"; }
         public string Color { get; set; }
         public int CreatedByUserId { get; set; }
         public string CreatedByUserUrl { get => $"{baseUrl}/users/{CreatedByUserId}"; }
