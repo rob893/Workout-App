@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WorkoutApp.API.Models.Domain
 {
     public class Workout : IIdentifiable
     {
         public int Id { get; set; }
+        [Required]
+        [MaxLength(255)]
         public string Label { get; set; }
         public string Description { get; set; }
-        public string Color { get; set; }
         public int CreatedByUserId { get; set; }
         public User CreatedByUser { get; set; }
         public DateTime CreatedOnDate { get; set; }

@@ -7,6 +7,7 @@ namespace WorkoutApp.API.Models.Dtos
     public class ExerciseForCreationDto
     {
         [Required]
+        [MaxLength(255)]
         public string Name { get; set; }
         public int? PrimaryMuscleId { get; set; }
         public int? SecondaryMuscleId { get; set; }

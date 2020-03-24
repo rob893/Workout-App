@@ -1,12 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutApp.API.Models.Domain
 {
     public class User : IdentityUser<int>, IIdentifiable
     {
+        [Required]
+        [MaxLength(255)]
         public string FirstName { get; set; }
+        [Required]
+        [MaxLength(255)]
         public string LastName { get; set; }
         public DateTime Created { get; set; }
         public List<RefreshToken> RefreshTokens { get; set; }

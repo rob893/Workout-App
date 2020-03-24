@@ -43,8 +43,8 @@ namespace WorkoutApp.API.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
+                    FirstName = table.Column<string>(maxLength: 255, nullable: false),
+                    LastName = table.Column<string>(maxLength: 255, nullable: false),
                     Created = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
@@ -58,7 +58,7 @@ namespace WorkoutApp.API.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,7 +71,7 @@ namespace WorkoutApp.API.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -84,7 +84,7 @@ namespace WorkoutApp.API.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(maxLength: 255, nullable: false),
                     Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -203,8 +203,8 @@ namespace WorkoutApp.API.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false),
-                    Source = table.Column<string>(nullable: false),
-                    Token = table.Column<string>(nullable: true),
+                    Source = table.Column<string>(maxLength: 255, nullable: false),
+                    Token = table.Column<string>(maxLength: 255, nullable: false),
                     Expiration = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
@@ -224,9 +224,8 @@ namespace WorkoutApp.API.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Label = table.Column<string>(nullable: true),
+                    Label = table.Column<string>(maxLength: 255, nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    Color = table.Column<string>(nullable: true),
                     CreatedByUserId = table.Column<int>(nullable: false),
                     CreatedOnDate = table.Column<DateTime>(nullable: false),
                     LastModifiedDate = table.Column<DateTime>(nullable: false),
@@ -257,7 +256,7 @@ namespace WorkoutApp.API.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(maxLength: 255, nullable: false),
                     Description = table.Column<string>(nullable: true),
                     PrimaryMuscleId = table.Column<int>(nullable: true),
                     SecondaryMuscleId = table.Column<int>(nullable: true)
