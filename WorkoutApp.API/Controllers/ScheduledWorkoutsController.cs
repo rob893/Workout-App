@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -79,23 +80,6 @@ namespace WorkoutApp.API.Controllers
             var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDetailedDto>(workout);
 
             return Ok(workoutToReturn);
-        }
-
-        [HttpGet("{id}/attendees")]
-        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetScheduledWorkoutAttendeesAsync(int id, [FromQuery] PaginationParams searchParams)
-        {
-            var workout = await scheduledWorkoutRepository.GetByIdDetailedAsync(id);
-
-            if (workout == null)
-            {
-                return NotFound();
-            }
-
-            var attendees = await scheduledWorkoutRepository.GetScheduledWorkoutAttendeesAsync(id, searchParams);
-            Response.AddPagination(attendees);
-            var attendeesToReturn = mapper.Map<IEnumerable<UserForReturnDto>>(attendees);
-
-            return Ok(attendeesToReturn);
         }
 
         [HttpPost]
@@ -264,6 +248,121 @@ namespace WorkoutApp.API.Controllers
             var workoutToReturn = mapper.Map<ScheduledWorkoutForReturnDto>(workout);
 
             return Ok(workoutToReturn);
+        }
+
+        [HttpGet("{id}/attendees")]
+        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetScheduledWorkoutAttendeesAsync(int id, [FromQuery] PaginationParams searchParams)
+        {
+            var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            var attendees = await scheduledWorkoutRepository.GetScheduledWorkoutAttendeesAsync(id, searchParams);
+            Response.AddPagination(attendees);
+            var attendeesToReturn = mapper.Map<IEnumerable<UserForReturnDto>>(attendees);
+
+            return Ok(attendeesToReturn);
+        }
+
+        [HttpGet("{id}/attendees/{userId}")]
+        public async Task<ActionResult<UserForReturnDto>> GetScheduledWorkoutAttendeeAsync(int id, int userId)
+        {
+            var workout = await scheduledWorkoutRepository.GetByIdDetailedAsync(id);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            var attendee = workout.Attendees.Where(a => a.UserId == userId).FirstOrDefault();
+
+            if (attendee == null)
+            {
+                return NotFound();
+            }
+
+            var attendeeToReturn = mapper.Map<UserForReturnDto>(attendee.User);
+
+            return Ok(attendeeToReturn);
+        }
+
+        [HttpPost("{id}/attendees")]
+        public async Task<ActionResult<ScheduledWorkoutUserForReturnDto>> AddScheduledWorkoutAttendeeToWorkoutAsync(int id, [FromBody] ScheduledWorkoutUserForCreationDto attendeeToAdd)
+        {
+            var workout = await scheduledWorkoutRepository.GetByIdAsync(id, w => w.Attendees);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            if (int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value) != workout.ScheduledByUserId)
+            {
+                return Unauthorized();
+            }
+
+            if (workout.Attendees.Where(a => a.UserId == attendeeToAdd.UserId).FirstOrDefault() != null)
+            {
+                return BadRequest(new ProblemDetailsWithErrors($"User {attendeeToAdd.UserId} is already attending this workout.", 400, Request));
+            }
+
+            var newAttendee = new ScheduledWorkoutUser
+            {
+                UserId = attendeeToAdd.UserId,
+                ScheduledWorkoutId = id
+            };
+
+            workout.Attendees.Add(newAttendee);
+
+            var saveResults = await scheduledWorkoutRepository.SaveAllAsync();
+
+            if (!saveResults)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Could not add attendee.", 400, Request));
+            }
+            
+            var attendeeToReturn = mapper.Map<ScheduledWorkoutUserForReturnDto>(newAttendee);
+
+            return CreatedAtRoute("GetScheduledWorkout", new { id = attendeeToReturn.UserId }, attendeeToReturn);
+        }
+
+        [HttpDelete("{id}/attendees/{userId}")]
+        public async Task<ActionResult> DeleteScheduledWorkoutAttendeeAsync(int id, int userId)
+        {
+            var workout = await scheduledWorkoutRepository.GetByIdAsync(id, w => w.Attendees);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            var tokenUser = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            if (tokenUser != workout.ScheduledByUserId || tokenUser != userId)
+            {
+                return Unauthorized();
+            }
+
+            var attendeeToRemove = workout.Attendees.Where(a => a.UserId == userId).FirstOrDefault();
+
+            if (attendeeToRemove == null)
+            {
+                return BadRequest(new ProblemDetailsWithErrors($"User {userId} was not attending this workout.", 400, Request));
+            }
+
+            workout.Attendees.Remove(attendeeToRemove);
+
+            var saveResults = await scheduledWorkoutRepository.SaveAllAsync();
+
+            if (!saveResults)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Could not remove attendee.", 400, Request));
+            }
+            
+            return NoContent();
         }
     }
 }

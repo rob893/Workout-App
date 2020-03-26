@@ -58,6 +58,7 @@ namespace WorkoutApp.API.Helpers
                 .ForMember(dto => dto.Attendees, opt =>
                     opt.MapFrom(wo => wo.Attendees.Select(x => x.User)));
             CreateMap<ScheduledWorkoutForCreationDto, ScheduledWorkout>();
+            CreateMap<ScheduledWorkoutUser, ScheduledWorkoutUserForReturnDto>().ConstructUsing(x => new ScheduledWorkoutUserForReturnDto(baseUrl));
         }
 
         private void CreateWorkoutInvitationMaps()
