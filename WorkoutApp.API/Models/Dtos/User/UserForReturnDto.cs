@@ -7,6 +7,8 @@ namespace WorkoutApp.API.Models.Dtos
     {
         public string ScheduledWorkoutsUrl { get => $"{Url}/scheduledWorkouts"; }
         public string FavoriteExercisesUrl { get => $"{Url}/favorites/exercises"; }
+        public string WorkoutInvitationsUrl { get => $"{Url}/workoutInvitations"; }
+        public string SentWorkoutInvitationsUrl { get => $"{Url}/workoutInvitations/sent"; }
         public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

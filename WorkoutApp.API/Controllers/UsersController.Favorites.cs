@@ -5,7 +5,6 @@ using WorkoutApp.API.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Models.Dtos;
 using WorkoutApp.API.Models.QueryParams;
-using WorkoutApp.API.Data.Repositories;
 using System.Linq;
 using WorkoutApp.API.Models.Domain;
 

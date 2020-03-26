@@ -1,5 +1,6 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using WorkoutApp.API.Helpers;
 using WorkoutApp.API.Models.Domain;
 using WorkoutApp.API.Models.QueryParams;
 
@@ -32,6 +33,24 @@ namespace WorkoutApp.API.Data.Repositories
             if (searchParams.ScheduledWorkoutId != null)
             {
                 query = query.Where(i => i.ScheduledWorkoutId == searchParams.ScheduledWorkoutId);
+            }
+
+            if (searchParams.Status != null)
+            {
+                var status = searchParams.Status.ToLower();
+
+                if (status == WorkoutInvitationStatus.Accepted)
+                {
+                    query = query.Where(i => i.Accepted == true && i.Declined == false);
+                }
+                else if (status == WorkoutInvitationStatus.Declined)
+                {
+                    query = query.Where(i => i.Accepted == false && i.Declined == true);
+                }
+                else if (status == WorkoutInvitationStatus.Pending)
+                {
+                    query = query.Where(i => i.Accepted == false && i.Declined == false);
+                }
             }
 
             return query;

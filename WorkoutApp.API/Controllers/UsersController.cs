@@ -19,13 +19,15 @@ namespace WorkoutApp.API.Controllers
     {
         private readonly UserRepository userRepository;
         private readonly ExerciseRepository exerciseRepository;
+        private readonly WorkoutInvitationRepository workoutInvitationRepository;
         private readonly IMapper mapper;
 
 
-        public UsersController(UserRepository userRepository, ExerciseRepository exerciseRepository, IMapper mapper)
+        public UsersController(UserRepository userRepository, ExerciseRepository exerciseRepository, WorkoutInvitationRepository workoutInvitationRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
             this.exerciseRepository = exerciseRepository;
+            this.workoutInvitationRepository = workoutInvitationRepository;
             this.mapper = mapper;
         }
 

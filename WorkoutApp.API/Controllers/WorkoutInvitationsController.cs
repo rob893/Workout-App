@@ -24,8 +24,8 @@ namespace WorkoutApp.API.Controllers
 
 
         public WorkoutInvitationsController(
-            WorkoutInvitationRepository workoutInvitationRepository, 
-            ScheduledWorkoutRepository scheduledWorkoutRepository, 
+            WorkoutInvitationRepository workoutInvitationRepository,
+            ScheduledWorkoutRepository scheduledWorkoutRepository,
             UserRepository userRepository,
             IMapper mapper)
         {
@@ -88,12 +88,22 @@ namespace WorkoutApp.API.Controllers
         [HttpPost]
         public async Task<ActionResult<WorkoutInvitationForReturnDto>> CreateWorkoutInvitationAsync([FromBody] WorkoutInvitationForCreationDto woInv)
         {
-            var scheduledWorkout = await scheduledWorkoutRepository.GetByIdAsync(woInv.ScheduledWorkoutId.Value);
+            var scheduledWorkout = await scheduledWorkoutRepository.GetByIdAsync(woInv.ScheduledWorkoutId.Value, wo => wo.Attendees);
             var invitee = await userRepository.GetByIdAsync(woInv.InviteeId.Value);
-            
-            if (invitee == null || scheduledWorkout == null)
+
+            if (invitee == null)
             {
-                return BadRequest(new ProblemDetailsWithErrors("Invalid workout id or invitee id.", 400, Request));
+                return BadRequest(new ProblemDetailsWithErrors("Invalid invitee id.", 400, Request));
+            }
+
+            if (scheduledWorkout == null)
+            {
+                return BadRequest(new ProblemDetailsWithErrors($"No scheduled workout with id {woInv.ScheduledWorkoutId} exists.", 400, Request));
+            }
+
+            if (scheduledWorkout.Attendees.FirstOrDefault(attendee => attendee.UserId == woInv.InviteeId) != null)
+            {
+                return BadRequest(new ProblemDetailsWithErrors($"User {woInv.InviteeId} is already attending this workout.", 400, Request));
             }
 
             int inviterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -112,7 +122,8 @@ namespace WorkoutApp.API.Controllers
             {
                 InviteeId = woInv.InviteeId,
                 InviterId = inviterId,
-                ScheduledWorkoutId = woInv.ScheduledWorkoutId
+                ScheduledWorkoutId = woInv.ScheduledWorkoutId,
+                Status = WorkoutInvitationStatus.Pending
             });
 
             if (pendingInvitation.Count > 0)
@@ -135,7 +146,9 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("Failed to send invitation.", 400, Request));
             }
 
-            return CreatedAtRoute("GetWorkoutInvitation", new { id = newInvitation.Id }, newInvitation);
+            var invToReturn = mapper.Map<WorkoutInvitationForReturnDto>(newInvitation);
+
+            return CreatedAtRoute("GetWorkoutInvitation", new { id = newInvitation.Id }, invToReturn);
         }
 
         [HttpDelete("{id}")]
@@ -143,7 +156,7 @@ namespace WorkoutApp.API.Controllers
         {
             var woInv = await workoutInvitationRepository.GetByIdAsync(id);
 
-            if (woInv == null) 
+            if (woInv == null)
             {
                 return NotFound();
             }
@@ -169,90 +182,86 @@ namespace WorkoutApp.API.Controllers
             return NoContent();
         }
 
-        // [HttpGet("pending/invitee/{inviteeId}")]
-        // public async Task<IActionResult> GetPendingInvitationsForInvitee(int inviteeId)
-        // {
-        //     if (inviteeId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-        //     {
-        //         return Unauthorized();
-        //     }
+        [HttpPut("{id}/accept")]
+        public async Task<ActionResult<WorkoutInvitationForReturnDto>> AcceptPendingInvitationAsync(int id)
+        {
+            var woInv = await workoutInvitationRepository.GetByIdAsync(id);
 
-        //     List<WorkoutInvitation> woInvs = await workoutInvitationProvider.GetPendingInvitationsForInvitee(inviteeId);
+            if (woInv == null)
+            {
+                return NotFound();
+            }
 
-        //     return Ok(woInvs);
-        // }
+            if (woInv.InviteeId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized(new ProblemDetailsWithErrors("You cannot accept this invitation.", 401, Request));
+            }
 
-        // [HttpPatch("{id}/accept")]
-        // public async Task<IActionResult> AcceptPendingInvitation(int id)
-        // {
-        //     WorkoutInvitation woInv = await repo.GetWorkoutInvitationAsync(id);
+            if (woInv.Accepted || woInv.Declined)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("This invitation has already been responded to.", 400, Request));
+            }
 
-        //     if (woInv == null)
-        //     {
-        //         return NotFound();
-        //     }
+            var user = await userRepository.GetByIdAsync(woInv.InviteeId);
 
-        //     if (woInv.InviteeId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-        //     {
-        //         return Unauthorized();
-        //     }
+            woInv.Accepted = true;
+            woInv.Declined = false;
+            woInv.RespondedAtDateTime = DateTime.Now;
 
-        //     if (woInv.Accepted || woInv.Declined)
-        //     {
-        //         return BadRequest("This invitation has already been responeded to.");
-        //     }
+            var schWo = await scheduledWorkoutRepository.GetByIdAsync(woInv.ScheduledWorkoutId, wo => wo.Attendees);
 
-        //     var user = await repo.GetUserAsync(woInv.InviteeId);
+            schWo.Attendees.Add(new ScheduledWorkoutUser
+            {
+                User = user,
+                ScheduledWorkout = schWo
+            });
 
-        //     woInv.Accepted = true;
-        //     woInv.Declined = false;
-        //     woInv.RespondedAtDateTime = DateTime.Now;
+            var schWoSaveResult = await scheduledWorkoutRepository.SaveAllAsync();
 
-        //     ScheduledWorkout schWo = await repo.GetScheduledUserWorkoutAsync(woInv.ScheduledWorkoutId);
-        //     schWo.Attendees.Add(new ScheduledWorkoutUser
-        //     {
-        //         User = user,
-        //         ScheduledWorkout = schWo
-        //     });
+            if (!schWoSaveResult)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Unable to save invitation.", 400, Request));
+            }
 
-        //     if (await repo.SaveAllAsync())
-        //     {
-        //         return Ok(woInv);
-        //     }
+            var invitationToReturn = mapper.Map<WorkoutInvitationForReturnDto>(woInv);
 
-        //     return BadRequest("Unable to accept invitation.");
-        // }
+            return Ok(invitationToReturn);
+        }
 
-        // [HttpPatch("{id}/decline")]
-        // public async Task<IActionResult> DeclinePendingInvitation(int id)
-        // {
-        //     WorkoutInvitation woInv = await repo.GetWorkoutInvitationAsync(id);
+        [HttpPut("{id}/decline")]
+        public async Task<ActionResult<WorkoutInvitationForReturnDto>> DeclinePendingInvitationAsync(int id)
+        {
+            var woInv = await workoutInvitationRepository.GetByIdAsync(id);
 
-        //     if (woInv == null)
-        //     {
-        //         return NotFound();
-        //     }
+            if (woInv == null)
+            {
+                return NotFound();
+            }
 
-        //     if (woInv.InviteeId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-        //     {
-        //         return Unauthorized();
-        //     }
+            if (woInv.InviteeId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized(new ProblemDetailsWithErrors("You cannot decline this invitation.", 401, Request));
+            }
 
-        //     if (woInv.Accepted || woInv.Declined)
-        //     {
-        //         return BadRequest("This invitation has already been responeded to.");
-        //     }
+            if (woInv.Accepted || woInv.Declined)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("This invitation has already been responded to.", 400, Request));
+            }
 
-        //     woInv.Accepted = false;
-        //     woInv.Declined = true;
-        //     woInv.RespondedAtDateTime = DateTime.Now;
+            woInv.Accepted = false;
+            woInv.Declined = true;
+            woInv.RespondedAtDateTime = DateTime.Now;
 
-        //     if (await repo.SaveAllAsync())
-        //     {
-        //         return Ok(woInv);
-        //     }
+            var saveResult = await workoutInvitationRepository.SaveAllAsync();
 
-        //     return BadRequest("Unable to decline invitation.");
-        // }
+            if (!saveResult)
+            {
+                return BadRequest(new ProblemDetailsWithErrors("Unable to save invitation.", 400, Request));
+            }
+
+            var invitationToReturn = mapper.Map<WorkoutInvitationForReturnDto>(woInv);
+
+            return Ok(invitationToReturn);
+        }
     }
 }

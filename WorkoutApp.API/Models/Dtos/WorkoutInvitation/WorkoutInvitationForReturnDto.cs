@@ -1,4 +1,5 @@
 using System;
+using WorkoutApp.API.Helpers;
 
 namespace WorkoutApp.API.Models.Dtos
 {
@@ -12,6 +13,18 @@ namespace WorkoutApp.API.Models.Dtos
         public string ScheduledWorkoutUrl { get => $"{baseUrl}/scheduledWorkouts/{ScheduledWorkoutId}"; }
         public bool Accepted { get; set; }
         public bool Declined { get; set; }
+        public string Status 
+        { 
+            get
+            {
+                if (!Accepted && !Declined)
+                {
+                    return WorkoutInvitationStatus.Pending;
+                }
+
+                return Accepted ? WorkoutInvitationStatus.Accepted : WorkoutInvitationStatus.Declined;
+            } 
+        }
         public DateTime? RespondedAtDateTime { get; set; }
 
 
