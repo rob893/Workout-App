@@ -8,6 +8,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -87,6 +88,7 @@ namespace WorkoutApp.API
 
             ConfigureAuthentication(services);
             ConfigureSwagger(services);
+            ConfigureHealthChecks(services);
 
             services.AddCors();
 
@@ -142,6 +144,11 @@ namespace WorkoutApp.API
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/health");
+                endpoints.MapHealthChecks("/health/db", new HealthCheckOptions()
+                {
+                    Predicate = check => check.Tags.Contains("db")
+                });
                 endpoints.MapControllers();
             });
         }
@@ -199,6 +206,12 @@ namespace WorkoutApp.API
                         }
                     };
                 });
+        }
+
+        private void ConfigureHealthChecks(IServiceCollection services)
+        {
+            services.AddHealthChecks()
+                .AddDbContextCheck<DataContext>(tags: new[] { "db" });
         }
 
         private void ConfigureSwagger(IServiceCollection services)

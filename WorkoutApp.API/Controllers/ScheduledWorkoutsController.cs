@@ -267,7 +267,7 @@ namespace WorkoutApp.API.Controllers
             return Ok(attendeesToReturn);
         }
 
-        [HttpGet("{id}/attendees/{userId}")]
+        [HttpGet("{id}/attendees/{userId}", Name = "GetScheduledWorkoutAttendee")]
         public async Task<ActionResult<UserForReturnDto>> GetScheduledWorkoutAttendeeAsync(int id, int userId)
         {
             var workout = await scheduledWorkoutRepository.GetByIdDetailedAsync(id);
@@ -290,7 +290,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpPost("{id}/attendees")]
-        public async Task<ActionResult<ScheduledWorkoutUserForReturnDto>> AddScheduledWorkoutAttendeeToWorkoutAsync(int id, [FromBody] ScheduledWorkoutUserForCreationDto attendeeToAdd)
+        public async Task<ActionResult<ScheduledWorkoutUserForReturnDto>> AddAttendeeToScheduledWorkoutAsync(int id, [FromBody] ScheduledWorkoutUserForCreationDto attendeeToAdd)
         {
             var workout = await scheduledWorkoutRepository.GetByIdAsync(id, w => w.Attendees);
 
@@ -326,7 +326,7 @@ namespace WorkoutApp.API.Controllers
             
             var attendeeToReturn = mapper.Map<ScheduledWorkoutUserForReturnDto>(newAttendee);
 
-            return CreatedAtRoute("GetScheduledWorkout", new { id = attendeeToReturn.UserId }, attendeeToReturn);
+            return CreatedAtRoute("GetScheduledWorkoutAttendee", new { userId = attendeeToReturn.UserId }, attendeeToReturn);
         }
 
         [HttpDelete("{id}/attendees/{userId}")]
