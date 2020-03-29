@@ -11,6 +11,9 @@
         },
         {
             "path": "WorkoutApp-GraphQL"
+        },
+        {
+            "path": "WorkoutApp.HealthChecker"
         }
     ],
     "settings": {}

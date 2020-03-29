@@ -44,6 +44,9 @@ async function start(): Promise<void> {
         },
         typeDefs,
         resolvers,
+        onHealthCheck: async () => {
+            return true;
+        },
         formatError: error => {
             if (error.extensions && error.originalError) {
                 error.extensions.originalErrorType = error.originalError.constructor.name;
