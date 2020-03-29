@@ -4,3 +4,4 @@ obj/
 **/appsettings.json
 node_modules/
 dist/
+**/.env
