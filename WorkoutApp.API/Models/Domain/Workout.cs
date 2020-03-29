@@ -13,8 +13,8 @@ namespace WorkoutApp.API.Models.Domain
         public string Description { get; set; }
         public int CreatedByUserId { get; set; }
         public User CreatedByUser { get; set; }
-        public DateTime CreatedOnDate { get; set; }
-        public DateTime LastModifiedDate { get; set; }
+        public DateTimeOffset CreatedOnDate { get; set; }
+        public DateTimeOffset LastModifiedDate { get; set; }
         public bool Shareable { get; set; }
         public bool IsDeleted { get; set; }
         public Workout WorkoutCopiedFrom { get; set; }

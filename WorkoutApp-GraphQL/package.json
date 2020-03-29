@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node dist/index.js",
+        "start": "npm run dev-debug",
         "dev": "nodemon --exec ts-node src/index.ts",
         "dev-debug": "nodemon --exec node --inspect -r ts-node/register ./src/index.ts",
         "build": "tsc",
@@ -20,13 +20,15 @@
         "apollo-datasource": "^0.7.0",
         "apollo-datasource-rest": "^0.8.0",
         "apollo-server": "^2.11.0",
+        "date-fns": "^2.11.1",
+        "date-fns-tz": "^1.0.10",
         "dotenv": "^8.2.0",
         "graphql": "^14.5.8",
         "jwt-decode": "^2.2.0"
     },
     "devDependencies": {
         "@types/jwt-decode": "^2.2.1",
-        "@types/node": "^12.12.31",
+        "@types/node": "^12.12.32",
         "@typescript-eslint/eslint-plugin": "^2.25.0",
         "@typescript-eslint/parser": "^2.25.0",
         "eslint": "^6.8.0",

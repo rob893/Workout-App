@@ -198,7 +198,7 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("This workout has already been started!", 400, Request));
             }
 
-            workout.StartedDateTime = DateTime.Now;
+            workout.StartedDateTime = DateTimeOffset.UtcNow;
             var saveResults = await scheduledWorkoutRepository.SaveAllAsync();
 
             if (!saveResults)
@@ -231,11 +231,11 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("This workout has already been completed!", 400, Request));
             }
 
-            workout.CompletedDateTime = DateTime.Now;
+            workout.CompletedDateTime = DateTimeOffset.UtcNow;
 
             if (workout.StartedDateTime == null)
             {
-                workout.StartedDateTime = DateTime.Now;
+                workout.StartedDateTime = DateTimeOffset.UtcNow;
             }
 
             var saveResults = await scheduledWorkoutRepository.SaveAllAsync();

@@ -2,8 +2,41 @@ import { IResolvers } from 'apollo-server';
 import { UserToRegister, UserLogin, User, UserLoginResponse } from './entities/User';
 import { Exercise, Muscle, Equipment, ExerciseCategory } from './entities/Exercise';
 import { WorkoutAppContext } from './entities/WorkoutAppContext';
+import { GraphQLScalarType, Kind } from 'graphql';
 
 export const resolvers: IResolvers<any, WorkoutAppContext> = {
+    DateTime: new GraphQLScalarType({
+        name: 'DateTime',
+        description: 'Scalar type that represents a DateTime object',
+        serialize(value: string | number | Date) {
+            if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) {
+                throw new Error(`Expected value to be either a string, number, or Date. Got ${typeof value} instead.`);
+            }
+
+            if (typeof value === 'number' || value instanceof Date) {
+                return new Date(value).toISOString();
+            }
+            
+            return value;
+        },
+        parseValue(value: string | number | Date) {
+            if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) {
+                throw new Error(`Expected value to be either a string, number, or Date. Got ${typeof value} instead.`);
+            }
+
+            return new Date(value);
+        },
+        parseLiteral(ast) {
+            switch (ast.kind) {
+                case Kind.INT:
+                    return new Date(ast.value);
+                case Kind.STRING:
+                    return new Date(ast.value);
+            }
+
+            return null;
+        }
+    }),
     Query: {
         test() {
             return 'Hello World and stuff!';

@@ -45,7 +45,7 @@ namespace WorkoutApp.API.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     FirstName = table.Column<string>(maxLength: 255, nullable: false),
                     LastName = table.Column<string>(maxLength: 255, nullable: false),
-                    Created = table.Column<DateTime>(nullable: false)
+                    Created = table.Column<DateTimeOffset>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -205,7 +205,7 @@ namespace WorkoutApp.API.Migrations
                     UserId = table.Column<int>(nullable: false),
                     Source = table.Column<string>(maxLength: 255, nullable: false),
                     Token = table.Column<string>(maxLength: 255, nullable: false),
-                    Expiration = table.Column<DateTime>(nullable: false)
+                    Expiration = table.Column<DateTimeOffset>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -227,8 +227,8 @@ namespace WorkoutApp.API.Migrations
                     Label = table.Column<string>(maxLength: 255, nullable: false),
                     Description = table.Column<string>(nullable: true),
                     CreatedByUserId = table.Column<int>(nullable: false),
-                    CreatedOnDate = table.Column<DateTime>(nullable: false),
-                    LastModifiedDate = table.Column<DateTime>(nullable: false),
+                    CreatedOnDate = table.Column<DateTimeOffset>(nullable: false),
+                    LastModifiedDate = table.Column<DateTimeOffset>(nullable: false),
                     Shareable = table.Column<bool>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     WorkoutCopiedFromId = table.Column<int>(nullable: true)
@@ -286,9 +286,10 @@ namespace WorkoutApp.API.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ScheduledByUserId = table.Column<int>(nullable: false),
                     WorkoutId = table.Column<int>(nullable: false),
-                    StartedDateTime = table.Column<DateTime>(nullable: true),
-                    CompletedDateTime = table.Column<DateTime>(nullable: true),
-                    ScheduledDateTime = table.Column<DateTime>(nullable: false)
+                    StartedDateTime = table.Column<DateTimeOffset>(nullable: true),
+                    CompletedDateTime = table.Column<DateTimeOffset>(nullable: true),
+                    ScheduledDateTime = table.Column<DateTimeOffset>(nullable: false),
+                    CustomWorkout = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -442,8 +443,8 @@ namespace WorkoutApp.API.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
                     ExerciseId = table.Column<int>(nullable: false),
-                    StartedAt = table.Column<DateTime>(nullable: true),
-                    CompletedAt = table.Column<DateTime>(nullable: true),
+                    StartedAt = table.Column<DateTimeOffset>(nullable: true),
+                    CompletedAt = table.Column<DateTimeOffset>(nullable: true),
                     TargetCompletionTimeInSeconds = table.Column<int>(nullable: true),
                     CompletionTimeInSeconds = table.Column<int>(nullable: true),
                     TargetReps = table.Column<int>(nullable: true),
@@ -507,8 +508,8 @@ namespace WorkoutApp.API.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
-                    StartedAt = table.Column<DateTime>(nullable: true),
-                    CompletedAt = table.Column<DateTime>(nullable: true),
+                    StartedAt = table.Column<DateTimeOffset>(nullable: true),
+                    CompletedAt = table.Column<DateTimeOffset>(nullable: true),
                     TargetCompletionTimeInSeconds = table.Column<int>(nullable: true),
                     CompletionTimeInSeconds = table.Column<int>(nullable: true),
                     WorkoutId = table.Column<int>(nullable: false),
@@ -549,7 +550,7 @@ namespace WorkoutApp.API.Migrations
                     ScheduledWorkoutId = table.Column<int>(nullable: false),
                     Accepted = table.Column<bool>(nullable: false),
                     Declined = table.Column<bool>(nullable: false),
-                    RespondedAtDateTime = table.Column<DateTime>(nullable: true)
+                    RespondedAtDateTime = table.Column<DateTimeOffset>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -583,8 +584,8 @@ namespace WorkoutApp.API.Migrations
                     UserId = table.Column<int>(nullable: false),
                     ExerciseId = table.Column<int>(nullable: false),
                     ExerciseGroupId = table.Column<int>(nullable: false),
-                    StartedAt = table.Column<DateTime>(nullable: true),
-                    CompletedAt = table.Column<DateTime>(nullable: true),
+                    StartedAt = table.Column<DateTimeOffset>(nullable: true),
+                    CompletedAt = table.Column<DateTimeOffset>(nullable: true),
                     TargetCompletionTimeInSeconds = table.Column<int>(nullable: true),
                     CompletionTimeInSeconds = table.Column<int>(nullable: true),
                     TargetSets = table.Column<int>(nullable: true),

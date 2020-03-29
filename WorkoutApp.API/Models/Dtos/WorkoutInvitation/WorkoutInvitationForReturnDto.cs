@@ -25,7 +25,7 @@ namespace WorkoutApp.API.Models.Dtos
                 return Accepted ? WorkoutInvitationStatus.Accepted : WorkoutInvitationStatus.Declined;
             } 
         }
-        public DateTime? RespondedAtDateTime { get; set; }
+        public DateTimeOffset? RespondedAtDateTime { get; set; }
 
 
         public WorkoutInvitationForReturnDto(string baseUrl) : base(baseUrl, "workoutInvitations") { }

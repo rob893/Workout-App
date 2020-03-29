@@ -23,12 +23,12 @@ namespace WorkoutApp.API.Models.Dtos
         [Required]
         public string Email { get; set; }
         
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
 
         public UserForRegisterDto()
         {
-            Created = DateTime.Now;
+            Created = DateTimeOffset.UtcNow;
         }
     }
 }

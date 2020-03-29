@@ -206,7 +206,7 @@ namespace WorkoutApp.API.Controllers
 
             woInv.Accepted = true;
             woInv.Declined = false;
-            woInv.RespondedAtDateTime = DateTime.Now;
+            woInv.RespondedAtDateTime = DateTimeOffset.UtcNow;
 
             var schWo = await scheduledWorkoutRepository.GetByIdAsync(woInv.ScheduledWorkoutId, wo => wo.Attendees);
 
@@ -250,7 +250,7 @@ namespace WorkoutApp.API.Controllers
 
             woInv.Accepted = false;
             woInv.Declined = true;
-            woInv.RespondedAtDateTime = DateTime.Now;
+            woInv.RespondedAtDateTime = DateTimeOffset.UtcNow;
 
             var saveResult = await workoutInvitationRepository.SaveAllAsync();
 

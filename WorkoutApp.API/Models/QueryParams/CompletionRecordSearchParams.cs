@@ -4,10 +4,10 @@ namespace WorkoutApp.API.Models.QueryParams
 {
     public class CompletionRecordSearchParams : PaginationParams
     {
-        public DateTime? MinStartDateTime { get; set; }
-        public DateTime? MaxStartDateTime { get; set; }
-        public DateTime? MinCompletionDateTime { get; set; }
-        public DateTime? MaxCompletionDateTime { get; set; }
+        public DateTimeOffset? MinStartDateTime { get; set; }
+        public DateTimeOffset? MaxStartDateTime { get; set; }
+        public DateTimeOffset? MinCompletionDateTime { get; set; }
+        public DateTimeOffset? MaxCompletionDateTime { get; set; }
         public int? UserId { get; set; }
     }
 }

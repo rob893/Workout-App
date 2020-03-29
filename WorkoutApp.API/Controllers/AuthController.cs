@@ -78,13 +78,13 @@ namespace WorkoutApp.API.Controllers
             var token = GenerateJwtToken(user);
             var refreshToken = GenerateRefreshToken();
 
-            user.RefreshTokens.RemoveAll(token => token.Source == userForLoginDto.Source || token.Expiration < DateTime.Now);
+            user.RefreshTokens.RemoveAll(token => token.Source == userForLoginDto.Source || token.Expiration < DateTimeOffset.UtcNow);
 
             user.RefreshTokens.Add(new RefreshToken
             {
                 Token = refreshToken,
                 Source = userForLoginDto.Source,
-                Expiration = DateTime.Now.AddMinutes(authSettings.RefreshTokenExpirationTimeInMinutes)
+                Expiration = DateTimeOffset.UtcNow.AddMinutes(authSettings.RefreshTokenExpirationTimeInMinutes)
             });
 
             await userRepository.SaveAllAsync();
@@ -142,7 +142,7 @@ namespace WorkoutApp.API.Controllers
                 return Unauthorized(new ProblemDetailsWithErrors("Invalid token.", 401, Request));
             }
 
-            if (user.RefreshTokens.FirstOrDefault(rToken => rToken.Token == refreshTokenDto.RefreshToken && rToken.Source == refreshTokenDto.Source && rToken.Expiration >= DateTime.Now) == null)
+            if (user.RefreshTokens.FirstOrDefault(rToken => rToken.Token == refreshTokenDto.RefreshToken && rToken.Source == refreshTokenDto.Source && rToken.Expiration >= DateTimeOffset.UtcNow) == null)
             {
                 return Unauthorized(new ProblemDetailsWithErrors("Invalid token.", 401, Request));
             }
@@ -150,13 +150,13 @@ namespace WorkoutApp.API.Controllers
             var token = GenerateJwtToken(user);
             var refreshToken = GenerateRefreshToken();
 
-            user.RefreshTokens.RemoveAll(rToken => rToken.Token == refreshTokenDto.RefreshToken || rToken.Source == refreshTokenDto.Source || rToken.Expiration < DateTime.Now);
+            user.RefreshTokens.RemoveAll(rToken => rToken.Token == refreshTokenDto.RefreshToken || rToken.Source == refreshTokenDto.Source || rToken.Expiration < DateTimeOffset.UtcNow);
 
             user.RefreshTokens.Add(new RefreshToken
             {
                 Token = refreshToken,
                 Source = refreshTokenDto.Source,
-                Expiration = DateTime.Now.AddMinutes(authSettings.RefreshTokenExpirationTimeInMinutes)
+                Expiration = DateTimeOffset.UtcNow.AddMinutes(authSettings.RefreshTokenExpirationTimeInMinutes)
             });
 
             await userRepository.SaveAllAsync();
@@ -202,8 +202,8 @@ namespace WorkoutApp.API.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(authSettings.TokenExpirationTimeInMinutes),
-                NotBefore = DateTime.Now,
+                Expires = DateTime.UtcNow.AddMinutes(authSettings.TokenExpirationTimeInMinutes),
+                NotBefore = DateTime.UtcNow,
                 SigningCredentials = creds,
                 Audience = authSettings.TokenAudience,
                 Issuer = authSettings.TokenIssuer

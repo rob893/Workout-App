@@ -22,6 +22,18 @@
         {
             "type": "node",
             "request": "attach",
+            "name": "Node: Attach Ignore Node Modules",
+            "processId": "${command:PickProcess}",
+            "skipFiles": [
+                "${workspaceFolder}/node_modules/**",
+                "<node_internals>/**"
+            ],
+            "restart": true,
+            "protocol": "inspector"
+        },
+        {
+            "type": "node",
+            "request": "attach",
             "name": "Node: Attach",
             "processId": "${command:PickProcess}",
             "skipFiles": [

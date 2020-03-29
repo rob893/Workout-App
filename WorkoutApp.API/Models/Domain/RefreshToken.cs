@@ -13,6 +13,6 @@ namespace WorkoutApp.API.Models.Domain
         [Required]
         [MaxLength(255)]
         public string Token { get; set; }
-        public DateTime Expiration { get; set; }
+        public DateTimeOffset Expiration { get; set; }
     }
 }

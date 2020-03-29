@@ -13,6 +13,6 @@ namespace WorkoutApp.API.Models.Domain
         public ScheduledWorkout ScheduledWorkout { get; set; }
         public bool Accepted { get; set; }
         public bool Declined { get; set; }
-        public DateTime? RespondedAtDateTime { get; set; }
+        public DateTimeOffset? RespondedAtDateTime { get; set; }
     }
 }

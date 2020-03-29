@@ -9,8 +9,8 @@ namespace WorkoutApp.API.Models.Domain
         public User User { get; set; }
         public int ExerciseId { get; set; }
         public Exercise Exercise { get; set; }
-        public DateTime? StartedAt { get; set; }
-        public DateTime? CompletedAt { get; set; }
+        public DateTimeOffset? StartedAt { get; set; }
+        public DateTimeOffset? CompletedAt { get; set; }
         public int? TargetCompletionTimeInSeconds { get; set; }
         public int? CompletionTimeInSeconds { get; set; }
         public int? TargetReps { get; set; }

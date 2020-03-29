@@ -9,9 +9,10 @@ namespace WorkoutApp.API.Models.Dtos
         public int WorkoutId { get; set; }
         public string WorkoutUrl { get => $"{baseUrl}/workouts/{WorkoutId}"; }
         public string AttendeesUrl { get => $"{Url}/attendees"; }
-        public DateTime? StartedDateTime { get; set; }
-        public DateTime? CompletedDateTime { get; set; }
-        public DateTime ScheduledDateTime { get; set; }
+        public string CustomWorkout { get; set; }
+        public DateTimeOffset? StartedDateTime { get; set; }
+        public DateTimeOffset? CompletedDateTime { get; set; }
+        public DateTimeOffset ScheduledDateTime { get; set; }
 
 
         public ScheduledWorkoutForReturnDto(string baseUrl) : base(baseUrl, "scheduledWorkouts") { }

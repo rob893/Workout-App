@@ -13,7 +13,7 @@ namespace WorkoutApp.API.Models.Dtos
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
         public UserForReturnDto(string baseUrl) : base(baseUrl, "users") { }
     }

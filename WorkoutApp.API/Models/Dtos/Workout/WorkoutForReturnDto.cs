@@ -9,8 +9,8 @@ namespace WorkoutApp.API.Models.Dtos
         public string ExerciseGroupsUrl { get => $"{Url}/exerciseGroups"; }
         public int CreatedByUserId { get; set; }
         public string CreatedByUserUrl { get => $"{baseUrl}/users/{CreatedByUserId}"; }
-        public DateTime CreatedOnDate { get; set; }
-        public DateTime LastModifiedDate { get; set; }
+        public DateTimeOffset CreatedOnDate { get; set; }
+        public DateTimeOffset LastModifiedDate { get; set; }
         public bool Shareable { get; set; }
         public bool IsDeleted { get; set; }
 

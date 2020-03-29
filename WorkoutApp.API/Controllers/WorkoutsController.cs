@@ -102,8 +102,8 @@ namespace WorkoutApp.API.Controllers
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var workout = mapper.Map<Workout>(newWorkout);
 
-            workout.CreatedOnDate = DateTime.Now;
-            workout.LastModifiedDate = DateTime.Now;
+            workout.CreatedOnDate = DateTimeOffset.UtcNow;
+            workout.LastModifiedDate = DateTimeOffset.UtcNow;
             workout.CreatedByUserId = userId;
 
             workoutRepository.Add(workout);
@@ -180,7 +180,7 @@ namespace WorkoutApp.API.Controllers
             var workout = await workoutRepository.GetByIdAsync(id);
             mapper.Map(updateDto, workout);
 
-            workout.LastModifiedDate = DateTime.Now;
+            workout.LastModifiedDate = DateTimeOffset.UtcNow;
 
             var saveResult = await workoutRepository.SaveAllAsync();
 

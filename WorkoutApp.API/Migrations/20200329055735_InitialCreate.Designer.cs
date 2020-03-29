@@ -9,7 +9,7 @@ using WorkoutApp.API.Data;
 namespace WorkoutApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200324031501_InitialCreate")]
+    [Migration("20200329055735_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -235,7 +235,7 @@ namespace WorkoutApp.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CompletedAt")
+                    b.Property<DateTimeOffset?>("CompletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("CompletedSets")
@@ -256,7 +256,7 @@ namespace WorkoutApp.API.Migrations
                     b.Property<int?>("ScheduledWorkoutId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("StartedAt")
+                    b.Property<DateTimeOffset?>("StartedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("TargetCompletionTimeInSeconds")
@@ -287,7 +287,7 @@ namespace WorkoutApp.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CompletedAt")
+                    b.Property<DateTimeOffset?>("CompletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("CompletedReps")
@@ -308,7 +308,7 @@ namespace WorkoutApp.API.Migrations
                     b.Property<int?>("ScheduledWorkoutId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("StartedAt")
+                    b.Property<DateTimeOffset?>("StartedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("TargetCompletionTimeInSeconds")
@@ -378,7 +378,7 @@ namespace WorkoutApp.API.Migrations
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
                         .HasMaxLength(255);
 
-                    b.Property<DateTime>("Expiration")
+                    b.Property<DateTimeOffset>("Expiration")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Token")
@@ -424,16 +424,19 @@ namespace WorkoutApp.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CompletedDateTime")
+                    b.Property<DateTimeOffset?>("CompletedDateTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CustomWorkout")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int>("ScheduledByUserId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ScheduledDateTime")
+                    b.Property<DateTimeOffset>("ScheduledDateTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("StartedDateTime")
+                    b.Property<DateTimeOffset?>("StartedDateTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("WorkoutId")
@@ -476,7 +479,7 @@ namespace WorkoutApp.API.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
@@ -580,7 +583,7 @@ namespace WorkoutApp.API.Migrations
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedOnDate")
+                    b.Property<DateTimeOffset>("CreatedOnDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
@@ -594,7 +597,7 @@ namespace WorkoutApp.API.Migrations
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
                         .HasMaxLength(255);
 
-                    b.Property<DateTime>("LastModifiedDate")
+                    b.Property<DateTimeOffset>("LastModifiedDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<bool>("Shareable")
@@ -618,7 +621,7 @@ namespace WorkoutApp.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CompletedAt")
+                    b.Property<DateTimeOffset?>("CompletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("CompletionTimeInSeconds")
@@ -630,7 +633,7 @@ namespace WorkoutApp.API.Migrations
                     b.Property<int?>("ScheduledWorkoutId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("StartedAt")
+                    b.Property<DateTimeOffset?>("StartedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("TargetCompletionTimeInSeconds")
@@ -671,7 +674,7 @@ namespace WorkoutApp.API.Migrations
                     b.Property<int>("InviterId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("RespondedAtDateTime")
+                    b.Property<DateTimeOffset?>("RespondedAtDateTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("ScheduledWorkoutId")

@@ -10,11 +10,15 @@ import jwtDecode from 'jwt-decode';
 import { JwtClaims } from './entities/User';
 import { WorkoutAPI } from './datasources/WorkoutAPI';
 import { TypeGuards } from './helpers/TypeGuards';
+import { DateFormatDirective } from './helpers/DateFormatDirective';
 
 async function start(): Promise<void> {
     dotenv.config();
 
+    process.env.NODE_ENV = process.env.NODE_ENV ?? 'development';
+
     const debugEnabled = process.env.DEBUG === 'true';
+    const tracingEnabled = process.env.TRACING === 'true';
     const enabledErrorExtensions = new Set<string>(process.env.ALLOWED_ERROR_EXTENSIONS?.split(',') || []);
 
     const server = new ApolloServer({
@@ -34,6 +38,9 @@ async function start(): Promise<void> {
                 request: req,
                 response: res
             };
+        },
+        schemaDirectives: {
+            dateFormat: DateFormatDirective
         },
         typeDefs,
         resolvers,
@@ -61,6 +68,7 @@ async function start(): Promise<void> {
             return error;
         },
         debug: debugEnabled,
+        tracing: tracingEnabled,
         dataSources: () => ({
             userAPI: new UserAPI(),
             exerciseAPI: new ExerciseAPI(),

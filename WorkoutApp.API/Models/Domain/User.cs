@@ -13,7 +13,7 @@ namespace WorkoutApp.API.Models.Domain
         [Required]
         [MaxLength(255)]
         public string LastName { get; set; }
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
         public List<RefreshToken> RefreshTokens { get; set; }
         public List<UserFavoriteExercise> FavoriteExercises { get; set; }
         public List<Workout> CreatedWorkouts { get; set; }
