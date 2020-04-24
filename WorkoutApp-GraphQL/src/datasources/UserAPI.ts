@@ -1,4 +1,4 @@
-import { User, UserToRegister, UserLogin, UserLoginResponse } from '../entities/User';
+import { User, UserToRegister, UserLogin, UserLoginResponse } from '../models/workout-api/User';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
 
 export class UserAPI extends WorkoutAppAPI {
@@ -6,7 +6,7 @@ export class UserAPI extends WorkoutAppAPI {
         return this.get<User[]>('users');
     }
 
-    public async getUserById(id: string): Promise<User | null> {
+    public async getUserById(id: number): Promise<User | null> {
         const user = await this.get<User>(`users/${id}`);
 
         if (!user) {
@@ -24,7 +24,7 @@ export class UserAPI extends WorkoutAppAPI {
         return this.post<UserLoginResponse>('auth/login', { ...userLogin });
     }
 
-    public getScheduledWorkoutsForUser(userId: string): Promise<any[]> {
+    public getScheduledWorkoutsForUser(userId: number): Promise<any[]> {
         return this.get(`users/${userId}/scheduledWorkouts/detailed`);
     }
 

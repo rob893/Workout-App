@@ -7,10 +7,10 @@ import { ExerciseAPI } from './datasources/ExerciseAPI';
 import { MuscleAPI } from './datasources/MuscleAPI';
 import { EquipmentAPI } from './datasources/EquipmentAPI';
 import jwtDecode from 'jwt-decode';
-import { JwtClaims } from './entities/User';
 import { WorkoutAPI } from './datasources/WorkoutAPI';
 import { TypeGuards } from './helpers/TypeGuards';
 import { DateFormatDirective } from './helpers/DateFormatDirective';
+import { JwtClaims } from './models/WorkoutAppContext';
 
 async function start(): Promise<void> {
     dotenv.config();

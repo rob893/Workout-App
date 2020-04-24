@@ -1,10 +1,16 @@
 export interface User {
-    id: string;
+    scheduledWorkoutsUrl: string;
+    favoriteExercisesUrl: string;
+    workoutInvitationsUrl: string;
+    sentWorkoutInvitationsUrl: string;
     userName: string;
     firstName: string;
     lastName: string;
     email: string;
-    created: string;
+    created: Date;
+    id: number;
+    url: string;
+    detailedUrl: string;
 }
 
 export interface UserToRegister {
@@ -23,16 +29,6 @@ export interface UserLogin {
 
 export interface UserLoginResponse {
     token: string;
+    refreshToken: string;
     user: User;
-}
-
-export interface JwtClaims {
-    nameid?: string;
-    unique_name?: string;
-    role?: string[];
-    nbf?: number;
-    exp?: number;
-    iat?: number;
-    iss?: string;
-    aud?: string;
 }

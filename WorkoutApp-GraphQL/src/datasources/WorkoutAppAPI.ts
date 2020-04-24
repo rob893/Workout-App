@@ -1,6 +1,6 @@
 import { RESTDataSource, RequestOptions, Response, Request } from 'apollo-datasource-rest';
 import { AuthenticationError } from 'apollo-server';
-import { WorkoutAppContext } from '../entities/WorkoutAppContext';
+import { WorkoutAppContext } from '../models/WorkoutAppContext';
 
 export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
     public constructor() {
@@ -9,7 +9,7 @@ export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
     }
 
     protected willSendRequest(request: RequestOptions): void {
-        if (this.context && this.context.token) {
+        if (this.context.token) {
             request.headers.set('authorization', this.context.token);
         }
     }

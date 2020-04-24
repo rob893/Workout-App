@@ -14,6 +14,10 @@ export class DateFormatDirective extends SchemaDirectiveVisitor {
                 return null;
             }
 
+            if (format === 'timestamp') {
+                return `${result}`;
+            }
+
             const date = new Date(result);
             const tzDate = utcToZonedTime(date, timeZone || defaultTimeZone || '00:00');
             return fnsFormat(tzDate, format || defaultFormat || "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", {

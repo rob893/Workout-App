@@ -1,4 +1,4 @@
-import { Muscle } from '../entities/Exercise';
+import { Muscle } from '../models/workout-api/Exercise';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
 
 export class MuscleAPI extends WorkoutAppAPI {
@@ -6,7 +6,7 @@ export class MuscleAPI extends WorkoutAppAPI {
         return this.get<Muscle[]>('muscles');
     }
 
-    public async getMuscleById(id: string): Promise<Muscle | null> {
+    public async getMuscleById(id: number): Promise<Muscle | null> {
         const muscle = await this.get<Muscle>(`muscles/${id}`);
 
         if (!muscle) {

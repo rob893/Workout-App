@@ -11,15 +11,15 @@ export const typeDefs = gql`
         "Get the list of users"
         users: [User]!
         exercise(id: Int!): Exercise
-        exercises: [Exercise]!
+        exercises: [Exercise!]!
         exerciseCategory(id: Int!): ExerciseCategory
-        exerciseCategories: [ExerciseCategory]!
+        exerciseCategories: [ExerciseCategory!]!
         muscle(id: Int!): Muscle
-        muscles: [Muscle]!
+        muscles: [Muscle!]!
         equipment(id: Int!): Equipment
-        allEquipment: [Equipment]!
+        allEquipment: [Equipment!]!
         workout(id: Int!): Workout
-        workouts: [Workout]!
+        workouts: [Workout!]!
         me: User
     }
 
@@ -62,11 +62,11 @@ export const typeDefs = gql`
         email: String!
         created(format: String, timeZone: String): DateTime!
             @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
-        roles: [UserRole]!
-        createdWorkouts: [Workout]!
-        scheduledWorkouts: [ScheduledWorkout]!
-        ownedScheduledWorkouts: [ScheduledWorkout]!
-        favoriteExercises: [Exercise]!
+        roles: [UserRole]
+        createdWorkouts: [Workout]
+        scheduledWorkouts: [ScheduledWorkout]
+        ownedScheduledWorkouts: [ScheduledWorkout]
+        favoriteExercises: [Exercise]
     }
 
     type UserRole {
@@ -95,7 +95,7 @@ export const typeDefs = gql`
         lastModifiedDate(format: String, timeZone: String): DateTime!
             @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
         shareable: Boolean!
-        exerciseGroups: [ExerciseGroup]!
+        exerciseGroups: [ExerciseGroup]
     }
 
     type ExerciseGroup {
@@ -116,8 +116,8 @@ export const typeDefs = gql`
         scheduledDateTime(format: String, timeZone: String): DateTime!
             @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
         customWorkout: String
-        adHocExercises: [ExerciseGroup]!
-        attendees: [User]!
+        adHocExercises: [ExerciseGroup]
+        attendees: [User]
     }
 
     type Exercise {
@@ -125,17 +125,17 @@ export const typeDefs = gql`
         name: String!
         primaryMuscle: Muscle
         secondaryMuscle: Muscle
-        exerciseSteps: [ExerciseStep]!
-        equipment: [Equipment]!
-        exerciseCategorys: [ExerciseCategory]!
+        exerciseSteps: [ExerciseStep!]!
+        equipment: [Equipment!]!
+        exerciseCategorys: [ExerciseCategory!]!
     }
 
     type Muscle {
         id: Int!
         name: String!
         description: String
-        primaryExercises: [Exercise]!
-        secondaryExercises: [Exercise]!
+        primaryExercises: [Exercise]
+        secondaryExercises: [Exercise]
     }
 
     type ExerciseStep {
@@ -152,7 +152,7 @@ export const typeDefs = gql`
     type ExerciseCategory {
         id: Int!
         name: String!
-        exercises: [Exercise]!
+        exercises: [Exercise]
     }
 
     input RegisterUser {

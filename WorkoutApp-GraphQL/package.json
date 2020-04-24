@@ -4,6 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
+        "generate-schema-types": "graphql-codegen",
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "npm run dev-debug",
         "dev": "nodemon --exec ts-node src/index.ts",
@@ -27,15 +28,17 @@
         "jwt-decode": "^2.2.0"
     },
     "devDependencies": {
+        "@graphql-codegen/cli": "^1.13.3",
+        "@graphql-codegen/typescript-resolvers": "^1.13.3",
         "@types/jwt-decode": "^2.2.1",
-        "@types/node": "^12.12.36",
+        "@types/node": "^12.12.37",
         "@typescript-eslint/eslint-plugin": "^2.29.0",
         "@typescript-eslint/parser": "^2.29.0",
         "eslint": "^6.8.0",
-        "eslint-config-prettier": "^6.10.1",
+        "eslint-config-prettier": "^6.11.0",
         "eslint-plugin-prettier": "^3.1.3",
         "nodemon": "^2.0.3",
-        "prettier": "^2.0.4",
+        "prettier": "^2.0.5",
         "ts-node": "^8.9.0",
         "typescript": "^3.8.3"
     }

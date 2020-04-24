@@ -1,10 +1,10 @@
-import { IResolvers } from 'apollo-server';
-import { UserToRegister, UserLogin, User, UserLoginResponse } from './entities/User';
-import { Exercise, Muscle, Equipment, ExerciseCategory } from './entities/Exercise';
-import { WorkoutAppContext } from './entities/WorkoutAppContext';
+import { UserToRegister, UserLogin, User, UserLoginResponse } from './models/workout-api/User';
+import { ExerciseDetailed, Muscle, Equipment, ExerciseCategory } from './models/workout-api/Exercise';
+import { WorkoutAppContext } from './models/WorkoutAppContext';
 import { GraphQLScalarType, Kind } from 'graphql';
+import { Resolvers } from './models/schema';
 
-export const resolvers: IResolvers<any, WorkoutAppContext> = {
+export const resolvers: Resolvers<WorkoutAppContext> = {
     DateTime: new GraphQLScalarType({
         name: 'DateTime',
         description: 'Scalar type that represents a DateTime object',
@@ -16,7 +16,7 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
             if (typeof value === 'number' || value instanceof Date) {
                 return new Date(value).toISOString();
             }
-            
+
             return value;
         },
         parseValue(value: string | number | Date) {
@@ -42,48 +42,48 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
             return 'Hello World and stuff!';
         },
 
-        users(root, args, { dataSources: { userAPI } }): Promise<User[]> {
+        users(_root, _args, { dataSources: { userAPI } }): Promise<User[]> {
             return userAPI.getAllUsers();
         },
 
-        user(root, { id }, { dataSources: { userAPI } }): Promise<User | null> {
+        user(_root, { id }, { dataSources: { userAPI } }): Promise<User | null> {
             return userAPI.getUserById(id);
         },
 
-        exercises(root, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
+        exercises(_root, _args, { dataSources: { exerciseAPI } }): Promise<ExerciseDetailed[]> {
             return exerciseAPI.getExercises();
         },
 
-        exercise(root, { id }, { dataSources: { exerciseAPI } }): Promise<Exercise | null> {
+        exercise(_root, { id }, { dataSources: { exerciseAPI } }): Promise<ExerciseDetailed | null> {
             return exerciseAPI.getExerciseById(id);
         },
 
-        muscles(root, args, { dataSources: { muscleAPI } }): Promise<Muscle[]> {
+        muscles(_root, _args, { dataSources: { muscleAPI } }): Promise<Muscle[]> {
             return muscleAPI.getMuscles();
         },
 
-        muscle(root, { id }, { dataSources: { muscleAPI } }): Promise<Muscle | null> {
+        muscle(_root, { id }, { dataSources: { muscleAPI } }): Promise<Muscle | null> {
             return muscleAPI.getMuscleById(id);
         },
 
-        allEquipment(root, args, { dataSources: { equipmentAPI } }): Promise<Equipment[]> {
+        allEquipment(_root, _args, { dataSources: { equipmentAPI } }): Promise<Equipment[]> {
             return equipmentAPI.getAllEquipment();
         },
 
-        equipment(root, { id }, { dataSources: { equipmentAPI } }): Promise<Equipment | null> {
+        equipment(_root, { id }, { dataSources: { equipmentAPI } }): Promise<Equipment | null> {
             return equipmentAPI.getEquipmentById(id);
         },
 
-        workouts(root, args, { dataSources: { workoutAPI } }): Promise<any[]> {
+        workouts(_root, _args, { dataSources: { workoutAPI } }): Promise<any[]> {
             return workoutAPI.getWorkoutsDetailed();
         },
 
-        workout(root, { id }, { dataSources: { workoutAPI } }): Promise<any[]> {
+        workout(_root, { id }, { dataSources: { workoutAPI } }): Promise<any> {
             return workoutAPI.getWorkoutDetailed(id);
         },
 
-        me(root, args, { claims: { nameid }, dataSources: { userAPI } }): Promise<User | null> {
-            return nameid ? userAPI.getUserById(nameid) : Promise.resolve(null);
+        me(_root, _args, { claims: { nameid }, dataSources: { userAPI } }): Promise<User | null> {
+            return nameid ? userAPI.getUserById(parseInt(nameid)) : Promise.resolve(null);
         }
     },
     Mutation: {
@@ -96,11 +96,7 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
             return { user: newUser };
         },
 
-        login(
-            root,
-            { userCredentials }: { userCredentials: UserLogin },
-            { dataSources: { userAPI } }
-        ): Promise<UserLoginResponse> {
+        login(root, { userCredentials }, { dataSources: { userAPI } }): Promise<UserLoginResponse> {
             return userAPI.login(userCredentials);
         },
 
@@ -118,8 +114,16 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
             return { scheduledWorkout: workout };
         }
     },
+    Exercise: {
+        equipment(root) {
+            if (!root || !root.equipment) {
+                throw new Error();
+            }
+            return root.equipment;
+        }
+    },
     User: {
-        scheduledWorkouts(user: User, args, { dataSources: { userAPI } }) {
+        scheduledWorkouts(user, args, { dataSources: { userAPI } }) {
             return userAPI.getScheduledWorkoutsForUser(user.id);
         }
     },
@@ -127,11 +131,17 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         async exercise(root, args, { dataSources: { exerciseAPI } }) {
             const exercises = await exerciseAPI.getExercises();
 
-            return exercises.find(ex => ex.id === root.exercise.id);
+            const exercise = exercises.find(ex => ex.id === root.exercise?.id);
+
+            if (!exercise) {
+                throw new Error('No exercise found for exercise group');
+            }
+
+            return exercise;
         }
     },
     Muscle: {
-        async primaryExercises(root: Muscle, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
+        async primaryExercises(root, args, { dataSources: { exerciseAPI } }): Promise<ExerciseDetailed[]> {
             const exercises = await exerciseAPI.getExercises();
 
             const exercisesForMuscle = exercises.filter(
@@ -141,7 +151,7 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
             return exercisesForMuscle;
         },
 
-        async secondaryExercises(root: Muscle, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
+        async secondaryExercises(root, _args, { dataSources: { exerciseAPI } }) {
             const exercises = await exerciseAPI.getExercises();
 
             const exercisesForMuscle = exercises.filter(
@@ -152,7 +162,7 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         }
     },
     Equipment: {
-        async exercises(root: Equipment, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
+        async exercises(root, _args, { dataSources: { exerciseAPI } }): Promise<ExerciseDetailed[]> {
             const exercises = await exerciseAPI.getExercises();
 
             const exercisesForEquipment = exercises.filter(exercise =>
@@ -163,7 +173,7 @@ export const resolvers: IResolvers<any, WorkoutAppContext> = {
         }
     },
     ExerciseCategory: {
-        async exercises(root: ExerciseCategory, args, { dataSources: { exerciseAPI } }): Promise<Exercise[]> {
+        async exercises(root, args, { dataSources: { exerciseAPI } }) {
             const exercises = await exerciseAPI.getExercises();
 
             const exercisesForCategory = exercises.filter(exercise =>

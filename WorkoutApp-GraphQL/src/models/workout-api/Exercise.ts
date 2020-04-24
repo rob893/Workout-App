@@ -1,17 +1,17 @@
-export interface Exercise {
-    id: string;
+export interface ExerciseDetailed {
+    id: number;
     name: string;
-    primaryMuscle: Muscle;
-    secondaryMuscle: Muscle;
+    primaryMuscle: Muscle | null;
+    secondaryMuscle: Muscle | null;
     exerciseSteps: ExerciseStep[];
     equipment: Equipment[];
     exerciseCategorys: ExerciseCategory[];
 }
 
 export interface Muscle {
-    id: string;
+    id: number;
     name: string;
-    description?: string;
+    description: string;
 }
 
 export interface ExerciseStep {
@@ -20,11 +20,11 @@ export interface ExerciseStep {
 }
 
 export interface Equipment {
-    id: string;
+    id: number;
     name: string;
 }
 
 export interface ExerciseCategory {
-    id: string;
+    id: number;
     name: string;
 }
