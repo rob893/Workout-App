@@ -13,77 +13,77 @@ import { DateFormatDirective } from './helpers/DateFormatDirective';
 import { JwtClaims } from './models/WorkoutAppContext';
 
 async function start(): Promise<void> {
-    dotenv.config();
+  dotenv.config();
 
-    process.env.NODE_ENV = process.env.NODE_ENV ?? 'development';
+  process.env.NODE_ENV = process.env.NODE_ENV ?? 'development';
 
-    const debugEnabled = process.env.DEBUG === 'true';
-    const tracingEnabled = process.env.TRACING === 'true';
-    const enabledErrorExtensions = new Set<string>(process.env.ALLOWED_ERROR_EXTENSIONS?.split(',') || []);
+  const debugEnabled = process.env.DEBUG === 'true';
+  const tracingEnabled = process.env.TRACING === 'true';
+  const enabledErrorExtensions = new Set<string>(process.env.ALLOWED_ERROR_EXTENSIONS?.split(',') || []);
 
-    const server = new ApolloServer({
-        context: ({ req, res }) => {
-            const token = (req.headers && req.headers.authorization) || '';
-            let claims;
+  const server = new ApolloServer({
+    context: ({ req, res }) => {
+      const token = (req.headers && req.headers.authorization) || '';
+      let claims;
 
-            try {
-                claims = jwtDecode<JwtClaims>(token);
-            } catch {
-                claims = {};
-            }
+      try {
+        claims = jwtDecode<JwtClaims>(token);
+      } catch {
+        claims = {};
+      }
 
-            return {
-                token,
-                claims,
-                request: req,
-                response: res
-            };
-        },
-        schemaDirectives: {
-            dateFormat: DateFormatDirective
-        },
-        typeDefs,
-        resolvers,
-        onHealthCheck: async () => {
-            return true;
-        },
-        formatError: error => {
-            if (error.extensions && error.originalError) {
-                error.extensions.originalErrorType = error.originalError.constructor.name;
-            }
+      return {
+        token,
+        claims,
+        request: req,
+        response: res
+      };
+    },
+    schemaDirectives: {
+      dateFormat: DateFormatDirective
+    },
+    typeDefs,
+    resolvers,
+    onHealthCheck: async () => {
+      return true;
+    },
+    formatError: error => {
+      if (error.extensions && error.originalError) {
+        error.extensions.originalErrorType = error.originalError.constructor.name;
+      }
 
-            if (error.extensions?.response?.body) {
-                const { body } = error.extensions.response;
+      if (error.extensions?.response?.body) {
+        const { body } = error.extensions.response;
 
-                if (TypeGuards.isWorkoutAppAPIError(body)) {
-                    error.message = body.errors.reduce((accumulator, curr) => `${accumulator} ${curr}`);
-                }
-            }
+        if (TypeGuards.isWorkoutAppAPIError(body)) {
+          error.message = body.errors.reduce((accumulator, curr) => `${accumulator} ${curr}`);
+        }
+      }
 
-            if (!debugEnabled) {
-                for (const key in error.extensions) {
-                    if (!enabledErrorExtensions.has(key)) {
-                        delete error.extensions[key];
-                    }
-                }
-            }
+      if (!debugEnabled) {
+        for (const key in error.extensions) {
+          if (!enabledErrorExtensions.has(key)) {
+            delete error.extensions[key];
+          }
+        }
+      }
 
-            return error;
-        },
-        debug: debugEnabled,
-        tracing: tracingEnabled,
-        dataSources: () => ({
-            userAPI: new UserAPI(),
-            exerciseAPI: new ExerciseAPI(),
-            muscleAPI: new MuscleAPI(),
-            equipmentAPI: new EquipmentAPI(),
-            workoutAPI: new WorkoutAPI()
-        })
-    });
+      return error;
+    },
+    debug: debugEnabled,
+    tracing: tracingEnabled,
+    dataSources: () => ({
+      userAPI: new UserAPI(),
+      exerciseAPI: new ExerciseAPI(),
+      muscleAPI: new MuscleAPI(),
+      equipmentAPI: new EquipmentAPI(),
+      workoutAPI: new WorkoutAPI()
+    })
+  });
 
-    const serverInfo = await server.listen();
+  const serverInfo = await server.listen();
 
-    console.log(`Server ready at ${serverInfo.url}`);
+  console.log(`Server ready at ${serverInfo.url}`);
 }
 
 start();

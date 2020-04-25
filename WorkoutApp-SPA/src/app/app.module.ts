@@ -19,40 +19,40 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SignupComponent } from './auth/signup/signup.component';
 
 export function tokenGetter(): string {
-    return localStorage.getItem('access-token');
+  return localStorage.getItem('access-token');
 }
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        HeaderComponent,
-        SidenavListComponent,
-        WelcomeComponent,
-        LoginComponent,
-        SignupComponent
-    ],
-    imports: [
-        MaterialModule,
-        FlexLayoutModule,
-        BrowserModule,
-        FormsModule,
-        ReactiveFormsModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        ServiceWorkerModule.register('ngsw-worker.js', {
-            enabled: environment.production
-        }),
-        GraphQLModule,
-        HttpClientModule,
-        JwtModule.forRoot({
-            config: {
-                tokenGetter,
-                whitelistedDomains: ['localhost:5003', 'localhost:4000', 'rwherber.com'],
-                blacklistedRoutes: []
-            }
-        })
-    ],
-    providers: [AuthService],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    SidenavListComponent,
+    WelcomeComponent,
+    LoginComponent,
+    SignupComponent
+  ],
+  imports: [
+    MaterialModule,
+    FlexLayoutModule,
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production
+    }),
+    GraphQLModule,
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter,
+        whitelistedDomains: ['localhost:5003', 'localhost:4000', 'rwherber.com'],
+        blacklistedRoutes: []
+      }
+    })
+  ],
+  providers: [AuthService],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -7,26 +7,26 @@ import { EquipmentAPI } from '../datasources/EquipmentAPI';
 import { WorkoutAPI } from '../datasources/WorkoutAPI';
 
 export interface JwtClaims {
-    nameid?: string;
-    unique_name?: string;
-    role?: string[];
-    nbf?: number;
-    exp?: number;
-    iat?: number;
-    iss?: string;
-    aud?: string;
+  nameid?: string;
+  unique_name?: string;
+  role?: string[];
+  nbf?: number;
+  exp?: number;
+  iat?: number;
+  iss?: string;
+  aud?: string;
 }
 
 export interface WorkoutAppContext {
-    token: string;
-    claims: JwtClaims;
-    request: Request;
-    response: Response;
-    dataSources: {
-        userAPI: UserAPI;
-        exerciseAPI: ExerciseAPI;
-        muscleAPI: MuscleAPI;
-        equipmentAPI: EquipmentAPI;
-        workoutAPI: WorkoutAPI;
-    };
+  token: string;
+  claims: JwtClaims;
+  request: Request;
+  response: Response;
+  dataSources: {
+    userAPI: UserAPI;
+    exerciseAPI: ExerciseAPI;
+    muscleAPI: MuscleAPI;
+    equipmentAPI: EquipmentAPI;
+    workoutAPI: WorkoutAPI;
+  };
 }

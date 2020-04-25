@@ -3,10 +3,11 @@ generates:
   src/models/schema.ts:
     config:
       useIndexSignature: true
-      defaultMapper: Partial<{T}>
+      defaultMapper: DeepPartial<{T}>
     plugins:
       - typescript
       - typescript-resolvers
+      - add: "import { DeepPartial } from 'utility-types';"
 
 hooks:
   afterAllFileWrite:

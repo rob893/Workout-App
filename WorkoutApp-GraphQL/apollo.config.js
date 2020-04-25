@@ -1,8 +1,8 @@
 module.exports = {
-    service: {
-        endpoint: {
-            url: 'http://localhost:4000',
-            skipSSLValidation: true
-        }
+  service: {
+    endpoint: {
+      url: 'http://localhost:4000',
+      skipSSLValidation: true
     }
+  }
 };

@@ -1,46 +1,34 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Node: Launch GraphQL",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "runtimeArgs": [
-                "-r",
-                "ts-node/register"
-            ],
-            "args": [
-                "${workspaceFolder}/src/index.ts"
-            ]
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Node: Attach Ignore Node Modules",
-            "processId": "${command:PickProcess}",
-            "skipFiles": [
-                "${workspaceFolder}/node_modules/**",
-                "<node_internals>/**"
-            ],
-            "restart": true,
-            "protocol": "inspector"
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Node: Attach",
-            "processId": "${command:PickProcess}",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "restart": true,
-            "protocol": "inspector"
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Node: Launch GraphQL",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "args": ["${workspaceFolder}/src/index.ts"]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Node: Attach Ignore Node Modules",
+      "processId": "${command:PickProcess}",
+      "skipFiles": ["${workspaceFolder}/node_modules/**", "<node_internals>/**"],
+      "restart": true,
+      "protocol": "inspector"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Node: Attach",
+      "processId": "${command:PickProcess}",
+      "skipFiles": ["<node_internals>/**"],
+      "restart": true,
+      "protocol": "inspector"
+    }
+  ]
 }

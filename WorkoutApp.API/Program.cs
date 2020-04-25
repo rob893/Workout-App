@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -21,7 +21,7 @@ namespace WorkoutApp.API
             if (args.Contains(CommandLineOptions.seedArgument, StringComparer.OrdinalIgnoreCase))
             {
                 Parser.Default.ParseArguments<CommandLineOptions>(args)
-                    .WithParsed(o => 
+                    .WithParsed(o =>
                     {
                         var scope = host.Services.CreateScope();
                         var serviceProvider = scope.ServiceProvider;
@@ -55,7 +55,7 @@ namespace WorkoutApp.API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls(new string[] {"https://localhost:5003", "http://localhost:5002"});
+                    webBuilder.UseUrls(new string[] { "https://localhost:5003", "http://localhost:5002" });
 
                 });
         }

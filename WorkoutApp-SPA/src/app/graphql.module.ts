@@ -10,62 +10,64 @@ import { refreshToken } from './auth/auth.queries';
 const uri = 'http://localhost:4000';
 
 export function createApollo(httpLink: HttpLink) {
-    const http = httpLink.create({ uri });
+  const http = httpLink.create({ uri });
 
-    const logoutLink = onError(({ graphQLErrors, operation, forward }): Observable<FetchResult> => {
-        if (graphQLErrors) {
-            for (const error of graphQLErrors) {
-                if (error.extensions.code === 'UNAUTHENTICATED') {
-                    if (error.message === 'token-expired') {
-                        return execute(http, {
-                            query: refreshToken,
-                            variables: {
-                                refreshTokenInput: {
-                                    token: localStorage.getItem('access-token'),
-                                    refreshToken: localStorage.getItem('refresh-token'),
-                                    source: 'web'
-                                }
-                            }
-                        }).flatMap(res => {
-                            const token = res.data.refreshToken.token;
-                            const refreshToken = res.data.refreshToken.refreshToken;
-                            
-                            localStorage.setItem('access-token', token);
-                            localStorage.setItem('refresh-token', refreshToken);
-
-                            const oldHeaders = operation.getContext().headers;
-
-                            operation.setContext({
-                                headers: {
-                                    ...oldHeaders,
-                                    authorization: `Bearer ${token}`
-                                }
-                            });
-
-                            return forward(operation);
-                        });
-                    } else {
-                        console.log('log the dude out');
-                    }
+  const logoutLink = onError(
+    ({ graphQLErrors, operation, forward }): Observable<FetchResult> => {
+      if (graphQLErrors) {
+        for (const error of graphQLErrors) {
+          if (error.extensions.code === 'UNAUTHENTICATED') {
+            if (error.message === 'token-expired') {
+              return execute(http, {
+                query: refreshToken,
+                variables: {
+                  refreshTokenInput: {
+                    token: localStorage.getItem('access-token'),
+                    refreshToken: localStorage.getItem('refresh-token'),
+                    source: 'web'
+                  }
                 }
-            }
-        }
-    });
+              }).flatMap(res => {
+                const token = res.data.refreshToken.token;
+                const refreshToken = res.data.refreshToken.refreshToken;
 
-    return {
-        link: logoutLink.concat(http),
-        cache: new InMemoryCache()
-    };
+                localStorage.setItem('access-token', token);
+                localStorage.setItem('refresh-token', refreshToken);
+
+                const oldHeaders = operation.getContext().headers;
+
+                operation.setContext({
+                  headers: {
+                    ...oldHeaders,
+                    authorization: `Bearer ${token}`
+                  }
+                });
+
+                return forward(operation);
+              });
+            } else {
+              console.log('log the dude out');
+            }
+          }
+        }
+      }
+    }
+  );
+
+  return {
+    link: logoutLink.concat(http),
+    cache: new InMemoryCache()
+  };
 }
 
 @NgModule({
-    exports: [ApolloModule, HttpLinkModule],
-    providers: [
-        {
-            provide: APOLLO_OPTIONS,
-            useFactory: createApollo,
-            deps: [HttpLink]
-        }
-    ]
+  exports: [ApolloModule, HttpLinkModule],
+  providers: [
+    {
+      provide: APOLLO_OPTIONS,
+      useFactory: createApollo,
+      deps: [HttpLink]
+    }
+  ]
 })
 export class GraphQLModule {}
