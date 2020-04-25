@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  graphqlEndpoint: 'https://rwherber.com/api/workout-app/graphql'
 };

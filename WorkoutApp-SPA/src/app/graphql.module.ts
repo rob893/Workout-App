@@ -6,8 +6,9 @@ import { ServerError, ServerParseError } from 'apollo-link-http-common';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloLink, execute, Observable, FetchResult } from 'apollo-link';
 import { refreshToken } from './auth/auth.queries';
+import { environment } from 'src/environments/environment';
 
-const uri = 'http://localhost:4000';
+const uri = environment.graphqlEndpoint;
 
 export function createApollo(httpLink: HttpLink) {
   const http = httpLink.create({ uri });
