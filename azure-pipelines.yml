@@ -33,13 +33,14 @@ steps:
     Contents: |
       dist/**/*.js
       src/**/*.ts
+      package-lock.json
       package.json
       tsconfig.json
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/graphql'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/graphql'
     ArtifactName: 'GraphQL'
     publishLocation: 'Container'
 
@@ -52,12 +53,12 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/api'
     workingDirectory: 'WorkoutApp.API/'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/api'
     ArtifactName: 'API'
     publishLocation: 'Container'
 
