@@ -137,6 +137,8 @@ export type SchemaUser = {
   scheduledWorkouts: Array<SchemaScheduledWorkout>;
   ownedScheduledWorkouts: Array<SchemaScheduledWorkout>;
   favoriteExercises: Array<SchemaExercise>;
+  sentWorkoutInvitations: Array<SchemaWorkoutInvitation>;
+  receivedWorkoutInvitations: Array<SchemaWorkoutInvitation>;
 };
 
 export type SchemaUserCreatedArgs = {
@@ -642,6 +644,8 @@ export type SchemaUserResolvers<
   scheduledWorkouts?: Resolver<Array<SchemaResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
   ownedScheduledWorkouts?: Resolver<Array<SchemaResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
   favoriteExercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
+  sentWorkoutInvitations?: Resolver<Array<SchemaResolversTypes['WorkoutInvitation']>, ParentType, ContextType>;
+  receivedWorkoutInvitations?: Resolver<Array<SchemaResolversTypes['WorkoutInvitation']>, ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 

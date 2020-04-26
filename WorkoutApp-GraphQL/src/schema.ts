@@ -75,6 +75,8 @@ export const typeDefs = gql`
     scheduledWorkouts: [ScheduledWorkout!]!
     ownedScheduledWorkouts: [ScheduledWorkout!]!
     favoriteExercises: [Exercise!]!
+    sentWorkoutInvitations: [WorkoutInvitation!]!
+    receivedWorkoutInvitations: [WorkoutInvitation!]!
   }
 
   type WorkoutInvitation {

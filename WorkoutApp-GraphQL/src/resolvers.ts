@@ -125,9 +125,22 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       };
     }
   },
+  MutationResponse: {
+    __resolveType() {
+      return null;
+    }
+  },
   User: {
     scheduledWorkouts({ id }, _args, { dataSources: { userAPI } }) {
       return userAPI.getScheduledWorkoutsForUser(id);
+    },
+
+    sentWorkoutInvitations({ id }, _args, { dataSources: { userAPI } }) {
+      return userAPI.getSentWorkoutInvitationsForUser(id);
+    },
+
+    receivedWorkoutInvitations({ id }, _args, { dataSources: { userAPI } }) {
+      return userAPI.getReceivedWorkoutInvitationsForUser(id);
     }
   },
   ExerciseGroup: {

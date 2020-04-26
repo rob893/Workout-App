@@ -7,6 +7,7 @@ import {
   RefreshTokenResponse
 } from '../models/workout-api/User';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
+import { WorkoutInvitation } from '../models/workout-api/Workout';
 
 export class UserAPI extends WorkoutAppAPI {
   public getAllUsers(): Promise<User[]> {
@@ -21,6 +22,14 @@ export class UserAPI extends WorkoutAppAPI {
     }
 
     return user;
+  }
+
+  public getSentWorkoutInvitationsForUser(id: number): Promise<WorkoutInvitation[]> {
+    return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations/sent`);
+  }
+
+  public getReceivedWorkoutInvitationsForUser(id: number): Promise<WorkoutInvitation[]> {
+    return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations`);
   }
 
   public registerUser(userToCreate: UserToRegister): Promise<RegisterUserResponse> {
