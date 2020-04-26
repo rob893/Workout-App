@@ -18,16 +18,22 @@ namespace WorkoutApp.API.Middleware
             this.next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, IOptions<SwaggerAuthSettings> apiExplorerSettings)
+        public async Task InvokeAsync(HttpContext context, IOptions<SwaggerAuthSettings> swaggerAuthSettings)
         {
-            var settings = apiExplorerSettings.Value;
+            var settings = swaggerAuthSettings.Value;
 
             //Make sure we are hitting the swagger path, and not doing it locally as it just gets annoying :-)
-            if (context.Request.Path.StartsWithSegments("/swagger") && !IsLocalRequest(context))
+            if (context.Request.Path.StartsWithSegments("/swagger"))
             {
                 if (!settings.Enabled)
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    return;
+                }
+
+                if (!settings.RequireAuth)
+                {
+                    await next.Invoke(context);
                     return;
                 }
 
@@ -68,24 +74,6 @@ namespace WorkoutApp.API.Middleware
         {
             // Check that username and password are correct
             return username.Equals(settings.Username, StringComparison.InvariantCultureIgnoreCase) && password.Equals(settings.Password);
-        }
-
-        private bool IsLocalRequest(HttpContext context)
-        {
-            //Handle running using the Microsoft.AspNetCore.TestHost and the site being run entirely locally in memory without an actual TCP/IP connection
-            if (context.Connection.RemoteIpAddress == null && context.Connection.LocalIpAddress == null)
-            {
-                return true;
-            }
-            if (context.Connection.RemoteIpAddress.Equals(context.Connection.LocalIpAddress))
-            {
-                return true;
-            }
-            if (IPAddress.IsLoopback(context.Connection.RemoteIpAddress))
-            {
-                return true;
-            }
-            return false;
         }
     }
 }
