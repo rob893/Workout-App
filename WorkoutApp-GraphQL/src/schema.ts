@@ -5,6 +5,10 @@ export const typeDefs = gql`
 
   directive @dateFormat(defaultFormat: String, defaultTimeZone: String) on FIELD_DEFINITION
 
+  interface MutationResponse {
+    success: Boolean!
+  }
+
   type Query {
     test: String!
     user(id: Int!): User
@@ -31,26 +35,31 @@ export const typeDefs = gql`
     startScheduledWorkout(id: Int!): StartScheduledWorkoutResponse!
   }
 
-  type RefreshTokenResponse {
+  type RefreshTokenResponse implements MutationResponse {
+    success: Boolean!
     token: String!
     refreshToken: String!
   }
 
-  type RegisterUserResponse {
+  type RegisterUserResponse implements MutationResponse {
+    success: Boolean!
     user: User!
   }
 
-  type UserLoginResponse {
+  type UserLoginResponse implements MutationResponse {
+    success: Boolean!
     token: String!
     refreshToken: String!
     user: User!
   }
 
-  type CreateScheduledWorkoutResponse {
+  type CreateScheduledWorkoutResponse implements MutationResponse {
+    success: Boolean!
     scheduledWorkout: ScheduledWorkout!
   }
 
-  type StartScheduledWorkoutResponse {
+  type StartScheduledWorkoutResponse implements MutationResponse {
+    success: Boolean!
     scheduledWorkout: ScheduledWorkout!
   }
 
@@ -62,18 +71,14 @@ export const typeDefs = gql`
     email: String!
     created(format: String, timeZone: String): DateTime!
       @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
-    roles: [UserRole]
-    createdWorkouts: [Workout]
-    scheduledWorkouts: [ScheduledWorkout]
-    ownedScheduledWorkouts: [ScheduledWorkout]
-    favoriteExercises: [Exercise]
-  }
-
-  type UserRole {
-    name: String!
+    createdWorkouts: [Workout!]!
+    scheduledWorkouts: [ScheduledWorkout!]!
+    ownedScheduledWorkouts: [ScheduledWorkout!]!
+    favoriteExercises: [Exercise!]!
   }
 
   type WorkoutInvitation {
+    id: Int!
     inviter: User!
     invitee: User!
     scheduledWorkout: ScheduledWorkout!
@@ -95,11 +100,12 @@ export const typeDefs = gql`
     lastModifiedDate(format: String, timeZone: String): DateTime!
       @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
     shareable: Boolean!
-    exerciseGroups: [ExerciseGroup]
+    exerciseGroups: [ExerciseGroup!]!
   }
 
   type ExerciseGroup {
     id: Int!
+    exerciseId: Int!
     exercise: Exercise!
     sets: Int!
     repetitions: Int!
@@ -116,8 +122,8 @@ export const typeDefs = gql`
     scheduledDateTime(format: String, timeZone: String): DateTime!
       @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
     customWorkout: String
-    adHocExercises: [ExerciseGroup]
-    attendees: [User]
+    adHocExercises: [ExerciseGroup!]!
+    attendees: [User!]!
   }
 
   type Exercise {
@@ -135,7 +141,7 @@ export const typeDefs = gql`
     name: String!
     description: String
     primaryExercises: [Exercise!]!
-    secondaryExercises: [Exercise]
+    secondaryExercises: [Exercise!]!
   }
 
   type ExerciseStep {
@@ -146,13 +152,13 @@ export const typeDefs = gql`
   type Equipment {
     id: Int!
     name: String!
-    exercises: [Exercise]!
+    exercises: [Exercise!]!
   }
 
   type ExerciseCategory {
     id: Int!
     name: String!
-    exercises: [Exercise]
+    exercises: [Exercise!]!
   }
 
   input RegisterUser {

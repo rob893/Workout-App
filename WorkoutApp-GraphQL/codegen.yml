@@ -2,12 +2,22 @@ schema: ./src/schema.ts
 generates:
   src/models/schema.ts:
     config:
+      typesPrefix: Schema
       useIndexSignature: true
-      defaultMapper: DeepPartial<{T}>
+      # defaultMapper: DeepPartial<{T}>
+      mappers:
+        User: ./workout-api/User#User
+        Exercise: ./workout-api/Exercise#ExerciseDetailed
+        Muscle: ./workout-api/Exercise#Muscle
+        Equipment: ./workout-api/Exercise#Equipment
+        ExerciseStep: ./workout-api/Exercise#ExerciseStep
+        ExerciseCategory: ./workout-api/Exercise#ExerciseCategory
+        Workout: ./workout-api/Workout#WorkoutDetailed
+        WorkoutInvitation: ./workout-api/Workout#WorkoutInvitation
     plugins:
       - typescript
       - typescript-resolvers
-      - add: "import { DeepPartial } from 'utility-types';"
+      # - add: "import { DeepPartial } from 'utility-types';"
 
 hooks:
   afterAllFileWrite:

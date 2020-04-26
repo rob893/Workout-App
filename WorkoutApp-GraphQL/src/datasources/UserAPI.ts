@@ -1,4 +1,11 @@
-import { User, UserToRegister, UserLogin, UserLoginResponse } from '../models/workout-api/User';
+import {
+  User,
+  UserToRegister,
+  UserLogin,
+  UserLoginResponse,
+  RegisterUserResponse,
+  RefreshTokenResponse
+} from '../models/workout-api/User';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
 
 export class UserAPI extends WorkoutAppAPI {
@@ -16,7 +23,7 @@ export class UserAPI extends WorkoutAppAPI {
     return user;
   }
 
-  public registerUser(userToCreate: UserToRegister): Promise<User> {
+  public registerUser(userToCreate: UserToRegister): Promise<RegisterUserResponse> {
     return this.post<User>('auth/register', { ...userToCreate });
   }
 
@@ -32,7 +39,7 @@ export class UserAPI extends WorkoutAppAPI {
     token: string;
     refreshToken: string;
     source: string;
-  }): Promise<{ token: string; refreshToken: string }> {
+  }): Promise<RefreshTokenResponse> {
     return this.post('auth/refreshToken', { ...refreshTokenInput });
   }
 }

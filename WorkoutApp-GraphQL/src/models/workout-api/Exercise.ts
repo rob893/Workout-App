@@ -1,3 +1,12 @@
+export interface Exercise {
+  equipmentUrl: string;
+  exerciseCategoriesUrl: string;
+  name: string;
+  id: number;
+  url: string;
+  detailedUrl: string;
+}
+
 export interface ExerciseDetailed {
   id: number;
   name: string;

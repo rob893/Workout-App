@@ -1,6 +1,9 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { DeepPartial } from 'utility-types';
+import { User } from './workout-api/User';
+import { ExerciseDetailed, Muscle, Equipment, ExerciseStep, ExerciseCategory } from './workout-api/Exercise';
+import { WorkoutDetailed, WorkoutInvitation } from './workout-api/Workout';
 export type Maybe<T> = T | null;
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
   { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
@@ -13,107 +16,116 @@ export type Scalars = {
   DateTime: any;
 };
 
-export type Query = {
+export type SchemaMutationResponse = {
+  success: Scalars['Boolean'];
+};
+
+export type SchemaQuery = {
   __typename?: 'Query';
   test: Scalars['String'];
-  user?: Maybe<User>;
+  user?: Maybe<SchemaUser>;
   /** Get the list of users */
-  users: Array<Maybe<User>>;
-  exercise?: Maybe<Exercise>;
-  exercises: Array<Exercise>;
-  exerciseCategory?: Maybe<ExerciseCategory>;
-  exerciseCategories: Array<ExerciseCategory>;
-  muscle?: Maybe<Muscle>;
-  muscles: Array<Muscle>;
-  equipment?: Maybe<Equipment>;
-  allEquipment: Array<Equipment>;
-  workout?: Maybe<Workout>;
-  workouts: Array<Workout>;
-  me?: Maybe<User>;
+  users: Array<Maybe<SchemaUser>>;
+  exercise?: Maybe<SchemaExercise>;
+  exercises: Array<SchemaExercise>;
+  exerciseCategory?: Maybe<SchemaExerciseCategory>;
+  exerciseCategories: Array<SchemaExerciseCategory>;
+  muscle?: Maybe<SchemaMuscle>;
+  muscles: Array<SchemaMuscle>;
+  equipment?: Maybe<SchemaEquipment>;
+  allEquipment: Array<SchemaEquipment>;
+  workout?: Maybe<SchemaWorkout>;
+  workouts: Array<SchemaWorkout>;
+  me?: Maybe<SchemaUser>;
 };
 
-export type QueryUserArgs = {
+export type SchemaQueryUserArgs = {
   id: Scalars['Int'];
 };
 
-export type QueryExerciseArgs = {
+export type SchemaQueryExerciseArgs = {
   id: Scalars['Int'];
 };
 
-export type QueryExerciseCategoryArgs = {
+export type SchemaQueryExerciseCategoryArgs = {
   id: Scalars['Int'];
 };
 
-export type QueryMuscleArgs = {
+export type SchemaQueryMuscleArgs = {
   id: Scalars['Int'];
 };
 
-export type QueryEquipmentArgs = {
+export type SchemaQueryEquipmentArgs = {
   id: Scalars['Int'];
 };
 
-export type QueryWorkoutArgs = {
+export type SchemaQueryWorkoutArgs = {
   id: Scalars['Int'];
 };
 
-export type Mutation = {
+export type SchemaMutation = {
   __typename?: 'Mutation';
-  registerUser: RegisterUserResponse;
-  login: UserLoginResponse;
-  refreshToken: RefreshTokenResponse;
-  createScheduledWorkout: CreateScheduledWorkoutResponse;
-  startScheduledWorkout: StartScheduledWorkoutResponse;
+  registerUser: SchemaRegisterUserResponse;
+  login: SchemaUserLoginResponse;
+  refreshToken: SchemaRefreshTokenResponse;
+  createScheduledWorkout: SchemaCreateScheduledWorkoutResponse;
+  startScheduledWorkout: SchemaStartScheduledWorkoutResponse;
 };
 
-export type MutationRegisterUserArgs = {
-  user: RegisterUser;
+export type SchemaMutationRegisterUserArgs = {
+  user: SchemaRegisterUser;
 };
 
-export type MutationLoginArgs = {
-  userCredentials: UserLogin;
+export type SchemaMutationLoginArgs = {
+  userCredentials: SchemaUserLogin;
 };
 
-export type MutationRefreshTokenArgs = {
-  input: RefreshTokenInput;
+export type SchemaMutationRefreshTokenArgs = {
+  input: SchemaRefreshTokenInput;
 };
 
-export type MutationCreateScheduledWorkoutArgs = {
-  newWorkout: NewScheduledWorkout;
+export type SchemaMutationCreateScheduledWorkoutArgs = {
+  newWorkout: SchemaNewScheduledWorkout;
 };
 
-export type MutationStartScheduledWorkoutArgs = {
+export type SchemaMutationStartScheduledWorkoutArgs = {
   id: Scalars['Int'];
 };
 
-export type RefreshTokenResponse = {
+export type SchemaRefreshTokenResponse = SchemaMutationResponse & {
   __typename?: 'RefreshTokenResponse';
+  success: Scalars['Boolean'];
   token: Scalars['String'];
   refreshToken: Scalars['String'];
 };
 
-export type RegisterUserResponse = {
+export type SchemaRegisterUserResponse = SchemaMutationResponse & {
   __typename?: 'RegisterUserResponse';
-  user: User;
+  success: Scalars['Boolean'];
+  user: SchemaUser;
 };
 
-export type UserLoginResponse = {
+export type SchemaUserLoginResponse = SchemaMutationResponse & {
   __typename?: 'UserLoginResponse';
+  success: Scalars['Boolean'];
   token: Scalars['String'];
   refreshToken: Scalars['String'];
-  user: User;
+  user: SchemaUser;
 };
 
-export type CreateScheduledWorkoutResponse = {
+export type SchemaCreateScheduledWorkoutResponse = SchemaMutationResponse & {
   __typename?: 'CreateScheduledWorkoutResponse';
-  scheduledWorkout: ScheduledWorkout;
+  success: Scalars['Boolean'];
+  scheduledWorkout: SchemaScheduledWorkout;
 };
 
-export type StartScheduledWorkoutResponse = {
+export type SchemaStartScheduledWorkoutResponse = SchemaMutationResponse & {
   __typename?: 'StartScheduledWorkoutResponse';
-  scheduledWorkout: ScheduledWorkout;
+  success: Scalars['Boolean'];
+  scheduledWorkout: SchemaScheduledWorkout;
 };
 
-export type User = {
+export type SchemaUser = {
   __typename?: 'User';
   id: Scalars['Int'];
   userName: Scalars['String'];
@@ -121,139 +133,135 @@ export type User = {
   lastName: Scalars['String'];
   email: Scalars['String'];
   created: Scalars['DateTime'];
-  roles?: Maybe<Array<Maybe<UserRole>>>;
-  createdWorkouts?: Maybe<Array<Maybe<Workout>>>;
-  scheduledWorkouts?: Maybe<Array<Maybe<ScheduledWorkout>>>;
-  ownedScheduledWorkouts?: Maybe<Array<Maybe<ScheduledWorkout>>>;
-  favoriteExercises?: Maybe<Array<Maybe<Exercise>>>;
+  createdWorkouts: Array<SchemaWorkout>;
+  scheduledWorkouts: Array<SchemaScheduledWorkout>;
+  ownedScheduledWorkouts: Array<SchemaScheduledWorkout>;
+  favoriteExercises: Array<SchemaExercise>;
 };
 
-export type UserCreatedArgs = {
+export type SchemaUserCreatedArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type UserRole = {
-  __typename?: 'UserRole';
-  name: Scalars['String'];
-};
-
-export type WorkoutInvitation = {
+export type SchemaWorkoutInvitation = {
   __typename?: 'WorkoutInvitation';
-  inviter: User;
-  invitee: User;
-  scheduledWorkout: ScheduledWorkout;
+  id: Scalars['Int'];
+  inviter: SchemaUser;
+  invitee: SchemaUser;
+  scheduledWorkout: SchemaScheduledWorkout;
   accepted: Scalars['Boolean'];
   declined: Scalars['Boolean'];
   status: Scalars['String'];
   respondedAtDateTime?: Maybe<Scalars['DateTime']>;
 };
 
-export type WorkoutInvitationRespondedAtDateTimeArgs = {
+export type SchemaWorkoutInvitationRespondedAtDateTimeArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type Workout = {
+export type SchemaWorkout = {
   __typename?: 'Workout';
   id: Scalars['Int'];
   label: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   createdByUserId: Scalars['Int'];
-  createdByUser: User;
+  createdByUser: SchemaUser;
   createdOnDate: Scalars['DateTime'];
   lastModifiedDate: Scalars['DateTime'];
   shareable: Scalars['Boolean'];
-  exerciseGroups?: Maybe<Array<Maybe<ExerciseGroup>>>;
+  exerciseGroups: Array<SchemaExerciseGroup>;
 };
 
-export type WorkoutCreatedOnDateArgs = {
+export type SchemaWorkoutCreatedOnDateArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type WorkoutLastModifiedDateArgs = {
+export type SchemaWorkoutLastModifiedDateArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type ExerciseGroup = {
+export type SchemaExerciseGroup = {
   __typename?: 'ExerciseGroup';
   id: Scalars['Int'];
-  exercise: Exercise;
+  exerciseId: Scalars['Int'];
+  exercise: SchemaExercise;
   sets: Scalars['Int'];
   repetitions: Scalars['Int'];
 };
 
-export type ScheduledWorkout = {
+export type SchemaScheduledWorkout = {
   __typename?: 'ScheduledWorkout';
   id: Scalars['Int'];
-  scheduledByUser: User;
-  workout: Workout;
+  scheduledByUser: SchemaUser;
+  workout: SchemaWorkout;
   startedDateTime?: Maybe<Scalars['DateTime']>;
   completedDateTime?: Maybe<Scalars['DateTime']>;
   scheduledDateTime: Scalars['DateTime'];
   customWorkout?: Maybe<Scalars['String']>;
-  adHocExercises?: Maybe<Array<Maybe<ExerciseGroup>>>;
-  attendees?: Maybe<Array<Maybe<User>>>;
+  adHocExercises: Array<SchemaExerciseGroup>;
+  attendees: Array<SchemaUser>;
 };
 
-export type ScheduledWorkoutStartedDateTimeArgs = {
+export type SchemaScheduledWorkoutStartedDateTimeArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type ScheduledWorkoutCompletedDateTimeArgs = {
+export type SchemaScheduledWorkoutCompletedDateTimeArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type ScheduledWorkoutScheduledDateTimeArgs = {
+export type SchemaScheduledWorkoutScheduledDateTimeArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type Exercise = {
+export type SchemaExercise = {
   __typename?: 'Exercise';
   id: Scalars['Int'];
   name: Scalars['String'];
-  primaryMuscle?: Maybe<Muscle>;
-  secondaryMuscle?: Maybe<Muscle>;
-  exerciseSteps: Array<ExerciseStep>;
-  equipment: Array<Equipment>;
-  exerciseCategorys: Array<ExerciseCategory>;
+  primaryMuscle?: Maybe<SchemaMuscle>;
+  secondaryMuscle?: Maybe<SchemaMuscle>;
+  exerciseSteps: Array<SchemaExerciseStep>;
+  equipment: Array<SchemaEquipment>;
+  exerciseCategorys: Array<SchemaExerciseCategory>;
 };
 
-export type Muscle = {
+export type SchemaMuscle = {
   __typename?: 'Muscle';
   id: Scalars['Int'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  primaryExercises: Array<Exercise>;
-  secondaryExercises?: Maybe<Array<Maybe<Exercise>>>;
+  primaryExercises: Array<SchemaExercise>;
+  secondaryExercises: Array<SchemaExercise>;
 };
 
-export type ExerciseStep = {
+export type SchemaExerciseStep = {
   __typename?: 'ExerciseStep';
   exerciseStepNumber: Scalars['Int'];
   description: Scalars['String'];
 };
 
-export type Equipment = {
+export type SchemaEquipment = {
   __typename?: 'Equipment';
   id: Scalars['Int'];
   name: Scalars['String'];
-  exercises: Array<Maybe<Exercise>>;
+  exercises: Array<SchemaExercise>;
 };
 
-export type ExerciseCategory = {
+export type SchemaExerciseCategory = {
   __typename?: 'ExerciseCategory';
   id: Scalars['Int'];
   name: Scalars['String'];
-  exercises?: Maybe<Array<Maybe<Exercise>>>;
+  exercises: Array<SchemaExercise>;
 };
 
-export type RegisterUser = {
+export type SchemaRegisterUser = {
   username: Scalars['String'];
   password: Scalars['String'];
   firstName: Scalars['String'];
@@ -261,18 +269,18 @@ export type RegisterUser = {
   email: Scalars['String'];
 };
 
-export type UserLogin = {
+export type SchemaUserLogin = {
   username: Scalars['String'];
   password: Scalars['String'];
   source: Scalars['String'];
 };
 
-export type NewScheduledWorkout = {
+export type SchemaNewScheduledWorkout = {
   workoutId: Scalars['Int'];
   scheduledDateTime: Scalars['DateTime'];
 };
 
-export type RefreshTokenInput = {
+export type SchemaRefreshTokenInput = {
   token: Scalars['String'];
   refreshToken: Scalars['String'];
   source: Scalars['String'];
@@ -350,396 +358,459 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 /** Mapping between all available schema types and the resolvers types */
-export type ResolversTypes = ResolversObject<{
-  String: ResolverTypeWrapper<DeepPartial<Scalars['String']>>;
-  Boolean: ResolverTypeWrapper<DeepPartial<Scalars['Boolean']>>;
-  DateTime: ResolverTypeWrapper<DeepPartial<Scalars['DateTime']>>;
+export type SchemaResolversTypes = ResolversObject<{
+  String: ResolverTypeWrapper<Scalars['String']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  MutationResponse:
+    | SchemaResolversTypes['RefreshTokenResponse']
+    | SchemaResolversTypes['RegisterUserResponse']
+    | SchemaResolversTypes['UserLoginResponse']
+    | SchemaResolversTypes['CreateScheduledWorkoutResponse']
+    | SchemaResolversTypes['StartScheduledWorkoutResponse'];
   Query: ResolverTypeWrapper<{}>;
-  Int: ResolverTypeWrapper<DeepPartial<Scalars['Int']>>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
-  RefreshTokenResponse: ResolverTypeWrapper<DeepPartial<RefreshTokenResponse>>;
-  RegisterUserResponse: ResolverTypeWrapper<DeepPartial<RegisterUserResponse>>;
-  UserLoginResponse: ResolverTypeWrapper<DeepPartial<UserLoginResponse>>;
-  CreateScheduledWorkoutResponse: ResolverTypeWrapper<DeepPartial<CreateScheduledWorkoutResponse>>;
-  StartScheduledWorkoutResponse: ResolverTypeWrapper<DeepPartial<StartScheduledWorkoutResponse>>;
-  User: ResolverTypeWrapper<DeepPartial<User>>;
-  UserRole: ResolverTypeWrapper<DeepPartial<UserRole>>;
-  WorkoutInvitation: ResolverTypeWrapper<DeepPartial<WorkoutInvitation>>;
-  Workout: ResolverTypeWrapper<DeepPartial<Workout>>;
-  ExerciseGroup: ResolverTypeWrapper<DeepPartial<ExerciseGroup>>;
-  ScheduledWorkout: ResolverTypeWrapper<DeepPartial<ScheduledWorkout>>;
-  Exercise: ResolverTypeWrapper<DeepPartial<Exercise>>;
-  Muscle: ResolverTypeWrapper<DeepPartial<Muscle>>;
-  ExerciseStep: ResolverTypeWrapper<DeepPartial<ExerciseStep>>;
-  Equipment: ResolverTypeWrapper<DeepPartial<Equipment>>;
-  ExerciseCategory: ResolverTypeWrapper<DeepPartial<ExerciseCategory>>;
-  RegisterUser: ResolverTypeWrapper<DeepPartial<RegisterUser>>;
-  UserLogin: ResolverTypeWrapper<DeepPartial<UserLogin>>;
-  NewScheduledWorkout: ResolverTypeWrapper<DeepPartial<NewScheduledWorkout>>;
-  RefreshTokenInput: ResolverTypeWrapper<DeepPartial<RefreshTokenInput>>;
+  RefreshTokenResponse: ResolverTypeWrapper<SchemaRefreshTokenResponse>;
+  RegisterUserResponse: ResolverTypeWrapper<
+    Omit<SchemaRegisterUserResponse, 'user'> & { user: SchemaResolversTypes['User'] }
+  >;
+  UserLoginResponse: ResolverTypeWrapper<
+    Omit<SchemaUserLoginResponse, 'user'> & { user: SchemaResolversTypes['User'] }
+  >;
+  CreateScheduledWorkoutResponse: ResolverTypeWrapper<
+    Omit<SchemaCreateScheduledWorkoutResponse, 'scheduledWorkout'> & {
+      scheduledWorkout: SchemaResolversTypes['ScheduledWorkout'];
+    }
+  >;
+  StartScheduledWorkoutResponse: ResolverTypeWrapper<
+    Omit<SchemaStartScheduledWorkoutResponse, 'scheduledWorkout'> & {
+      scheduledWorkout: SchemaResolversTypes['ScheduledWorkout'];
+    }
+  >;
+  User: ResolverTypeWrapper<User>;
+  WorkoutInvitation: ResolverTypeWrapper<WorkoutInvitation>;
+  Workout: ResolverTypeWrapper<WorkoutDetailed>;
+  ExerciseGroup: ResolverTypeWrapper<
+    Omit<SchemaExerciseGroup, 'exercise'> & { exercise: SchemaResolversTypes['Exercise'] }
+  >;
+  ScheduledWorkout: ResolverTypeWrapper<
+    Omit<SchemaScheduledWorkout, 'scheduledByUser' | 'workout' | 'adHocExercises' | 'attendees'> & {
+      scheduledByUser: SchemaResolversTypes['User'];
+      workout: SchemaResolversTypes['Workout'];
+      adHocExercises: Array<SchemaResolversTypes['ExerciseGroup']>;
+      attendees: Array<SchemaResolversTypes['User']>;
+    }
+  >;
+  Exercise: ResolverTypeWrapper<ExerciseDetailed>;
+  Muscle: ResolverTypeWrapper<Muscle>;
+  ExerciseStep: ResolverTypeWrapper<ExerciseStep>;
+  Equipment: ResolverTypeWrapper<Equipment>;
+  ExerciseCategory: ResolverTypeWrapper<ExerciseCategory>;
+  RegisterUser: SchemaRegisterUser;
+  UserLogin: SchemaUserLogin;
+  NewScheduledWorkout: SchemaNewScheduledWorkout;
+  RefreshTokenInput: SchemaRefreshTokenInput;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
-export type ResolversParentTypes = ResolversObject<{
-  String: DeepPartial<Scalars['String']>;
-  Boolean: DeepPartial<Scalars['Boolean']>;
-  DateTime: DeepPartial<Scalars['DateTime']>;
+export type SchemaResolversParentTypes = ResolversObject<{
+  String: Scalars['String'];
+  Boolean: Scalars['Boolean'];
+  DateTime: Scalars['DateTime'];
+  MutationResponse:
+    | SchemaResolversParentTypes['RefreshTokenResponse']
+    | SchemaResolversParentTypes['RegisterUserResponse']
+    | SchemaResolversParentTypes['UserLoginResponse']
+    | SchemaResolversParentTypes['CreateScheduledWorkoutResponse']
+    | SchemaResolversParentTypes['StartScheduledWorkoutResponse'];
   Query: {};
-  Int: DeepPartial<Scalars['Int']>;
+  Int: Scalars['Int'];
   Mutation: {};
-  RefreshTokenResponse: DeepPartial<RefreshTokenResponse>;
-  RegisterUserResponse: DeepPartial<RegisterUserResponse>;
-  UserLoginResponse: DeepPartial<UserLoginResponse>;
-  CreateScheduledWorkoutResponse: DeepPartial<CreateScheduledWorkoutResponse>;
-  StartScheduledWorkoutResponse: DeepPartial<StartScheduledWorkoutResponse>;
-  User: DeepPartial<User>;
-  UserRole: DeepPartial<UserRole>;
-  WorkoutInvitation: DeepPartial<WorkoutInvitation>;
-  Workout: DeepPartial<Workout>;
-  ExerciseGroup: DeepPartial<ExerciseGroup>;
-  ScheduledWorkout: DeepPartial<ScheduledWorkout>;
-  Exercise: DeepPartial<Exercise>;
-  Muscle: DeepPartial<Muscle>;
-  ExerciseStep: DeepPartial<ExerciseStep>;
-  Equipment: DeepPartial<Equipment>;
-  ExerciseCategory: DeepPartial<ExerciseCategory>;
-  RegisterUser: DeepPartial<RegisterUser>;
-  UserLogin: DeepPartial<UserLogin>;
-  NewScheduledWorkout: DeepPartial<NewScheduledWorkout>;
-  RefreshTokenInput: DeepPartial<RefreshTokenInput>;
+  RefreshTokenResponse: SchemaRefreshTokenResponse;
+  RegisterUserResponse: Omit<SchemaRegisterUserResponse, 'user'> & { user: SchemaResolversParentTypes['User'] };
+  UserLoginResponse: Omit<SchemaUserLoginResponse, 'user'> & { user: SchemaResolversParentTypes['User'] };
+  CreateScheduledWorkoutResponse: Omit<SchemaCreateScheduledWorkoutResponse, 'scheduledWorkout'> & {
+    scheduledWorkout: SchemaResolversParentTypes['ScheduledWorkout'];
+  };
+  StartScheduledWorkoutResponse: Omit<SchemaStartScheduledWorkoutResponse, 'scheduledWorkout'> & {
+    scheduledWorkout: SchemaResolversParentTypes['ScheduledWorkout'];
+  };
+  User: User;
+  WorkoutInvitation: WorkoutInvitation;
+  Workout: WorkoutDetailed;
+  ExerciseGroup: Omit<SchemaExerciseGroup, 'exercise'> & { exercise: SchemaResolversParentTypes['Exercise'] };
+  ScheduledWorkout: Omit<SchemaScheduledWorkout, 'scheduledByUser' | 'workout' | 'adHocExercises' | 'attendees'> & {
+    scheduledByUser: SchemaResolversParentTypes['User'];
+    workout: SchemaResolversParentTypes['Workout'];
+    adHocExercises: Array<SchemaResolversParentTypes['ExerciseGroup']>;
+    attendees: Array<SchemaResolversParentTypes['User']>;
+  };
+  Exercise: ExerciseDetailed;
+  Muscle: Muscle;
+  ExerciseStep: ExerciseStep;
+  Equipment: Equipment;
+  ExerciseCategory: ExerciseCategory;
+  RegisterUser: SchemaRegisterUser;
+  UserLogin: SchemaUserLogin;
+  NewScheduledWorkout: SchemaNewScheduledWorkout;
+  RefreshTokenInput: SchemaRefreshTokenInput;
 }>;
 
-export type DateFormatDirectiveArgs = {
+export type SchemaDateFormatDirectiveArgs = {
   defaultFormat?: Maybe<Scalars['String']>;
   defaultTimeZone?: Maybe<Scalars['String']>;
 };
 
-export type DateFormatDirectiveResolver<
+export type SchemaDateFormatDirectiveResolver<
   Result,
   Parent,
   ContextType = any,
-  Args = DateFormatDirectiveArgs
+  Args = SchemaDateFormatDirectiveArgs
 > = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
-export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+export interface SchemaDateTimeScalarConfig extends GraphQLScalarTypeConfig<SchemaResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
 
-export type QueryResolvers<
+export type SchemaMutationResponseResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
+  ParentType extends SchemaResolversParentTypes['MutationResponse'] = SchemaResolversParentTypes['MutationResponse']
 > = ResolversObject<{
-  test?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
-  users?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
-  exercise?: Resolver<
-    Maybe<ResolversTypes['Exercise']>,
+  __resolveType: TypeResolveFn<
+    | 'RefreshTokenResponse'
+    | 'RegisterUserResponse'
+    | 'UserLoginResponse'
+    | 'CreateScheduledWorkoutResponse'
+    | 'StartScheduledWorkoutResponse',
     ParentType,
-    ContextType,
-    RequireFields<QueryExerciseArgs, 'id'>
+    ContextType
   >;
-  exercises?: Resolver<Array<ResolversTypes['Exercise']>, ParentType, ContextType>;
-  exerciseCategory?: Resolver<
-    Maybe<ResolversTypes['ExerciseCategory']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryExerciseCategoryArgs, 'id'>
-  >;
-  exerciseCategories?: Resolver<Array<ResolversTypes['ExerciseCategory']>, ParentType, ContextType>;
-  muscle?: Resolver<Maybe<ResolversTypes['Muscle']>, ParentType, ContextType, RequireFields<QueryMuscleArgs, 'id'>>;
-  muscles?: Resolver<Array<ResolversTypes['Muscle']>, ParentType, ContextType>;
-  equipment?: Resolver<
-    Maybe<ResolversTypes['Equipment']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryEquipmentArgs, 'id'>
-  >;
-  allEquipment?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
-  workout?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutArgs, 'id'>>;
-  workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
-  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
 }>;
 
-export type MutationResolvers<
+export type SchemaQueryResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
+  ParentType extends SchemaResolversParentTypes['Query'] = SchemaResolversParentTypes['Query']
+> = ResolversObject<{
+  test?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<
+    Maybe<SchemaResolversTypes['User']>,
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryUserArgs, 'id'>
+  >;
+  users?: Resolver<Array<Maybe<SchemaResolversTypes['User']>>, ParentType, ContextType>;
+  exercise?: Resolver<
+    Maybe<SchemaResolversTypes['Exercise']>,
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryExerciseArgs, 'id'>
+  >;
+  exercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
+  exerciseCategory?: Resolver<
+    Maybe<SchemaResolversTypes['ExerciseCategory']>,
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryExerciseCategoryArgs, 'id'>
+  >;
+  exerciseCategories?: Resolver<Array<SchemaResolversTypes['ExerciseCategory']>, ParentType, ContextType>;
+  muscle?: Resolver<
+    Maybe<SchemaResolversTypes['Muscle']>,
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryMuscleArgs, 'id'>
+  >;
+  muscles?: Resolver<Array<SchemaResolversTypes['Muscle']>, ParentType, ContextType>;
+  equipment?: Resolver<
+    Maybe<SchemaResolversTypes['Equipment']>,
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryEquipmentArgs, 'id'>
+  >;
+  allEquipment?: Resolver<Array<SchemaResolversTypes['Equipment']>, ParentType, ContextType>;
+  workout?: Resolver<
+    Maybe<SchemaResolversTypes['Workout']>,
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryWorkoutArgs, 'id'>
+  >;
+  workouts?: Resolver<Array<SchemaResolversTypes['Workout']>, ParentType, ContextType>;
+  me?: Resolver<Maybe<SchemaResolversTypes['User']>, ParentType, ContextType>;
+}>;
+
+export type SchemaMutationResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['Mutation'] = SchemaResolversParentTypes['Mutation']
 > = ResolversObject<{
   registerUser?: Resolver<
-    ResolversTypes['RegisterUserResponse'],
+    SchemaResolversTypes['RegisterUserResponse'],
     ParentType,
     ContextType,
-    RequireFields<MutationRegisterUserArgs, 'user'>
+    RequireFields<SchemaMutationRegisterUserArgs, 'user'>
   >;
   login?: Resolver<
-    ResolversTypes['UserLoginResponse'],
+    SchemaResolversTypes['UserLoginResponse'],
     ParentType,
     ContextType,
-    RequireFields<MutationLoginArgs, 'userCredentials'>
+    RequireFields<SchemaMutationLoginArgs, 'userCredentials'>
   >;
   refreshToken?: Resolver<
-    ResolversTypes['RefreshTokenResponse'],
+    SchemaResolversTypes['RefreshTokenResponse'],
     ParentType,
     ContextType,
-    RequireFields<MutationRefreshTokenArgs, 'input'>
+    RequireFields<SchemaMutationRefreshTokenArgs, 'input'>
   >;
   createScheduledWorkout?: Resolver<
-    ResolversTypes['CreateScheduledWorkoutResponse'],
+    SchemaResolversTypes['CreateScheduledWorkoutResponse'],
     ParentType,
     ContextType,
-    RequireFields<MutationCreateScheduledWorkoutArgs, 'newWorkout'>
+    RequireFields<SchemaMutationCreateScheduledWorkoutArgs, 'newWorkout'>
   >;
   startScheduledWorkout?: Resolver<
-    ResolversTypes['StartScheduledWorkoutResponse'],
+    SchemaResolversTypes['StartScheduledWorkoutResponse'],
     ParentType,
     ContextType,
-    RequireFields<MutationStartScheduledWorkoutArgs, 'id'>
+    RequireFields<SchemaMutationStartScheduledWorkoutArgs, 'id'>
   >;
 }>;
 
-export type RefreshTokenResponseResolvers<
+export type SchemaRefreshTokenResponseResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['RefreshTokenResponse'] = ResolversParentTypes['RefreshTokenResponse']
+  ParentType extends SchemaResolversParentTypes['RefreshTokenResponse'] = SchemaResolversParentTypes['RefreshTokenResponse']
 > = ResolversObject<{
-  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
+  token?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  refreshToken?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type RegisterUserResponseResolvers<
+export type SchemaRegisterUserResponseResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['RegisterUserResponse'] = ResolversParentTypes['RegisterUserResponse']
+  ParentType extends SchemaResolversParentTypes['RegisterUserResponse'] = SchemaResolversParentTypes['RegisterUserResponse']
 > = ResolversObject<{
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
+  user?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type UserLoginResponseResolvers<
+export type SchemaUserLoginResponseResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['UserLoginResponse'] = ResolversParentTypes['UserLoginResponse']
+  ParentType extends SchemaResolversParentTypes['UserLoginResponse'] = SchemaResolversParentTypes['UserLoginResponse']
 > = ResolversObject<{
-  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
+  token?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  refreshToken?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type CreateScheduledWorkoutResponseResolvers<
+export type SchemaCreateScheduledWorkoutResponseResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['CreateScheduledWorkoutResponse'] = ResolversParentTypes['CreateScheduledWorkoutResponse']
+  ParentType extends SchemaResolversParentTypes['CreateScheduledWorkoutResponse'] = SchemaResolversParentTypes['CreateScheduledWorkoutResponse']
 > = ResolversObject<{
-  scheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
+  success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
+  scheduledWorkout?: Resolver<SchemaResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type StartScheduledWorkoutResponseResolvers<
+export type SchemaStartScheduledWorkoutResponseResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['StartScheduledWorkoutResponse'] = ResolversParentTypes['StartScheduledWorkoutResponse']
+  ParentType extends SchemaResolversParentTypes['StartScheduledWorkoutResponse'] = SchemaResolversParentTypes['StartScheduledWorkoutResponse']
 > = ResolversObject<{
-  scheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
+  success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
+  scheduledWorkout?: Resolver<SchemaResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type UserResolvers<
+export type SchemaUserResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
+  ParentType extends SchemaResolversParentTypes['User'] = SchemaResolversParentTypes['User']
 > = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  userName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<UserCreatedArgs, never>>;
-  roles?: Resolver<Maybe<Array<Maybe<ResolversTypes['UserRole']>>>, ParentType, ContextType>;
-  createdWorkouts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Workout']>>>, ParentType, ContextType>;
-  scheduledWorkouts?: Resolver<Maybe<Array<Maybe<ResolversTypes['ScheduledWorkout']>>>, ParentType, ContextType>;
-  ownedScheduledWorkouts?: Resolver<Maybe<Array<Maybe<ResolversTypes['ScheduledWorkout']>>>, ParentType, ContextType>;
-  favoriteExercises?: Resolver<Maybe<Array<Maybe<ResolversTypes['Exercise']>>>, ParentType, ContextType>;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  userName?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  firstName?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  lastName?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  created?: Resolver<
+    SchemaResolversTypes['DateTime'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaUserCreatedArgs, never>
+  >;
+  createdWorkouts?: Resolver<Array<SchemaResolversTypes['Workout']>, ParentType, ContextType>;
+  scheduledWorkouts?: Resolver<Array<SchemaResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
+  ownedScheduledWorkouts?: Resolver<Array<SchemaResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
+  favoriteExercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type UserRoleResolvers<
+export type SchemaWorkoutInvitationResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['UserRole'] = ResolversParentTypes['UserRole']
+  ParentType extends SchemaResolversParentTypes['WorkoutInvitation'] = SchemaResolversParentTypes['WorkoutInvitation']
 > = ResolversObject<{
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
-}>;
-
-export type WorkoutInvitationResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['WorkoutInvitation'] = ResolversParentTypes['WorkoutInvitation']
-> = ResolversObject<{
-  inviter?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  invitee?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  scheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
-  accepted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  declined?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  inviter?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
+  invitee?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
+  scheduledWorkout?: Resolver<SchemaResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
+  accepted?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
+  declined?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
+  status?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   respondedAtDateTime?: Resolver<
-    Maybe<ResolversTypes['DateTime']>,
+    Maybe<SchemaResolversTypes['DateTime']>,
     ParentType,
     ContextType,
-    RequireFields<WorkoutInvitationRespondedAtDateTimeArgs, never>
+    RequireFields<SchemaWorkoutInvitationRespondedAtDateTimeArgs, never>
   >;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type WorkoutResolvers<
+export type SchemaWorkoutResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['Workout'] = ResolversParentTypes['Workout']
+  ParentType extends SchemaResolversParentTypes['Workout'] = SchemaResolversParentTypes['Workout']
 > = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdByUserId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  createdByUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  label?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<SchemaResolversTypes['String']>, ParentType, ContextType>;
+  createdByUserId?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  createdByUser?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
   createdOnDate?: Resolver<
-    ResolversTypes['DateTime'],
+    SchemaResolversTypes['DateTime'],
     ParentType,
     ContextType,
-    RequireFields<WorkoutCreatedOnDateArgs, never>
+    RequireFields<SchemaWorkoutCreatedOnDateArgs, never>
   >;
   lastModifiedDate?: Resolver<
-    ResolversTypes['DateTime'],
+    SchemaResolversTypes['DateTime'],
     ParentType,
     ContextType,
-    RequireFields<WorkoutLastModifiedDateArgs, never>
+    RequireFields<SchemaWorkoutLastModifiedDateArgs, never>
   >;
-  shareable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  exerciseGroups?: Resolver<Maybe<Array<Maybe<ResolversTypes['ExerciseGroup']>>>, ParentType, ContextType>;
+  shareable?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
+  exerciseGroups?: Resolver<Array<SchemaResolversTypes['ExerciseGroup']>, ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type ExerciseGroupResolvers<
+export type SchemaExerciseGroupResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['ExerciseGroup'] = ResolversParentTypes['ExerciseGroup']
+  ParentType extends SchemaResolversParentTypes['ExerciseGroup'] = SchemaResolversParentTypes['ExerciseGroup']
 > = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  exercise?: Resolver<ResolversTypes['Exercise'], ParentType, ContextType>;
-  sets?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  repetitions?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  exerciseId?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  exercise?: Resolver<SchemaResolversTypes['Exercise'], ParentType, ContextType>;
+  sets?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  repetitions?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type ScheduledWorkoutResolvers<
+export type SchemaScheduledWorkoutResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['ScheduledWorkout'] = ResolversParentTypes['ScheduledWorkout']
+  ParentType extends SchemaResolversParentTypes['ScheduledWorkout'] = SchemaResolversParentTypes['ScheduledWorkout']
 > = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  scheduledByUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  scheduledByUser?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
+  workout?: Resolver<SchemaResolversTypes['Workout'], ParentType, ContextType>;
   startedDateTime?: Resolver<
-    Maybe<ResolversTypes['DateTime']>,
+    Maybe<SchemaResolversTypes['DateTime']>,
     ParentType,
     ContextType,
-    RequireFields<ScheduledWorkoutStartedDateTimeArgs, never>
+    RequireFields<SchemaScheduledWorkoutStartedDateTimeArgs, never>
   >;
   completedDateTime?: Resolver<
-    Maybe<ResolversTypes['DateTime']>,
+    Maybe<SchemaResolversTypes['DateTime']>,
     ParentType,
     ContextType,
-    RequireFields<ScheduledWorkoutCompletedDateTimeArgs, never>
+    RequireFields<SchemaScheduledWorkoutCompletedDateTimeArgs, never>
   >;
   scheduledDateTime?: Resolver<
-    ResolversTypes['DateTime'],
+    SchemaResolversTypes['DateTime'],
     ParentType,
     ContextType,
-    RequireFields<ScheduledWorkoutScheduledDateTimeArgs, never>
+    RequireFields<SchemaScheduledWorkoutScheduledDateTimeArgs, never>
   >;
-  customWorkout?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  adHocExercises?: Resolver<Maybe<Array<Maybe<ResolversTypes['ExerciseGroup']>>>, ParentType, ContextType>;
-  attendees?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+  customWorkout?: Resolver<Maybe<SchemaResolversTypes['String']>, ParentType, ContextType>;
+  adHocExercises?: Resolver<Array<SchemaResolversTypes['ExerciseGroup']>, ParentType, ContextType>;
+  attendees?: Resolver<Array<SchemaResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type ExerciseResolvers<
+export type SchemaExerciseResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['Exercise'] = ResolversParentTypes['Exercise']
+  ParentType extends SchemaResolversParentTypes['Exercise'] = SchemaResolversParentTypes['Exercise']
 > = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  primaryMuscle?: Resolver<Maybe<ResolversTypes['Muscle']>, ParentType, ContextType>;
-  secondaryMuscle?: Resolver<Maybe<ResolversTypes['Muscle']>, ParentType, ContextType>;
-  exerciseSteps?: Resolver<Array<ResolversTypes['ExerciseStep']>, ParentType, ContextType>;
-  equipment?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
-  exerciseCategorys?: Resolver<Array<ResolversTypes['ExerciseCategory']>, ParentType, ContextType>;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  primaryMuscle?: Resolver<Maybe<SchemaResolversTypes['Muscle']>, ParentType, ContextType>;
+  secondaryMuscle?: Resolver<Maybe<SchemaResolversTypes['Muscle']>, ParentType, ContextType>;
+  exerciseSteps?: Resolver<Array<SchemaResolversTypes['ExerciseStep']>, ParentType, ContextType>;
+  equipment?: Resolver<Array<SchemaResolversTypes['Equipment']>, ParentType, ContextType>;
+  exerciseCategorys?: Resolver<Array<SchemaResolversTypes['ExerciseCategory']>, ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type MuscleResolvers<
+export type SchemaMuscleResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['Muscle'] = ResolversParentTypes['Muscle']
+  ParentType extends SchemaResolversParentTypes['Muscle'] = SchemaResolversParentTypes['Muscle']
 > = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  primaryExercises?: Resolver<Array<ResolversTypes['Exercise']>, ParentType, ContextType>;
-  secondaryExercises?: Resolver<Maybe<Array<Maybe<ResolversTypes['Exercise']>>>, ParentType, ContextType>;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<SchemaResolversTypes['String']>, ParentType, ContextType>;
+  primaryExercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
+  secondaryExercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type ExerciseStepResolvers<
+export type SchemaExerciseStepResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['ExerciseStep'] = ResolversParentTypes['ExerciseStep']
+  ParentType extends SchemaResolversParentTypes['ExerciseStep'] = SchemaResolversParentTypes['ExerciseStep']
 > = ResolversObject<{
-  exerciseStepNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  exerciseStepNumber?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  description?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type EquipmentResolvers<
+export type SchemaEquipmentResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['Equipment'] = ResolversParentTypes['Equipment']
+  ParentType extends SchemaResolversParentTypes['Equipment'] = SchemaResolversParentTypes['Equipment']
 > = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  exercises?: Resolver<Array<Maybe<ResolversTypes['Exercise']>>, ParentType, ContextType>;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  exercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type ExerciseCategoryResolvers<
+export type SchemaExerciseCategoryResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['ExerciseCategory'] = ResolversParentTypes['ExerciseCategory']
+  ParentType extends SchemaResolversParentTypes['ExerciseCategory'] = SchemaResolversParentTypes['ExerciseCategory']
 > = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  exercises?: Resolver<Maybe<Array<Maybe<ResolversTypes['Exercise']>>>, ParentType, ContextType>;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  exercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type Resolvers<ContextType = any> = ResolversObject<{
+export type SchemaResolvers<ContextType = any> = ResolversObject<{
   DateTime?: GraphQLScalarType;
-  Query?: QueryResolvers<ContextType>;
-  Mutation?: MutationResolvers<ContextType>;
-  RefreshTokenResponse?: RefreshTokenResponseResolvers<ContextType>;
-  RegisterUserResponse?: RegisterUserResponseResolvers<ContextType>;
-  UserLoginResponse?: UserLoginResponseResolvers<ContextType>;
-  CreateScheduledWorkoutResponse?: CreateScheduledWorkoutResponseResolvers<ContextType>;
-  StartScheduledWorkoutResponse?: StartScheduledWorkoutResponseResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
-  UserRole?: UserRoleResolvers<ContextType>;
-  WorkoutInvitation?: WorkoutInvitationResolvers<ContextType>;
-  Workout?: WorkoutResolvers<ContextType>;
-  ExerciseGroup?: ExerciseGroupResolvers<ContextType>;
-  ScheduledWorkout?: ScheduledWorkoutResolvers<ContextType>;
-  Exercise?: ExerciseResolvers<ContextType>;
-  Muscle?: MuscleResolvers<ContextType>;
-  ExerciseStep?: ExerciseStepResolvers<ContextType>;
-  Equipment?: EquipmentResolvers<ContextType>;
-  ExerciseCategory?: ExerciseCategoryResolvers<ContextType>;
+  MutationResponse?: SchemaMutationResponseResolvers;
+  Query?: SchemaQueryResolvers<ContextType>;
+  Mutation?: SchemaMutationResolvers<ContextType>;
+  RefreshTokenResponse?: SchemaRefreshTokenResponseResolvers<ContextType>;
+  RegisterUserResponse?: SchemaRegisterUserResponseResolvers<ContextType>;
+  UserLoginResponse?: SchemaUserLoginResponseResolvers<ContextType>;
+  CreateScheduledWorkoutResponse?: SchemaCreateScheduledWorkoutResponseResolvers<ContextType>;
+  StartScheduledWorkoutResponse?: SchemaStartScheduledWorkoutResponseResolvers<ContextType>;
+  User?: SchemaUserResolvers<ContextType>;
+  WorkoutInvitation?: SchemaWorkoutInvitationResolvers<ContextType>;
+  Workout?: SchemaWorkoutResolvers<ContextType>;
+  ExerciseGroup?: SchemaExerciseGroupResolvers<ContextType>;
+  ScheduledWorkout?: SchemaScheduledWorkoutResolvers<ContextType>;
+  Exercise?: SchemaExerciseResolvers<ContextType>;
+  Muscle?: SchemaMuscleResolvers<ContextType>;
+  ExerciseStep?: SchemaExerciseStepResolvers<ContextType>;
+  Equipment?: SchemaEquipmentResolvers<ContextType>;
+  ExerciseCategory?: SchemaExerciseCategoryResolvers<ContextType>;
 }>;
 
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
- */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>;
-export type DirectiveResolvers<ContextType = any> = ResolversObject<{
-  dateFormat?: DateFormatDirectiveResolver<any, any, ContextType>;
+export type SchemaDirectiveResolvers<ContextType = any> = ResolversObject<{
+  dateFormat?: SchemaDateFormatDirectiveResolver<any, any, ContextType>;
 }>;
-
-/**
- * @deprecated
- * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
- */
-export type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<ContextType>;

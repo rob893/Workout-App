@@ -1,4 +1,5 @@
 import { WorkoutAppAPI } from './WorkoutAppAPI';
+import { WorkoutDetailed } from '../models/workout-api/Workout';
 
 export class WorkoutAPI extends WorkoutAppAPI {
   public createScheduledWorkout(newWorkout: { workoutId: number; scheduledDateTime: string }): Promise<any> {
@@ -9,11 +10,11 @@ export class WorkoutAPI extends WorkoutAppAPI {
     return this.patch(`scheduledWorkouts/${id}/startWorkout`);
   }
 
-  public getWorkoutsDetailed(): Promise<any> {
+  public getWorkoutsDetailed(): Promise<WorkoutDetailed[]> {
     return this.get('workouts/detailed');
   }
 
-  public async getWorkoutDetailed(id: number): Promise<any> {
+  public async getWorkoutDetailed(id: number): Promise<WorkoutDetailed> {
     return this.get(`workouts/${id}/detailed`);
   }
 }

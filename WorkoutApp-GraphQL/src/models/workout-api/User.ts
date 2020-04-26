@@ -13,6 +13,22 @@ export interface User {
   detailedUrl: string;
 }
 
+export interface UserDetailed {
+  roles: string[];
+  scheduledWorkoutsUrl: string;
+  favoriteExercisesUrl: string;
+  workoutInvitationsUrl: string;
+  sentWorkoutInvitationsUrl: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  created: Date;
+  id: number;
+  url: string;
+  detailedUrl: string;
+}
+
 export interface UserToRegister {
   username: string;
   password: string;
@@ -31,4 +47,24 @@ export interface UserLoginResponse {
   token: string;
   refreshToken: string;
   user: User;
+}
+
+export interface RefreshTokenResponse {
+  token: string;
+  refreshToken: string;
+}
+
+export interface RegisterUserResponse {
+  scheduledWorkoutsUrl: string;
+  favoriteExercisesUrl: string;
+  workoutInvitationsUrl: string;
+  sentWorkoutInvitationsUrl: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  created: Date;
+  id: number;
+  url: string;
+  detailedUrl: string;
 }

@@ -1,10 +1,8 @@
-import { UserToRegister, UserLogin, User, UserLoginResponse } from './models/workout-api/User';
-import { ExerciseDetailed, Muscle, Equipment, ExerciseCategory } from './models/workout-api/Exercise';
 import { WorkoutAppContext } from './models/WorkoutAppContext';
 import { GraphQLScalarType, Kind } from 'graphql';
-import { Resolvers } from './models/schema';
+import { SchemaResolvers } from './models/schema';
 
-export const resolvers: Resolvers<WorkoutAppContext> = {
+export const resolvers: SchemaResolvers<WorkoutAppContext> = {
   DateTime: new GraphQLScalarType({
     name: 'DateTime',
     description: 'Scalar type that represents a DateTime object',
@@ -39,94 +37,104 @@ export const resolvers: Resolvers<WorkoutAppContext> = {
   }),
   Query: {
     test() {
-      return 'Hello World and stuff!';
+      return 'Hello World!';
     },
 
-    users(_root, _args, { dataSources: { userAPI } }): Promise<User[]> {
+    users(_root, _args, { dataSources: { userAPI } }) {
       return userAPI.getAllUsers();
     },
 
-    user(_root, { id }, { dataSources: { userAPI } }): Promise<User | null> {
+    user(_root, { id }, { dataSources: { userAPI } }) {
       return userAPI.getUserById(id);
     },
 
-    exercises(_root, _args, { dataSources: { exerciseAPI } }): Promise<ExerciseDetailed[]> {
+    exercises(_root, _args, { dataSources: { exerciseAPI } }) {
       return exerciseAPI.getExercises();
     },
 
-    exercise(_root, { id }, { dataSources: { exerciseAPI } }): Promise<ExerciseDetailed | null> {
+    exercise(_root, { id }, { dataSources: { exerciseAPI } }) {
       return exerciseAPI.getExerciseById(id);
     },
 
-    muscles(_root, _args, { dataSources: { muscleAPI } }): Promise<Muscle[]> {
+    muscles(_root, _args, { dataSources: { muscleAPI } }) {
       return muscleAPI.getMuscles();
     },
 
-    muscle(_root, { id }, { dataSources: { muscleAPI } }): Promise<Muscle | null> {
+    muscle(_root, { id }, { dataSources: { muscleAPI } }) {
       return muscleAPI.getMuscleById(id);
     },
 
-    allEquipment(_root, _args, { dataSources: { equipmentAPI } }): Promise<Equipment[]> {
+    allEquipment(_root, _args, { dataSources: { equipmentAPI } }) {
       return equipmentAPI.getAllEquipment();
     },
 
-    equipment(_root, { id }, { dataSources: { equipmentAPI } }): Promise<Equipment | null> {
+    equipment(_root, { id }, { dataSources: { equipmentAPI } }) {
       return equipmentAPI.getEquipmentById(id);
     },
 
-    workouts(_root, _args, { dataSources: { workoutAPI } }): Promise<any[]> {
+    workouts(_root, _args, { dataSources: { workoutAPI } }) {
       return workoutAPI.getWorkoutsDetailed();
     },
 
-    workout(_root, { id }, { dataSources: { workoutAPI } }): Promise<any> {
+    workout(_root, { id }, { dataSources: { workoutAPI } }) {
       return workoutAPI.getWorkoutDetailed(id);
     },
 
-    me(_root, _args, { claims: { nameid }, dataSources: { userAPI } }): Promise<User | null> {
+    me(_root, _args, { claims: { nameid }, dataSources: { userAPI } }) {
       return nameid ? userAPI.getUserById(parseInt(nameid)) : Promise.resolve(null);
     }
   },
   Mutation: {
-    async registerUser(
-      root,
-      { user }: { user: UserToRegister },
-      { dataSources: { userAPI } }
-    ): Promise<{ user: User }> {
+    async registerUser(_root, { user }, { dataSources: { userAPI } }) {
       const newUser = await userAPI.registerUser(user);
-      return { user: newUser };
+      return {
+        success: true,
+        user: newUser
+      };
     },
 
-    login(root, { userCredentials }, { dataSources: { userAPI } }): Promise<UserLoginResponse> {
-      return userAPI.login(userCredentials);
+    async login(_root, { userCredentials }, { dataSources: { userAPI } }) {
+      const res = await userAPI.login(userCredentials);
+      return {
+        success: true,
+        ...res
+      };
     },
 
-    refreshToken(root, { input }, { dataSources: { userAPI } }) {
-      return userAPI.refreshToken(input);
+    async refreshToken(_root, { input }, { dataSources: { userAPI } }) {
+      const res = await userAPI.refreshToken(input);
+      return {
+        success: true,
+        ...res
+      };
     },
 
-    async createScheduledWorkout(root, { newWorkout }, { dataSources: { workoutAPI } }) {
+    async createScheduledWorkout(_root, { newWorkout }, { dataSources: { workoutAPI } }) {
       const createdWorkout = await workoutAPI.createScheduledWorkout(newWorkout);
-      return { scheduledWorkout: createdWorkout };
+      return {
+        success: true,
+        scheduledWorkout: createdWorkout
+      };
     },
 
-    async startScheduledWorkout(root, { id }, { dataSources: { workoutAPI } }) {
+    async startScheduledWorkout(_root, { id }, { dataSources: { workoutAPI } }) {
       const workout = await workoutAPI.startScheduledWorkout(id);
-      return { scheduledWorkout: workout };
+      return {
+        success: true,
+        scheduledWorkout: workout
+      };
     }
   },
   User: {
-    scheduledWorkouts(user, args, { dataSources: { userAPI } }) {
-      if (!user.id) {
-        throw new Error();
-      }
+    scheduledWorkouts(user, _args, { dataSources: { userAPI } }) {
       return userAPI.getScheduledWorkoutsForUser(user.id);
     }
   },
   ExerciseGroup: {
-    async exercise(root, args, { dataSources: { exerciseAPI } }) {
+    async exercise({ exercise: { id } }, _args, { dataSources: { exerciseAPI } }) {
       const exercises = await exerciseAPI.getExercises();
 
-      const exercise = exercises.find(ex => ex.id === root.exercise?.id);
+      const exercise = exercises.find(ex => ex.id === id);
 
       if (!exercise) {
         throw new Error('No exercise found for exercise group');
@@ -136,43 +144,43 @@ export const resolvers: Resolvers<WorkoutAppContext> = {
     }
   },
   Muscle: {
-    async primaryExercises(root, args, { dataSources: { exerciseAPI } }): Promise<ExerciseDetailed[]> {
+    async primaryExercises({ id }, _args, { dataSources: { exerciseAPI } }) {
       const exercises = await exerciseAPI.getExercises();
 
       const exercisesForMuscle = exercises.filter(
-        exercise => exercise.primaryMuscle && exercise.primaryMuscle.id === root.id
+        exercise => exercise.primaryMuscle && exercise.primaryMuscle.id === id
       );
 
       return exercisesForMuscle;
     },
 
-    async secondaryExercises(root, _args, { dataSources: { exerciseAPI } }) {
+    async secondaryExercises({ id }, _args, { dataSources: { exerciseAPI } }) {
       const exercises = await exerciseAPI.getExercises();
 
       const exercisesForMuscle = exercises.filter(
-        exercise => exercise.secondaryMuscle && exercise.secondaryMuscle.id === root.id
+        exercise => exercise.secondaryMuscle && exercise.secondaryMuscle.id === id
       );
 
       return exercisesForMuscle;
     }
   },
   Equipment: {
-    async exercises(root, _args, { dataSources: { exerciseAPI } }): Promise<ExerciseDetailed[]> {
+    async exercises({ id }, _args, { dataSources: { exerciseAPI } }) {
       const exercises = await exerciseAPI.getExercises();
 
       const exercisesForEquipment = exercises.filter(exercise =>
-        exercise.equipment.some(equipment => equipment.id === root.id)
+        exercise.equipment.some(equipment => equipment.id === id)
       );
 
       return exercisesForEquipment;
     }
   },
   ExerciseCategory: {
-    async exercises(root, args, { dataSources: { exerciseAPI } }) {
+    async exercises({ id }, _args, { dataSources: { exerciseAPI } }) {
       const exercises = await exerciseAPI.getExercises();
 
       const exercisesForCategory = exercises.filter(exercise =>
-        exercise.exerciseCategorys.some(category => category.id === root.id)
+        exercise.exerciseCategorys.some(category => category.id === id)
       );
 
       return exercisesForCategory;
