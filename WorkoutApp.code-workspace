@@ -1,20 +1,17 @@
 {
-	"folders": [
-        {
-            "path": "."
-        },
-        {
-            "path": "WorkoutApp.API"
-        },
-        {
-            "path": "WorkoutApp-SPA"
-        },
-        {
-            "path": "WorkoutApp-GraphQL"
-        },
-        {
-            "path": "WorkoutApp.HealthChecker"
-        }
-    ],
-    "settings": {}
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "WorkoutApp.API"
+    },
+    {
+      "path": "WorkoutApp-SPA"
+    },
+    {
+      "path": "WorkoutApp-GraphQL"
+    }
+  ],
+  "settings": {}
 }

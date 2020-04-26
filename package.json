@@ -1,10 +1,12 @@
 {
-    "scripts": {
-        "start-api": "cd WorkoutApp.API/ && dotnet watch run",
-        "start-graphql": "cd WorkoutApp-GraphQL/ && npm run dev-debug",
-        "start-client": "cd WorkoutApp-SPA/ && ng serve",
-        "start-health-checker": "cd WorkoutApp.HealthChecker/ && dotnet watch run",
-        "start": "concurrently --kill-others \"npm run start-api\" \"npm run start-graphql\" \"npm run start-client\" \"npm run start-health-checker\"",
-        "start-new-shells": "start npm run start-api && start npm run start-graphql && start npm run start-client"
-    }
+  "scripts": {
+    "start-api": "cd WorkoutApp.API/ && dotnet watch run",
+    "start-graphql": "cd WorkoutApp-GraphQL/ && npm run dev-debug",
+    "start-client": "cd WorkoutApp-SPA/ && ng serve",
+    "start": "concurrently --kill-others \"npm run start-api\" \"npm run start-graphql\" \"npm run start-client\" \"npm run start-health-checker\"",
+    "start-new-shells": "start npm run start-api && start npm run start-graphql && start npm run start-client",
+    "build-api": "cd WorkoutApp.API/ && dotnet publish -c Release",
+    "build-graphql": "cd WorkoutApp-GraphQL/ && npm run build",
+    "build-SPA": "cd WorkoutApp-SPA/ && npm run build"
+  }
 }
