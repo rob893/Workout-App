@@ -126,8 +126,8 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     }
   },
   User: {
-    scheduledWorkouts(user, _args, { dataSources: { userAPI } }) {
-      return userAPI.getScheduledWorkoutsForUser(user.id);
+    scheduledWorkouts({ id }, _args, { dataSources: { userAPI } }) {
+      return userAPI.getScheduledWorkoutsForUser(id);
     }
   },
   ExerciseGroup: {
