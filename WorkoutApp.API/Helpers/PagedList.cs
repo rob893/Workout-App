@@ -1,3 +1,4 @@
+using System.Diagnostics.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,16 @@ namespace WorkoutApp.API.Helpers
 
         public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber = 1, int pageSize = 0)
         {
+            if (pageNumber <= 0)
+            {
+                throw new ArgumentException("pageNumber must be greater than 0.");
+            }
+
+            if (pageSize < 0)
+            {
+                throw new ArgumentException("pageSize must be greater than or equal to 0.");
+            }
+
             int totalItems = await source.CountAsync();
             pageSize = pageSize == 0 ? totalItems : pageSize;
             List<T> items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
