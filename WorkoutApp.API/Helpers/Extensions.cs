@@ -18,7 +18,7 @@ namespace WorkoutApp.API.Helpers
             response.Headers.Add("X-Pagination-PageSize", pageSize.ToString());
             response.Headers.Add("X-Pagination-TotalItems", totalItems.ToString());
             response.Headers.Add("X-Pagination-TotalPages", totalPages.ToString());
-            response.Headers.Add("Access-Control-Expose-Headers", new StringValues(new string[] 
+            response.Headers.Add("Access-Control-Expose-Headers", new StringValues(new string[]
             {
                 "X-Pagination-PageNumber",
                 "X-Pagination-PageSize",
@@ -47,6 +47,11 @@ namespace WorkoutApp.API.Helpers
         public static IApplicationBuilder UseGlobalExceptionHandler(this IApplicationBuilder builder)
         {
             return builder.UseExceptionHandler(b => b.UseMiddleware<GlobalExceptionHandlerMiddleware>());
+        }
+
+        public static IApplicationBuilder UseSwaggerAuthorized(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<SwaggerBasicAuthMiddleware>();
         }
 
         public static IList<T> Shuffle<T>(this IList<T> list)

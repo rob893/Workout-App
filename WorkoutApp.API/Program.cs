@@ -55,7 +55,7 @@ namespace WorkoutApp.API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls(new string[] { "https://localhost:5003", "http://localhost:5002" });
+                    webBuilder.UseUrls(new string[] { "http://localhost:5002" });
 
                 });
         }

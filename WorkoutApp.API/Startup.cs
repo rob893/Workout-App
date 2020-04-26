@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -86,6 +87,7 @@ namespace WorkoutApp.API
             });
 
             services.Configure<AuthenticationSettings>(Configuration.GetSection("AuthenticationSettings"));
+            services.Configure<SwaggerAuthSettings>(Configuration.GetSection("SwaggerAuthSettings"));
 
             ConfigureAuthentication(services);
             ConfigureSwagger(services);
@@ -118,6 +120,7 @@ namespace WorkoutApp.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseSwaggerAuthorized();
             app.UseSwagger();
 
             if (AppEnvironment.IsDevelopment())
@@ -135,13 +138,18 @@ namespace WorkoutApp.API
                 });
             }
 
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCors(header => header.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders(new string[] { "X-Token-Expired" }));
             app.UseGlobalExceptionHandler();
             app.UseHsts();
-            // app.UseHttpsRedirection();
+
 
             app.UseEndpoints(endpoints =>
             {
