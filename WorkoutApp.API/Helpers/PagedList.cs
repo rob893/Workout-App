@@ -50,3 +50,80 @@ namespace WorkoutApp.API.Helpers
         }
     }
 }
+
+// using System.Diagnostics.Contracts;
+// using System;
+// using System.Collections.Generic;
+// using System.Linq;
+// using System.Threading.Tasks;
+// using Microsoft.EntityFrameworkCore;
+// using WorkoutApp.API.Models.QueryParams;
+// using WorkoutApp.API.Models.Domain;
+
+// namespace WorkoutApp.API.Helpers
+// {
+//     public class PagedList<T> : List<T> 
+//         where T : class, IIdentifiable
+//     {
+//         public bool HasNextPage { get; set; }
+//         public bool HasPreviousPage { get; set; }
+//         public string StartCursor { get; set; }
+//         public string EndCursor { get; set; }
+//         public int PageNumber { get; set; }
+//         public int TotalPages { get; set; }
+//         public int PageSize { get; set; }
+//         public int TotalItems { get; set; }
+
+
+//         public PagedList(IEnumerable<T> items, int totalItems, int pageNumber, int pageSize)
+//         {
+//             TotalItems = totalItems;
+//             PageSize = pageSize;
+//             PageNumber = pageNumber;
+//             TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+//             AddRange(items);
+//         }
+
+//         public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int? first, string after, int? last, string before)
+//         {
+//             if (first != null && last != null)
+//             {
+//                 throw new ArgumentException("Passing both `first` and `last` to paginate is not supported.");
+//             }
+
+//             int totalItems = await source.CountAsync();
+//             var maxId = await source.OrderByDescending(item => item.Id).Select(item => item.Id).FirstOrDefaultAsync();
+//             var minId = await source.OrderBy(item => item.Id).Select(item => item.Id).FirstOrDefaultAsync();
+
+//             if (first == null && last == null)
+//             {
+//                 first = totalItems;
+//             }
+
+//             if (first != null)
+//             {
+//                 var afterId = after == null ? -1 : after.ConvertToInt32FromBase64();
+//                 List<T> items = await source.Where(item => item.Id > afterId)
+//                     .OrderByDescending(item => item.Id)
+//                     .Take(first.Value).ToListAsync();
+
+//                 var hasNextPage = items.Count > 0 && items.Last().Id < maxId;
+//                 var hasPreviousPage = items.Count > 0 && items.First().Id > minId;
+
+//                 return new PagedList<T>(items, totalItems, pageNumber, pageSize);
+//             }
+
+//             if (last != null)
+//             {
+//                 List<T> items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+//                 return new PagedList<T>(items, totalItems, pageNumber, pageSize);
+//             }
+//         }
+
+//         public static Task<PagedList<T>> CreateAsync(IQueryable<T> source, PaginationParams searchParams)
+//         {
+//             return CreateAsync(source, searchParams.PageNumber, searchParams.PageSize);
+//         }
+//     }
+// }

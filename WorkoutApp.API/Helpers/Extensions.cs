@@ -68,5 +68,17 @@ namespace WorkoutApp.API.Helpers
 
             return list;
         }
+
+        public static int ConvertToInt32FromBase64(this string str)
+        {
+            try
+            {
+                return BitConverter.ToInt32(Convert.FromBase64String(str), 0);
+            }
+            catch
+            {
+                throw new ArgumentException($"{str} is not a valid base 64 encoded int32.");
+            }
+        }
     }
 }
