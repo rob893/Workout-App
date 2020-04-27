@@ -36,10 +36,6 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     }
   }),
   Query: {
-    test() {
-      return 'Hello World!';
-    },
-
     users(_root, _args, { dataSources: { userAPI } }) {
       return userAPI.getAllUsers();
     },
@@ -54,6 +50,14 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
 
     exercise(_root, { id }, { dataSources: { exerciseAPI } }) {
       return exerciseAPI.getExerciseById(id);
+    },
+
+    exerciseCategory(_root, { id }, { dataSources: { exerciseCategoryAPI } }) {
+      return exerciseCategoryAPI.getExerciseCategory(id);
+    },
+
+    exerciseCategories(_root, _args, { dataSources: { exerciseCategoryAPI } }) {
+      return exerciseCategoryAPI.getExerciseCategories();
     },
 
     muscles(_root, _args, { dataSources: { muscleAPI } }) {
@@ -130,18 +134,16 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       return userAPI.getScheduledWorkoutsForUser(id);
     },
 
-    sentWorkoutInvitations({ id }, { filter }, { dataSources: { userAPI } }) {
-      if (filter && filter.status) {
-        return userAPI.getSentWorkoutInvitationsForUser(id, filter.status);
-      }
-      return userAPI.getSentWorkoutInvitationsForUser(id);
+    sentWorkoutInvitations({ id }, { filter, pagination }, { dataSources: { userAPI } }) {
+      const params = {
+        ...filter,
+        ...pagination
+      };
+      return userAPI.getSentWorkoutInvitationsForUser(id, params);
     },
 
     receivedWorkoutInvitations({ id }, { filter }, { dataSources: { userAPI } }) {
-      if (filter && filter.status) {
-        return userAPI.getReceivedWorkoutInvitationsForUser(id, filter.status);
-      }
-      return userAPI.getReceivedWorkoutInvitationsForUser(id);
+      return userAPI.getReceivedWorkoutInvitationsForUser(id, filter || {});
     }
   },
   ExerciseGroup: {
@@ -158,46 +160,22 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     }
   },
   Muscle: {
-    async primaryExercises({ id }, _args, { dataSources: { exerciseAPI } }) {
-      const exercises = await exerciseAPI.getExercises();
-
-      const exercisesForMuscle = exercises.filter(
-        exercise => exercise.primaryMuscle && exercise.primaryMuscle.id === id
-      );
-
-      return exercisesForMuscle;
+    primaryExercises({ id }, _args, { dataSources: { muscleAPI } }) {
+      return muscleAPI.getPrimaryExercisesForMuscle(id);
     },
 
-    async secondaryExercises({ id }, _args, { dataSources: { exerciseAPI } }) {
-      const exercises = await exerciseAPI.getExercises();
-
-      const exercisesForMuscle = exercises.filter(
-        exercise => exercise.secondaryMuscle && exercise.secondaryMuscle.id === id
-      );
-
-      return exercisesForMuscle;
+    secondaryExercises({ id }, _args, { dataSources: { muscleAPI } }) {
+      return muscleAPI.getSecondaryExercisesForMuscle(id);
     }
   },
   Equipment: {
-    async exercises({ id }, _args, { dataSources: { exerciseAPI } }) {
-      const exercises = await exerciseAPI.getExercises();
-
-      const exercisesForEquipment = exercises.filter(exercise =>
-        exercise.equipment.some(equipment => equipment.id === id)
-      );
-
-      return exercisesForEquipment;
+    exercises({ id }, _args, { dataSources: { equipmentAPI } }) {
+      return equipmentAPI.getExercisesForEquipment(id);
     }
   },
   ExerciseCategory: {
-    async exercises({ id }, _args, { dataSources: { exerciseAPI } }) {
-      const exercises = await exerciseAPI.getExercises();
-
-      const exercisesForCategory = exercises.filter(exercise =>
-        exercise.exerciseCategorys.some(category => category.id === id)
-      );
-
-      return exercisesForCategory;
+    exercises({ id }, _args, { dataSources: { exerciseCategoryAPI } }) {
+      return exerciseCategoryAPI.getExercisesForExerciseCategory(id);
     }
   },
   WorkoutInvitation: {
@@ -257,7 +235,7 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     },
 
     adHocExercises({ id }, _args, { dataSources: { workoutAPI } }) {
-      return workoutAPI.getScheduledWorkoutAdHocExercises(id) as any;
+      return workoutAPI.getScheduledWorkoutAdHocExercises(id);
     }
   },
   MutationResponse: {

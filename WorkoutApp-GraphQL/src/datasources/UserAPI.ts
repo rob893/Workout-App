@@ -7,7 +7,9 @@ import {
   RefreshTokenResponse
 } from '../models/workout-api/User';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
-import { WorkoutInvitation, ScheduledWorkoutDetailed, ScheduledWorkout } from '../models/workout-api/Workout';
+import { WorkoutInvitation, ScheduledWorkout } from '../models/workout-api/Workout';
+import { WorkoutInvitationQueryParams } from '../models/workout-api/queryParams';
+import { SchemaWorkoutInvitationPage } from '../models/schema';
 
 export class UserAPI extends WorkoutAppAPI {
   public getAllUsers(): Promise<User[]> {
@@ -24,18 +26,33 @@ export class UserAPI extends WorkoutAppAPI {
     return user;
   }
 
-  public getSentWorkoutInvitationsForUser(id: number, status?: string): Promise<WorkoutInvitation[]> {
-    if (status) {
-      return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations/sent?status=${status}`);
+  public async getSentWorkoutInvitationsForUser(
+    id: number,
+    queryParams: WorkoutInvitationQueryParams = {}
+  ): Promise<any> {
+    const query = WorkoutAppAPI.buildQuery(queryParams);
+    const requestUrl = `users/${id}/workoutInvitations/sent?${query}`;
+    const workoutInvitations = await this.get<WorkoutInvitation[]>(requestUrl);
+    const reqres = this.requestMap.get(`${this.baseURL}/${requestUrl}`);
+    let pageInfo: any = {};
+    if (reqres) {
+      pageInfo.pageNumber = reqres.response.headers.get('X-Pagination-PageNumber');
+      pageInfo.pageSize = reqres.response.headers.get('X-Pagination-PageSize');
+      pageInfo.totalItems = reqres.response.headers.get('X-Pagination-TotalItems');
+      pageInfo.totalPages = reqres.response.headers.get('X-Pagination-TotalPages');
     }
-    return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations/sent`);
+    return {
+      workoutInvitations,
+      pageInfo
+    };
   }
 
-  public getReceivedWorkoutInvitationsForUser(id: number, status?: string): Promise<WorkoutInvitation[]> {
-    if (status) {
-      return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations?status=${status}`);
-    }
-    return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations`);
+  public getReceivedWorkoutInvitationsForUser(
+    id: number,
+    queryParams: WorkoutInvitationQueryParams = {}
+  ): Promise<WorkoutInvitation[]> {
+    const query = WorkoutAppAPI.buildQuery(queryParams);
+    return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations?${query}`);
   }
 
   public registerUser(userToCreate: UserToRegister): Promise<RegisterUserResponse> {

@@ -11,6 +11,7 @@ import { WorkoutAPI } from './datasources/WorkoutAPI';
 import { TypeGuards } from './helpers/TypeGuards';
 import { DateFormatDirective } from './helpers/DateFormatDirective';
 import { JwtClaims } from './models/WorkoutAppContext';
+import { ExerciseCategoryAPI } from './datasources/ExerciseCategoryAPI';
 
 async function start(): Promise<void> {
   dotenv.config();
@@ -77,7 +78,8 @@ async function start(): Promise<void> {
       exerciseAPI: new ExerciseAPI(),
       muscleAPI: new MuscleAPI(),
       equipmentAPI: new EquipmentAPI(),
-      workoutAPI: new WorkoutAPI()
+      workoutAPI: new WorkoutAPI(),
+      exerciseCategoryAPI: new ExerciseCategoryAPI()
     })
   });
 

@@ -5,6 +5,7 @@ import { ExerciseAPI } from '../datasources/ExerciseAPI';
 import { MuscleAPI } from '../datasources/MuscleAPI';
 import { EquipmentAPI } from '../datasources/EquipmentAPI';
 import { WorkoutAPI } from '../datasources/WorkoutAPI';
+import { ExerciseCategoryAPI } from '../datasources/ExerciseCategoryAPI';
 
 export interface JwtClaims {
   nameid?: string;
@@ -28,5 +29,6 @@ export interface WorkoutAppContext {
     muscleAPI: MuscleAPI;
     equipmentAPI: EquipmentAPI;
     workoutAPI: WorkoutAPI;
+    exerciseCategoryAPI: ExerciseCategoryAPI;
   };
 }

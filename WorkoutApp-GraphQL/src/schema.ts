@@ -9,8 +9,11 @@ export const typeDefs = gql`
     success: Boolean!
   }
 
+  interface PaginatedResponse {
+    pageInfo: PageInfo!
+  }
+
   type Query {
-    test: String!
     user(id: Int!): User
     "Get the list of users"
     users: [User]!
@@ -74,7 +77,7 @@ export const typeDefs = gql`
     scheduledWorkouts: [ScheduledWorkout!]!
     ownedScheduledWorkouts: [ScheduledWorkout!]!
     favoriteExercises: [Exercise!]!
-    sentWorkoutInvitations(filter: WorkoutInvitationFilter): [WorkoutInvitation!]!
+    sentWorkoutInvitations(filter: WorkoutInvitationFilter, pagination: PaginationInput): WorkoutInvitationPage!
     receivedWorkoutInvitations(filter: WorkoutInvitationFilter): [WorkoutInvitation!]!
   }
 
@@ -88,6 +91,11 @@ export const typeDefs = gql`
     status: String!
     respondedAtDateTime(format: String, timeZone: String): DateTime
       @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
+  }
+
+  type WorkoutInvitationPage implements PaginatedResponse {
+    pageInfo: PageInfo!
+    workoutInvitations: [WorkoutInvitation!]!
   }
 
   type Workout {
@@ -125,6 +133,13 @@ export const typeDefs = gql`
     customWorkout: String
     adHocExercises: [ExerciseGroup!]!
     attendees: [User!]!
+  }
+
+  type PageInfo {
+    pageNumber: Int!
+    pageSize: Int!
+    totalItems: Int!
+    totalPages: Int!
   }
 
   type Exercise {
@@ -189,6 +204,11 @@ export const typeDefs = gql`
 
   input WorkoutInvitationFilter {
     status: WorkoutInvitationStatus
+  }
+
+  input PaginationInput {
+    pageNumber: Int!
+    pageSize: Int!
   }
 
   enum WorkoutInvitationStatus {

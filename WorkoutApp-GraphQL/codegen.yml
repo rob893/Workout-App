@@ -7,12 +7,12 @@ generates:
       # defaultMapper: DeepPartial<{T}>
       mappers:
         User: ./workout-api/User#User
-        Exercise: ./workout-api/Exercise#ExerciseDetailed
+        Exercise: ./workout-api/Exercise#Exercise
         Muscle: ./workout-api/Exercise#Muscle
         Equipment: ./workout-api/Exercise#Equipment
         ExerciseStep: ./workout-api/Exercise#ExerciseStep
         ExerciseCategory: ./workout-api/Exercise#ExerciseCategory
-        Workout: ./workout-api/Workout#WorkoutDetailed
+        Workout: ./workout-api/Workout#Workout
         WorkoutInvitation: ./workout-api/Workout#WorkoutInvitation
         ScheduledWorkout: ./workout-api/Workout#ScheduledWorkout
     plugins:

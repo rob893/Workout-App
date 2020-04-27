@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { User } from './workout-api/User';
-import { ExerciseDetailed, Muscle, Equipment, ExerciseStep, ExerciseCategory } from './workout-api/Exercise';
-import { WorkoutDetailed, WorkoutInvitation, ScheduledWorkout } from './workout-api/Workout';
+import { Exercise, Muscle, Equipment, ExerciseStep, ExerciseCategory } from './workout-api/Exercise';
+import { Workout, WorkoutInvitation, ScheduledWorkout } from './workout-api/Workout';
 export type Maybe<T> = T | null;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
@@ -20,9 +20,12 @@ export type SchemaMutationResponse = {
   success: Scalars['Boolean'];
 };
 
+export type SchemaPaginatedResponse = {
+  pageInfo: SchemaPageInfo;
+};
+
 export type SchemaQuery = {
   __typename?: 'Query';
-  test: Scalars['String'];
   user?: Maybe<SchemaUser>;
   /** Get the list of users */
   users: Array<Maybe<SchemaUser>>;
@@ -136,7 +139,7 @@ export type SchemaUser = {
   scheduledWorkouts: Array<SchemaScheduledWorkout>;
   ownedScheduledWorkouts: Array<SchemaScheduledWorkout>;
   favoriteExercises: Array<SchemaExercise>;
-  sentWorkoutInvitations: Array<SchemaWorkoutInvitation>;
+  sentWorkoutInvitations: SchemaWorkoutInvitationPage;
   receivedWorkoutInvitations: Array<SchemaWorkoutInvitation>;
 };
 
@@ -147,6 +150,7 @@ export type SchemaUserCreatedArgs = {
 
 export type SchemaUserSentWorkoutInvitationsArgs = {
   filter?: Maybe<SchemaWorkoutInvitationFilter>;
+  pagination?: Maybe<SchemaPaginationInput>;
 };
 
 export type SchemaUserReceivedWorkoutInvitationsArgs = {
@@ -168,6 +172,12 @@ export type SchemaWorkoutInvitation = {
 export type SchemaWorkoutInvitationRespondedAtDateTimeArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
+};
+
+export type SchemaWorkoutInvitationPage = SchemaPaginatedResponse & {
+  __typename?: 'WorkoutInvitationPage';
+  pageInfo: SchemaPageInfo;
+  workoutInvitations: Array<SchemaWorkoutInvitation>;
 };
 
 export type SchemaWorkout = {
@@ -228,6 +238,14 @@ export type SchemaScheduledWorkoutCompletedDateTimeArgs = {
 export type SchemaScheduledWorkoutScheduledDateTimeArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
+};
+
+export type SchemaPageInfo = {
+  __typename?: 'PageInfo';
+  pageNumber: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  totalItems: Scalars['Int'];
+  totalPages: Scalars['Int'];
 };
 
 export type SchemaExercise = {
@@ -297,6 +315,11 @@ export type SchemaRefreshTokenInput = {
 
 export type SchemaWorkoutInvitationFilter = {
   status?: Maybe<SchemaWorkoutInvitationStatus>;
+};
+
+export type SchemaPaginationInput = {
+  pageNumber: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 export enum SchemaWorkoutInvitationStatus {
@@ -387,6 +410,7 @@ export type SchemaResolversTypes = ResolversObject<{
     | SchemaResolversTypes['UserLoginResponse']
     | SchemaResolversTypes['CreateScheduledWorkoutResponse']
     | SchemaResolversTypes['StartScheduledWorkoutResponse'];
+  PaginatedResponse: SchemaResolversTypes['WorkoutInvitationPage'];
   Query: ResolverTypeWrapper<{}>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -409,12 +433,18 @@ export type SchemaResolversTypes = ResolversObject<{
   >;
   User: ResolverTypeWrapper<User>;
   WorkoutInvitation: ResolverTypeWrapper<WorkoutInvitation>;
-  Workout: ResolverTypeWrapper<WorkoutDetailed>;
+  WorkoutInvitationPage: ResolverTypeWrapper<
+    Omit<SchemaWorkoutInvitationPage, 'workoutInvitations'> & {
+      workoutInvitations: Array<SchemaResolversTypes['WorkoutInvitation']>;
+    }
+  >;
+  Workout: ResolverTypeWrapper<Workout>;
   ExerciseGroup: ResolverTypeWrapper<
     Omit<SchemaExerciseGroup, 'exercise'> & { exercise: SchemaResolversTypes['Exercise'] }
   >;
   ScheduledWorkout: ResolverTypeWrapper<ScheduledWorkout>;
-  Exercise: ResolverTypeWrapper<ExerciseDetailed>;
+  PageInfo: ResolverTypeWrapper<SchemaPageInfo>;
+  Exercise: ResolverTypeWrapper<Exercise>;
   Muscle: ResolverTypeWrapper<Muscle>;
   ExerciseStep: ResolverTypeWrapper<ExerciseStep>;
   Equipment: ResolverTypeWrapper<Equipment>;
@@ -424,6 +454,7 @@ export type SchemaResolversTypes = ResolversObject<{
   NewScheduledWorkout: SchemaNewScheduledWorkout;
   RefreshTokenInput: SchemaRefreshTokenInput;
   WorkoutInvitationFilter: SchemaWorkoutInvitationFilter;
+  PaginationInput: SchemaPaginationInput;
   WorkoutInvitationStatus: SchemaWorkoutInvitationStatus;
 }>;
 
@@ -438,6 +469,7 @@ export type SchemaResolversParentTypes = ResolversObject<{
     | SchemaResolversParentTypes['UserLoginResponse']
     | SchemaResolversParentTypes['CreateScheduledWorkoutResponse']
     | SchemaResolversParentTypes['StartScheduledWorkoutResponse'];
+  PaginatedResponse: SchemaResolversParentTypes['WorkoutInvitationPage'];
   Query: {};
   Int: Scalars['Int'];
   Mutation: {};
@@ -452,10 +484,14 @@ export type SchemaResolversParentTypes = ResolversObject<{
   };
   User: User;
   WorkoutInvitation: WorkoutInvitation;
-  Workout: WorkoutDetailed;
+  WorkoutInvitationPage: Omit<SchemaWorkoutInvitationPage, 'workoutInvitations'> & {
+    workoutInvitations: Array<SchemaResolversParentTypes['WorkoutInvitation']>;
+  };
+  Workout: Workout;
   ExerciseGroup: Omit<SchemaExerciseGroup, 'exercise'> & { exercise: SchemaResolversParentTypes['Exercise'] };
   ScheduledWorkout: ScheduledWorkout;
-  Exercise: ExerciseDetailed;
+  PageInfo: SchemaPageInfo;
+  Exercise: Exercise;
   Muscle: Muscle;
   ExerciseStep: ExerciseStep;
   Equipment: Equipment;
@@ -465,6 +501,7 @@ export type SchemaResolversParentTypes = ResolversObject<{
   NewScheduledWorkout: SchemaNewScheduledWorkout;
   RefreshTokenInput: SchemaRefreshTokenInput;
   WorkoutInvitationFilter: SchemaWorkoutInvitationFilter;
+  PaginationInput: SchemaPaginationInput;
   WorkoutInvitationStatus: SchemaWorkoutInvitationStatus;
 }>;
 
@@ -500,11 +537,18 @@ export type SchemaMutationResponseResolvers<
   success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
 }>;
 
+export type SchemaPaginatedResponseResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['PaginatedResponse'] = SchemaResolversParentTypes['PaginatedResponse']
+> = ResolversObject<{
+  __resolveType: TypeResolveFn<'WorkoutInvitationPage', ParentType, ContextType>;
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+}>;
+
 export type SchemaQueryResolvers<
   ContextType = any,
   ParentType extends SchemaResolversParentTypes['Query'] = SchemaResolversParentTypes['Query']
 > = ResolversObject<{
-  test?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<
     Maybe<SchemaResolversTypes['User']>,
     ParentType,
@@ -653,7 +697,7 @@ export type SchemaUserResolvers<
   ownedScheduledWorkouts?: Resolver<Array<SchemaResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
   favoriteExercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
   sentWorkoutInvitations?: Resolver<
-    Array<SchemaResolversTypes['WorkoutInvitation']>,
+    SchemaResolversTypes['WorkoutInvitationPage'],
     ParentType,
     ContextType,
     RequireFields<SchemaUserSentWorkoutInvitationsArgs, never>
@@ -684,6 +728,15 @@ export type SchemaWorkoutInvitationResolvers<
     ContextType,
     RequireFields<SchemaWorkoutInvitationRespondedAtDateTimeArgs, never>
   >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaWorkoutInvitationPageResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['WorkoutInvitationPage'] = SchemaResolversParentTypes['WorkoutInvitationPage']
+> = ResolversObject<{
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  workoutInvitations?: Resolver<Array<SchemaResolversTypes['WorkoutInvitation']>, ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -756,6 +809,17 @@ export type SchemaScheduledWorkoutResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
+export type SchemaPageInfoResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['PageInfo'] = SchemaResolversParentTypes['PageInfo']
+> = ResolversObject<{
+  pageNumber?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  pageSize?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
 export type SchemaExerciseResolvers<
   ContextType = any,
   ParentType extends SchemaResolversParentTypes['Exercise'] = SchemaResolversParentTypes['Exercise']
@@ -814,6 +878,7 @@ export type SchemaExerciseCategoryResolvers<
 export type SchemaResolvers<ContextType = any> = ResolversObject<{
   DateTime?: GraphQLScalarType;
   MutationResponse?: SchemaMutationResponseResolvers;
+  PaginatedResponse?: SchemaPaginatedResponseResolvers;
   Query?: SchemaQueryResolvers<ContextType>;
   Mutation?: SchemaMutationResolvers<ContextType>;
   RefreshTokenResponse?: SchemaRefreshTokenResponseResolvers<ContextType>;
@@ -823,9 +888,11 @@ export type SchemaResolvers<ContextType = any> = ResolversObject<{
   StartScheduledWorkoutResponse?: SchemaStartScheduledWorkoutResponseResolvers<ContextType>;
   User?: SchemaUserResolvers<ContextType>;
   WorkoutInvitation?: SchemaWorkoutInvitationResolvers<ContextType>;
+  WorkoutInvitationPage?: SchemaWorkoutInvitationPageResolvers<ContextType>;
   Workout?: SchemaWorkoutResolvers<ContextType>;
   ExerciseGroup?: SchemaExerciseGroupResolvers<ContextType>;
   ScheduledWorkout?: SchemaScheduledWorkoutResolvers<ContextType>;
+  PageInfo?: SchemaPageInfoResolvers<ContextType>;
   Exercise?: SchemaExerciseResolvers<ContextType>;
   Muscle?: SchemaMuscleResolvers<ContextType>;
   ExerciseStep?: SchemaExerciseStepResolvers<ContextType>;
