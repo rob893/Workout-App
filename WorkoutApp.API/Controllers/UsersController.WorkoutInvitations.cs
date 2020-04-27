@@ -34,7 +34,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{userId}/workoutInvitations/sent")]
-        public async Task<ActionResult<IEnumerable<WorkoutInvitationForReturnDto>>> GetSentWorkoutInvitationsForUserAsync(int userId, [FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<WorkoutInvitationForReturnDto>>> GetSentWorkoutInvitationsForUserAsync(int userId, [FromQuery] PaginationParams searchParams, string status)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -45,7 +45,8 @@ namespace WorkoutApp.API.Controllers
             {
                 PageNumber = searchParams.PageNumber,
                 PageSize = searchParams.PageSize,
-                InviterId = userId
+                InviterId = userId,
+                Status = status
             };
 
             var invitations = await workoutInvitationRepository.SearchAsync(invSearchParams);

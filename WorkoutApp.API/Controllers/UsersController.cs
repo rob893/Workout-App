@@ -55,6 +55,12 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<UserForReturnDto>> GetUserAsync(int id)
         {
             var user = await userRepository.GetByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(new ProblemDetailsWithErrors($"User with id {id} does not exist."));
+            }
+
             var userToReturn = mapper.Map<UserForReturnDto>(user);
 
             return Ok(userToReturn);
@@ -63,10 +69,16 @@ namespace WorkoutApp.API.Controllers
         [HttpGet("{id}/detailed")]
         public async Task<ActionResult<UserForReturnDetailedDto>> GetUserDetailedAsync(int id)
         {
-            var users = await userRepository.GetByIdDetailedAsync(id);
-            var usersToReturn = mapper.Map<UserForReturnDetailedDto>(users);
+            var user = await userRepository.GetByIdDetailedAsync(id);
 
-            return Ok(usersToReturn);
+            if (user == null)
+            {
+                return NotFound(new ProblemDetailsWithErrors($"User with id {id} does not exist."));
+            }
+
+            var userToReturn = mapper.Map<UserForReturnDetailedDto>(user);
+
+            return Ok(userToReturn);
         }
 
         [Authorize(Policy = "RequireAdminRole")]

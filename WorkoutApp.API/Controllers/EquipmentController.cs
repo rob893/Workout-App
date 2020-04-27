@@ -51,6 +51,12 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<EquipmentForReturnDto>> GetSingleEquipmentAsync(int id)
         {
             var equipment = await equipmentRepository.GetByIdAsync(id);
+
+            if (equipment == null)
+            {
+                return NotFound();
+            }
+
             var equipmentToReturn = mapper.Map<EquipmentForReturnDto>(equipment);
 
             return Ok(equipmentToReturn);
@@ -60,6 +66,12 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<EquipmentForReturnDetailedDto>> GetSingleEquipmentDetailedAsync(int id)
         {
             var equipment = await equipmentRepository.GetByIdDetailedAsync(id);
+
+            if (equipment == null)
+            {
+                return NotFound();
+            }
+
             var equipmentToReturn = mapper.Map<EquipmentForReturnDetailedDto>(equipment);
 
             return Ok(equipmentToReturn);

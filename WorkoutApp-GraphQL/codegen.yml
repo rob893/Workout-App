@@ -14,6 +14,7 @@ generates:
         ExerciseCategory: ./workout-api/Exercise#ExerciseCategory
         Workout: ./workout-api/Workout#WorkoutDetailed
         WorkoutInvitation: ./workout-api/Workout#WorkoutInvitation
+        ScheduledWorkout: ./workout-api/Workout#ScheduledWorkout
     plugins:
       - typescript
       - typescript-resolvers

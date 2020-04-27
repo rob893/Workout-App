@@ -56,7 +56,7 @@ namespace WorkoutApp.API.Controllers
 
             if (workout == null)
             {
-                return NotFound();
+                return NotFound(new ProblemDetailsWithErrors($"No workout with id {id} exists."));
             }
 
             var workoutToReturn = mapper.Map<WorkoutForReturnDto>(workout);
@@ -71,7 +71,7 @@ namespace WorkoutApp.API.Controllers
 
             if (workout == null)
             {
-                return NotFound();
+                return NotFound(new ProblemDetailsWithErrors($"No workout with id {id} exists."));
             }
 
             var workoutToReturn = mapper.Map<WorkoutForReturnDetailedDto>(workout);

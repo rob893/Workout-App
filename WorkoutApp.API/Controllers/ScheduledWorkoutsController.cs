@@ -250,6 +250,23 @@ namespace WorkoutApp.API.Controllers
             return Ok(workoutToReturn);
         }
 
+        [HttpGet("{id}/adHocExercises")]
+        public async Task<ActionResult<IEnumerable<ExerciseGroupForReturnDto>>> GetScheduledWorkoutAdHocExercisesAsync(int id, [FromQuery] PaginationParams searchParams)
+        {
+            var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            var exercises = await scheduledWorkoutRepository.GetScheduledWorkoutAdHocExercisesAsync(id, searchParams);
+            Response.AddPagination(exercises);
+            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseGroupForReturnDto>>(exercises);
+
+            return Ok(exercisesToReturn);
+        }
+
         [HttpGet("{id}/attendees")]
         public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetScheduledWorkoutAttendeesAsync(int id, [FromQuery] PaginationParams searchParams)
         {
@@ -323,7 +340,7 @@ namespace WorkoutApp.API.Controllers
             {
                 return BadRequest(new ProblemDetailsWithErrors("Could not add attendee.", 400, Request));
             }
-            
+
             var attendeeToReturn = mapper.Map<ScheduledWorkoutUserForReturnDto>(newAttendee);
 
             return CreatedAtRoute("GetScheduledWorkoutAttendee", new { userId = attendeeToReturn.UserId }, attendeeToReturn);
@@ -361,7 +378,7 @@ namespace WorkoutApp.API.Controllers
             {
                 return BadRequest(new ProblemDetailsWithErrors("Could not remove attendee.", 400, Request));
             }
-            
+
             return NoContent();
         }
     }

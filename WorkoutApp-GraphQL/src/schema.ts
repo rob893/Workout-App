@@ -71,12 +71,11 @@ export const typeDefs = gql`
     email: String!
     created(format: String, timeZone: String): DateTime!
       @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
-    createdWorkouts: [Workout!]!
     scheduledWorkouts: [ScheduledWorkout!]!
     ownedScheduledWorkouts: [ScheduledWorkout!]!
     favoriteExercises: [Exercise!]!
-    sentWorkoutInvitations: [WorkoutInvitation!]!
-    receivedWorkoutInvitations: [WorkoutInvitation!]!
+    sentWorkoutInvitations(filter: WorkoutInvitationFilter): [WorkoutInvitation!]!
+    receivedWorkoutInvitations(filter: WorkoutInvitationFilter): [WorkoutInvitation!]!
   }
 
   type WorkoutInvitation {
@@ -186,5 +185,15 @@ export const typeDefs = gql`
     token: String!
     refreshToken: String!
     source: String!
+  }
+
+  input WorkoutInvitationFilter {
+    status: WorkoutInvitationStatus
+  }
+
+  enum WorkoutInvitationStatus {
+    ACCEPTED
+    DECLINED
+    PENDING
   }
 `;

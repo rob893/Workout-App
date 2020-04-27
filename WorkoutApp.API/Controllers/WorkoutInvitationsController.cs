@@ -62,7 +62,7 @@ namespace WorkoutApp.API.Controllers
 
             if (invitation == null)
             {
-                return NotFound();
+                return NotFound(new ProblemDetailsWithErrors($"No invitation with id {id} exists."));
             }
 
             var invitationForReturn = mapper.Map<WorkoutInvitationForReturnDto>(invitation);
@@ -77,7 +77,7 @@ namespace WorkoutApp.API.Controllers
 
             if (invitation == null)
             {
-                return NotFound();
+                return NotFound(new ProblemDetailsWithErrors($"No invitation with id {id} exists."));
             }
 
             var invitationForReturn = mapper.Map<WorkoutInvitationForReturnDetailedDto>(invitation);

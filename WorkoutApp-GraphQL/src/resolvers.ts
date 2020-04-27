@@ -125,21 +125,22 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       };
     }
   },
-  MutationResponse: {
-    __resolveType() {
-      return null;
-    }
-  },
   User: {
     scheduledWorkouts({ id }, _args, { dataSources: { userAPI } }) {
       return userAPI.getScheduledWorkoutsForUser(id);
     },
 
-    sentWorkoutInvitations({ id }, _args, { dataSources: { userAPI } }) {
+    sentWorkoutInvitations({ id }, { filter }, { dataSources: { userAPI } }) {
+      if (filter && filter.status) {
+        return userAPI.getSentWorkoutInvitationsForUser(id, filter.status);
+      }
       return userAPI.getSentWorkoutInvitationsForUser(id);
     },
 
-    receivedWorkoutInvitations({ id }, _args, { dataSources: { userAPI } }) {
+    receivedWorkoutInvitations({ id }, { filter }, { dataSources: { userAPI } }) {
+      if (filter && filter.status) {
+        return userAPI.getReceivedWorkoutInvitationsForUser(id, filter.status);
+      }
       return userAPI.getReceivedWorkoutInvitationsForUser(id);
     }
   },
@@ -197,6 +198,71 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       );
 
       return exercisesForCategory;
+    }
+  },
+  WorkoutInvitation: {
+    async invitee({ inviteeId }, _args, { dataSources: { userAPI } }) {
+      const invitee = await userAPI.getUserById(inviteeId);
+
+      if (invitee === null) {
+        throw new Error(`No user found for id ${inviteeId}`);
+      }
+
+      return invitee;
+    },
+
+    async inviter({ inviterId }, _args, { dataSources: { userAPI } }) {
+      const inviter = await userAPI.getUserById(inviterId);
+
+      if (inviter === null) {
+        throw new Error(`No user found for id ${inviterId}`);
+      }
+
+      return inviter;
+    },
+
+    async scheduledWorkout({ scheduledWorkoutId }, _args, { dataSources: { workoutAPI } }) {
+      const workout = await workoutAPI.getScheduledWorkout(scheduledWorkoutId);
+
+      if (workout === null) {
+        throw new Error(`No scheduled workout found for id ${scheduledWorkoutId}`);
+      }
+
+      return workout;
+    }
+  },
+  ScheduledWorkout: {
+    async workout({ workoutId }, _args, { dataSources: { workoutAPI } }) {
+      const workout = await workoutAPI.getWorkoutDetailed(workoutId);
+
+      if (workout === null) {
+        throw new Error(`No workout found for id ${workoutId}`);
+      }
+
+      return workout;
+    },
+
+    attendees({ id }, _args, { dataSources: { workoutAPI } }) {
+      return workoutAPI.getScheduledWorkoutAttendees(id);
+    },
+
+    async scheduledByUser({ scheduledByUserId }, _args, { dataSources: { userAPI } }) {
+      const scheduledBy = await userAPI.getUserById(scheduledByUserId);
+
+      if (scheduledBy === null) {
+        throw new Error(`No user found for id ${scheduledByUserId}`);
+      }
+
+      return scheduledBy;
+    },
+
+    adHocExercises({ id }, _args, { dataSources: { workoutAPI } }) {
+      return workoutAPI.getScheduledWorkoutAdHocExercises(id) as any;
+    }
+  },
+  MutationResponse: {
+    __resolveType() {
+      return null;
     }
   }
 };

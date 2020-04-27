@@ -7,7 +7,7 @@ import {
   RefreshTokenResponse
 } from '../models/workout-api/User';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
-import { WorkoutInvitation } from '../models/workout-api/Workout';
+import { WorkoutInvitation, ScheduledWorkoutDetailed, ScheduledWorkout } from '../models/workout-api/Workout';
 
 export class UserAPI extends WorkoutAppAPI {
   public getAllUsers(): Promise<User[]> {
@@ -24,11 +24,17 @@ export class UserAPI extends WorkoutAppAPI {
     return user;
   }
 
-  public getSentWorkoutInvitationsForUser(id: number): Promise<WorkoutInvitation[]> {
+  public getSentWorkoutInvitationsForUser(id: number, status?: string): Promise<WorkoutInvitation[]> {
+    if (status) {
+      return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations/sent?status=${status}`);
+    }
     return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations/sent`);
   }
 
-  public getReceivedWorkoutInvitationsForUser(id: number): Promise<WorkoutInvitation[]> {
+  public getReceivedWorkoutInvitationsForUser(id: number, status?: string): Promise<WorkoutInvitation[]> {
+    if (status) {
+      return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations?status=${status}`);
+    }
     return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations`);
   }
 
@@ -40,8 +46,8 @@ export class UserAPI extends WorkoutAppAPI {
     return this.post<UserLoginResponse>('auth/login', { ...userLogin });
   }
 
-  public getScheduledWorkoutsForUser(userId: number): Promise<any[]> {
-    return this.get(`users/${userId}/scheduledWorkouts/detailed`);
+  public getScheduledWorkoutsForUser(userId: number): Promise<ScheduledWorkout[]> {
+    return this.get(`users/${userId}/scheduledWorkouts`);
   }
 
   public refreshToken(refreshTokenInput: {

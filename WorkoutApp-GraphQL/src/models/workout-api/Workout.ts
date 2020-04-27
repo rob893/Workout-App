@@ -57,3 +57,38 @@ export interface WorkoutInvitation {
   url: string;
   detailedUrl: string;
 }
+
+export interface ScheduledWorkout {
+  scheduledByUserId: number;
+  scheduledByUserUrl: string;
+  workoutId: number;
+  workoutUrl: string;
+  attendeesUrl: string;
+  adHocExercisesUrl: string;
+  customWorkout: string | null;
+  startedDateTime: string | null;
+  completedDateTime: string | null;
+  scheduledDateTime: string;
+  id: number;
+  url: string;
+  detailedUrl: string;
+}
+
+export interface ScheduledWorkoutDetailed {
+  scheduledByUser: User;
+  attendees: User[];
+  workout: Workout;
+  adHocExercises: Exercise[];
+  scheduledByUserId: number;
+  scheduledByUserUrl: string;
+  workoutId: number;
+  workoutUrl: string;
+  attendeesUrl: string;
+  customWorkout: string | null;
+  startedDateTime: string | null;
+  completedDateTime: string | null;
+  scheduledDateTime: string;
+  id: number;
+  url: string;
+  detailedUrl: string;
+}

@@ -14,7 +14,7 @@ export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
     }
   }
 
-  protected didReceiveResponse<TResult = any>(response: Response, request: Request): Promise<TResult> {
+  protected didReceiveResponse<TResult>(response: Response, request: Request): Promise<TResult> {
     if (
       response.headers.has('Content-Type') &&
       response.headers.get('Content-Type')?.startsWith('application/problem+json')
@@ -24,6 +24,10 @@ export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
 
     if (response.status === 401 && response.headers.has('X-Token-Expired')) {
       throw new AuthenticationError('token-expired');
+    }
+
+    if (response.status === 404) {
+      return null as any;
     }
 
     return super.didReceiveResponse(response, request);

@@ -23,7 +23,7 @@ namespace WorkoutApp.API.Controllers
         private readonly IMapper mapper;
 
 
-        public ExercisesController(ExerciseRepository exerciseRepository, MuscleRepository muscleRepository, 
+        public ExercisesController(ExerciseRepository exerciseRepository, MuscleRepository muscleRepository,
             EquipmentRepository equipmentRepository, ExerciseCategoryRepository exerciseCategoryRepository, IMapper mapper)
         {
             this.exerciseRepository = exerciseRepository;
@@ -66,6 +66,12 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<ExerciseForReturnDto>> GetExerciseAsync(int id)
         {
             var exercise = await exerciseRepository.GetByIdAsync(id);
+
+            if (exercise == null)
+            {
+                return NotFound();
+            }
+
             var exerciseToReturn = mapper.Map<ExerciseForReturnDto>(exercise);
 
             return Ok(exerciseToReturn);
@@ -75,6 +81,12 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<ExerciseForReturnDetailedDto>> GetExerciseDetailedAsync(int id)
         {
             var exercise = await exerciseRepository.GetByIdDetailedAsync(id);
+
+            if (exercise == null)
+            {
+                return NotFound();
+            }
+
             var exerciseToReturn = mapper.Map<ExerciseForReturnDetailedDto>(exercise);
 
             return Ok(exerciseToReturn);
