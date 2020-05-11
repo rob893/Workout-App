@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WorkoutApp.API.Helpers;
@@ -10,18 +11,28 @@ namespace WorkoutApp.API.Models.Dtos
         public IEnumerable<Edge<T>> Edges { get; set; }
         public IEnumerable<T> Nodes { get; set; }
         public PageInfo PageInfo { get; set; }
-        public long? TotalCount { get; set; }
+        public int? TotalCount { get; set; }
 
+
+        public CursorPaginatedResponse(IEnumerable<T> items, string startCursor, string endCursor, bool hasNextPage, bool hasPreviousPage, int? totalCount)
+        {
+            SetEdges(items);
+            Nodes = items.ToList();
+            PageInfo = new PageInfo
+            {
+                StartCursor = startCursor,
+                EndCursor = endCursor,
+                HasNextPage = hasNextPage,
+                HasPreviousPage = hasPreviousPage
+            };
+            TotalCount = totalCount;
+        }
 
         public CursorPaginatedResponse(CursorPagedList<T> items)
         {
-            Edges = items.Select(item => new Edge<T>
-            {
-                Cursor = item.Id.ConvertInt32ToBase64(),
-                Node = item
-            });
+            SetEdges(items);
 
-            Nodes = items;
+            Nodes = items.ToList();
             PageInfo = new PageInfo
             {
                 StartCursor = items.StartCursor,
@@ -29,7 +40,23 @@ namespace WorkoutApp.API.Models.Dtos
                 HasNextPage = items.HasNextPage,
                 HasPreviousPage = items.HasPreviousPage
             };
-            TotalCount = items.TotalItems;
+            TotalCount = items.TotalCount;
+        }
+
+        public static CursorPaginatedResponse<T> CreateFrom<TSource>(CursorPagedList<TSource> items, Func<IEnumerable<TSource>, IEnumerable<T>> mappingFunction) where TSource : class, IIdentifiable
+        {
+            var mappedItems = mappingFunction(items);
+
+            return new CursorPaginatedResponse<T>(mappedItems, items.StartCursor, items.EndCursor, items.HasNextPage, items.HasPreviousPage, items.TotalCount);
+        }
+
+        private void SetEdges(IEnumerable<T> items)
+        {
+            Edges = items.Select(item => new Edge<T>
+            {
+                Cursor = item.Id.ConvertInt32ToBase64(),
+                Node = item
+            });
         }
     }
 

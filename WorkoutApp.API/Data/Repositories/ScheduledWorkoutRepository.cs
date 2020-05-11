@@ -12,7 +12,7 @@ namespace WorkoutApp.API.Data.Repositories
     {
         public ScheduledWorkoutRepository(DataContext context) : base(context) { }
 
-        public Task<OffsetPagedList<User>> GetScheduledWorkoutAttendeesAsync(int scheduledWorkoutId, PaginationParams searchParams)
+        public Task<OffsetPagedList<User>> GetScheduledWorkoutAttendeesAsync(int scheduledWorkoutId, OffsetPaginationParams searchParams)
         {
             IQueryable<User> query = context.ScheduledWorkouts
                 .Where(wo => wo.Id == scheduledWorkoutId)
@@ -21,7 +21,7 @@ namespace WorkoutApp.API.Data.Repositories
             return OffsetPagedList<User>.CreateAsync(query, searchParams);
         }
 
-        public Task<OffsetPagedList<ExerciseGroup>> GetScheduledWorkoutAdHocExercisesAsync(int scheduledWorkoutId, PaginationParams searchParams)
+        public Task<OffsetPagedList<ExerciseGroup>> GetScheduledWorkoutAdHocExercisesAsync(int scheduledWorkoutId, OffsetPaginationParams searchParams)
         {
             IQueryable<ExerciseGroup> query = context.ExerciseGroups
                 .Where(eg => eg.ScheduledWorkout.Id == scheduledWorkoutId)

@@ -5,7 +5,7 @@ using WorkoutApp.API.Models.QueryParams;
 
 namespace WorkoutApp.API.Data.Repositories
 {
-    public class MuscleRepository : Repository<Muscle, PaginationParams>
+    public class MuscleRepository : Repository<Muscle, CursorPaginationParams>
     {
         public MuscleRepository(DataContext context) : base(context) { }
 

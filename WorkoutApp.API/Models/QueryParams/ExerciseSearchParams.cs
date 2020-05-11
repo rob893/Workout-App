@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WorkoutApp.API.Models.QueryParams
 {
-    public class ExerciseSearchParams : PaginationParams
+    public class ExerciseSearchParams : CursorPaginationParams
     {
         public List<int> ExerciseCategoryId { get; set; } = new List<int>();
         public List<int> EquipmentId { get; set; } = new List<int>();

@@ -22,26 +22,24 @@ namespace WorkoutApp.API.Controllers
 
         public MusclesController(MuscleRepository muscleRepository, ExerciseRepository exerciseRepository, IMapper mapper)
         {
-            this.muscleRepository = muscleRepository; 
+            this.muscleRepository = muscleRepository;
             this.exerciseRepository = exerciseRepository;
-            this.mapper = mapper;   
+            this.mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MuscleForReturnDto>>> GetMusclesAsync([FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<MuscleForReturnDto>>> GetMusclesAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var muscles = await muscleRepository.SearchAsync(searchParams);
-            Response.AddPagination(muscles);
             var musclesToReturn = mapper.Map<IEnumerable<MuscleForReturnDto>>(muscles);
 
             return Ok(musclesToReturn);
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<IEnumerable<MuscleForReturnDetailedDto>>> GetMusclesDetailedAsync([FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<MuscleForReturnDetailedDto>>> GetMusclesDetailedAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var muscles = await muscleRepository.SearchDetailedAsync(searchParams);
-            Response.AddPagination(muscles);
             var musclesToReturn = mapper.Map<IEnumerable<MuscleForReturnDetailedDto>>(muscles);
 
             return Ok(musclesToReturn);
@@ -58,7 +56,7 @@ namespace WorkoutApp.API.Controllers
             }
 
             var muscleToReturn = mapper.Map<MuscleForReturnDto>(muscle);
-            
+
             return Ok(muscleToReturn);
         }
 
@@ -73,41 +71,45 @@ namespace WorkoutApp.API.Controllers
             }
 
             var muscleToReturn = mapper.Map<MuscleForReturnDetailedDto>(muscle);
-            
+
             return Ok(muscleToReturn);
         }
 
         [HttpGet("{id}/primaryExercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetPrimaryExercisesForMuscleAsync(int id, [FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetPrimaryExercisesForMuscleAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var exerciseSearchParams = new ExerciseSearchParams
             {
-                PageNumber = searchParams.PageNumber,
-                PageSize = searchParams.PageSize,
+                First = searchParams.First,
+                After = searchParams.After,
+                Last = searchParams.Last,
+                Before = searchParams.Before,
+                IncludeTotal = searchParams.IncludeTotal,
                 PrimaryMuscleId = new List<int> { id }
             };
 
             var exercises = await exerciseRepository.SearchAsync(exerciseSearchParams);
-            Response.AddPagination(exercises);
             var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
-            
+
             return Ok(exercisesToReturn);
         }
 
         [HttpGet("{id}/secondaryExercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetSecondaryExercisesForMuscleAsync(int id, [FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetSecondaryExercisesForMuscleAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var exerciseSearchParams = new ExerciseSearchParams
             {
-                PageNumber = searchParams.PageNumber,
-                PageSize = searchParams.PageSize,
+                First = searchParams.First,
+                After = searchParams.After,
+                Last = searchParams.Last,
+                Before = searchParams.Before,
+                IncludeTotal = searchParams.IncludeTotal,
                 SecondaryMuscleId = new List<int> { id }
             };
 
             var exercises = await exerciseRepository.SearchAsync(exerciseSearchParams);
-            Response.AddPagination(exercises);
             var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
-            
+
             return Ok(exercisesToReturn);
         }
 
@@ -125,7 +127,7 @@ namespace WorkoutApp.API.Controllers
             }
 
             var muscleToReturn = mapper.Map<MuscleForReturnDto>(newMuscle);
-            
+
             return CreatedAtRoute("GetMuscle", new { id = newMuscle.Id }, muscleToReturn);
         }
 
@@ -143,9 +145,9 @@ namespace WorkoutApp.API.Controllers
 
             if (!await muscleRepository.SaveAllAsync())
             {
-               return BadRequest(new ProblemDetailsWithErrors("Failed to delete the muscle.", 400, Request)); 
+                return BadRequest(new ProblemDetailsWithErrors("Failed to delete the muscle.", 400, Request));
             }
-            
+
             return NoContent();
         }
 

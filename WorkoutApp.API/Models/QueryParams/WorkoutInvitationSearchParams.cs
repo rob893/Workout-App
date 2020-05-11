@@ -1,6 +1,6 @@
 namespace WorkoutApp.API.Models.QueryParams
 {
-    public class WorkoutInvitationSearchParams : PaginationParams
+    public class WorkoutInvitationSearchParams : CursorPaginationParams
     {
         public string Status { get; set; }
         public int? InviteeId { get; set; }

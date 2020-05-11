@@ -36,7 +36,6 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDto>>> GetScheduledWorkoutsAsync([FromQuery] ScheduledWorkoutSearchParams searchParams)
         {
             var workouts = await scheduledWorkoutRepository.SearchAsync(searchParams);
-            Response.AddPagination(workouts);
             var workoutsToReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDto>>(workouts);
 
             return Ok(workoutsToReturn);
@@ -46,7 +45,6 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>> GetScheduledWorkoutsDetailedAsync([FromQuery] ScheduledWorkoutSearchParams searchParams)
         {
             var workouts = await scheduledWorkoutRepository.SearchDetailedAsync(searchParams);
-            Response.AddPagination(workouts);
             var workoutsToReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>(workouts);
 
             return Ok(workoutsToReturn);
@@ -251,7 +249,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/adHocExercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseGroupForReturnDto>>> GetScheduledWorkoutAdHocExercisesAsync(int id, [FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<ExerciseGroupForReturnDto>>> GetScheduledWorkoutAdHocExercisesAsync(int id, [FromQuery] OffsetPaginationParams searchParams)
         {
             var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
 
@@ -268,7 +266,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/attendees")]
-        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetScheduledWorkoutAttendeesAsync(int id, [FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetScheduledWorkoutAttendeesAsync(int id, [FromQuery] OffsetPaginationParams searchParams)
         {
             var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
 

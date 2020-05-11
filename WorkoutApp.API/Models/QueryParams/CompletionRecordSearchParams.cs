@@ -2,7 +2,7 @@ using System;
 
 namespace WorkoutApp.API.Models.QueryParams
 {
-    public class CompletionRecordSearchParams : PaginationParams
+    public class CompletionRecordSearchParams : CursorPaginationParams
     {
         public DateTimeOffset? MinStartDateTime { get; set; }
         public DateTimeOffset? MaxStartDateTime { get; set; }

@@ -14,16 +14,16 @@ namespace WorkoutApp.API.Helpers
         public bool HasPreviousPage { get; set; }
         public string StartCursor { get; set; }
         public string EndCursor { get; set; }
-        public int? TotalItems { get; set; }
+        public int? TotalCount { get; set; }
 
 
-        public CursorPagedList(IEnumerable<T> items, bool hasNextPage, bool hasPreviousPage, string startCursor, string endCursor, int? totalItems)
+        public CursorPagedList(IEnumerable<T> items, bool hasNextPage, bool hasPreviousPage, string startCursor, string endCursor, int? totalCount)
         {
             HasNextPage = hasNextPage;
             HasPreviousPage = hasPreviousPage;
             StartCursor = startCursor;
             EndCursor = endCursor;
-            TotalItems = totalItems;
+            TotalCount = totalCount;
             AddRange(items);
         }
 
@@ -34,21 +34,21 @@ namespace WorkoutApp.API.Helpers
                 throw new ArgumentException("Passing both `first` and `last` to paginate is not supported.");
             }
 
-            int? totalItems = null;
+            int? totalCount = null;
 
             if (includeTotal)
             {
-                totalItems = await source.CountAsync();
+                totalCount = await source.CountAsync();
             }
 
             if (first == null && last == null)
             {
-                List<T> items = await source.OrderBy(item => item.Id).ToListAsync();
+                var items = await source.OrderBy(item => item.Id).ToListAsync();
 
                 var startCursor = items.FirstOrDefault()?.Id.ConvertInt32ToBase64();
                 var endCursor = items.LastOrDefault()?.Id.ConvertInt32ToBase64();
 
-                return new CursorPagedList<T>(items, false, false, startCursor, endCursor, totalItems);
+                return new CursorPagedList<T>(items, false, false, startCursor, endCursor, totalCount);
             }
 
             if (first != null)
@@ -61,7 +61,7 @@ namespace WorkoutApp.API.Helpers
                 var afterId = after == null ? int.MinValue : after.ConvertToInt32FromBase64();
                 var beforeId = before == null ? int.MaxValue : before.ConvertToInt32FromBase64();
 
-                List<T> items = await source.Where(item => item.Id > afterId && item.Id < beforeId)
+                var items = await source.Where(item => item.Id > afterId && item.Id < beforeId)
                     .OrderBy(item => item.Id)
                     .Take(first.Value + 1).ToListAsync();
 
@@ -76,7 +76,7 @@ namespace WorkoutApp.API.Helpers
                 var startCursor = items.FirstOrDefault()?.Id.ConvertInt32ToBase64();
                 var endCursor = items.LastOrDefault()?.Id.ConvertInt32ToBase64();
 
-                return new CursorPagedList<T>(items, hasNextPage, hasPreviousPage, startCursor, endCursor, totalItems);
+                return new CursorPagedList<T>(items, hasNextPage, hasPreviousPage, startCursor, endCursor, totalCount);
             }
 
             if (last != null)
@@ -89,7 +89,7 @@ namespace WorkoutApp.API.Helpers
                 var afterId = after == null ? int.MinValue : after.ConvertToInt32FromBase64();
                 var beforeId = before == null ? int.MaxValue : before.ConvertToInt32FromBase64();
 
-                List<T> items = await source.Where(item => item.Id > afterId && item.Id < beforeId)
+                var items = await source.Where(item => item.Id > afterId && item.Id < beforeId)
                     .OrderByDescending(item => item.Id)
                     .Take(last.Value + 1).ToListAsync();
 
@@ -106,7 +106,7 @@ namespace WorkoutApp.API.Helpers
                 var startCursor = items.FirstOrDefault()?.Id.ConvertInt32ToBase64();
                 var endCursor = items.LastOrDefault()?.Id.ConvertInt32ToBase64();
 
-                return new CursorPagedList<T>(items, hasNextPage, hasPreviousPage, startCursor, endCursor, totalItems);
+                return new CursorPagedList<T>(items, hasNextPage, hasPreviousPage, startCursor, endCursor, totalCount);
             }
 
             throw new Exception("Error creating cursor paged list.");

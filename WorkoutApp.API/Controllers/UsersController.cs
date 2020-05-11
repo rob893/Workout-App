@@ -32,21 +32,19 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetUsersAsync([FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetUsersAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var users = await userRepository.SearchAsync(searchParams);
             var usersToReturn = mapper.Map<IEnumerable<UserForReturnDto>>(users);
-            Response.AddPagination(users);
 
             return Ok(usersToReturn);
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<IEnumerable<UserForReturnDetailedDto>>> GetUsersDetailedAsync([FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<UserForReturnDetailedDto>>> GetUsersDetailedAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var users = await userRepository.SearchDetailedAsync(searchParams);
             var usersToReturn = mapper.Map<IEnumerable<UserForReturnDetailedDto>>(users);
-            Response.AddPagination(users);
 
             return Ok(usersToReturn);
         }
@@ -83,11 +81,10 @@ namespace WorkoutApp.API.Controllers
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("roles")]
-        public async Task<ActionResult<RoleForReturnDto>> GetRolesAsync([FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<RoleForReturnDto>> GetRolesAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var roles = await userRepository.GetRolesAsync(searchParams);
             var rolesForReturn = mapper.Map<IEnumerable<RoleForReturnDto>>(roles);
-            Response.AddPagination(roles);
 
             return Ok(rolesForReturn);
         }
@@ -181,7 +178,6 @@ namespace WorkoutApp.API.Controllers
             }
 
             var workouts = await userRepository.GetScheduledWorkoutsForUserAsync(userId, searchParams);
-            Response.AddPagination(workouts);
             var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDto>>(workouts);
 
             return Ok(workoutsForReturn);
@@ -196,7 +192,6 @@ namespace WorkoutApp.API.Controllers
             }
 
             var workouts = await userRepository.GetScheduledWorkoutsForUserDetailedAsync(userId, searchParams);
-            Response.AddPagination(workouts);
             var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>(workouts);
 
             return Ok(workoutsForReturn);
@@ -206,7 +201,6 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<IEnumerable<object>>> GetWorkoutCompletionRecordsForUserAsync(int userId, [FromQuery] CompletionRecordSearchParams searchParams)
         {
             var records = await userRepository.GetWorkoutCompletionRecordsForUserAsync(userId, searchParams);
-            Response.AddPagination(records);
 
             return Ok(records);
         }

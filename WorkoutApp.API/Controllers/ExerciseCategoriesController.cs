@@ -24,14 +24,13 @@ namespace WorkoutApp.API.Controllers
         {
             this.exerciseCategoryRepository = exerciseCategoryRepository;
             this.exerciseRepository = exerciseRepository;
-            this.mapper = mapper;   
+            this.mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExerciseCategoryForReturnDto>>> GetExerciseCategoriesAsync([FromQuery] ExerciseCategorySearchParams searchParams)
         {
             var categories = await exerciseCategoryRepository.SearchAsync(searchParams);
-            Response.AddPagination(categories);
             var categoriesForReturn = mapper.Map<IEnumerable<ExerciseCategoryForReturnDto>>(categories);
 
             return Ok(categoriesForReturn);
@@ -41,7 +40,6 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<IEnumerable<ExerciseCategoryForReturnDetailedDto>>> GetExerciseCategoriesDetailedAsync([FromQuery] ExerciseCategorySearchParams searchParams)
         {
             var categories = await exerciseCategoryRepository.SearchDetailedAsync(searchParams);
-            Response.AddPagination(categories);
             var categoriesForReturn = mapper.Map<IEnumerable<ExerciseCategoryForReturnDetailedDto>>(categories);
 
             return Ok(categoriesForReturn);
@@ -58,7 +56,7 @@ namespace WorkoutApp.API.Controllers
             }
 
             var categoryForReturnDto = mapper.Map<ExerciseCategoryForReturnDto>(category);
-            
+
             return Ok(categoryForReturnDto);
         }
 
@@ -73,22 +71,24 @@ namespace WorkoutApp.API.Controllers
             }
 
             var categoryForReturnDto = mapper.Map<ExerciseCategoryForReturnDetailedDto>(category);
-            
+
             return Ok(categoryForReturnDto);
         }
 
         [HttpGet("{id}/exercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetExercisesForExerciseCategoryAsync(int id, [FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetExercisesForExerciseCategoryAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var exerciseSearchParams = new ExerciseSearchParams
             {
-                PageNumber = searchParams.PageNumber,
-                PageSize = searchParams.PageSize,
+                First = searchParams.First,
+                After = searchParams.After,
+                Last = searchParams.Last,
+                Before = searchParams.Before,
+                IncludeTotal = searchParams.IncludeTotal,
                 ExerciseCategoryId = new List<int> { id }
             };
 
             var exercises = await exerciseRepository.SearchAsync(exerciseSearchParams);
-            Response.AddPagination(exercises);
             var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
 
             return Ok(exercisesToReturn);
@@ -108,7 +108,7 @@ namespace WorkoutApp.API.Controllers
             }
 
             var categoryForReturn = mapper.Map<ExerciseCategoryForReturnDto>(newCategory);
-            
+
             return CreatedAtRoute("GetExerciseCategory", new { id = newCategory.Id }, categoryForReturn);
         }
 
@@ -127,9 +127,9 @@ namespace WorkoutApp.API.Controllers
 
             if (!saveResult)
             {
-               return BadRequest(new ProblemDetailsWithErrors("Failed to delete the category.", 400, Request)); 
+                return BadRequest(new ProblemDetailsWithErrors("Failed to delete the category.", 400, Request));
             }
-            
+
             return NoContent();
         }
 

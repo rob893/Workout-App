@@ -33,7 +33,6 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<IEnumerable<WorkoutForReturnDto>>> GetWorkoutsAsync([FromQuery] WorkoutSearchParams searchParams)
         {
             var workouts = await workoutRepository.SearchAsync(searchParams);
-            Response.AddPagination(workouts);
             var workoutsToReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
 
             return Ok(workoutsToReturn);
@@ -43,7 +42,6 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<IEnumerable<WorkoutForReturnDetailedDto>>> GetWorkoutsDetailedAsync([FromQuery] WorkoutSearchParams searchParams)
         {
             var workouts = await workoutRepository.SearchDetailedAsync(searchParams);
-            Response.AddPagination(workouts);
             var workoutsToReturn = mapper.Map<IEnumerable<WorkoutForReturnDetailedDto>>(workouts);
 
             return Ok(workoutsToReturn);
@@ -80,17 +78,19 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/exerciseGroups")]
-        public async Task<ActionResult<IEnumerable<ExerciseGroupForReturnDto>>> GetExerciseGroupsForWorkoutAsync(int id, [FromQuery] PaginationParams searchParams)
+        public async Task<ActionResult<IEnumerable<ExerciseGroupForReturnDto>>> GetExerciseGroupsForWorkoutAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var exerciseGroupSearchParams = new ExerciseGroupSearchParams
             {
-                PageNumber = searchParams.PageNumber,
-                PageSize = searchParams.PageSize,
+                First = searchParams.First,
+                After = searchParams.After,
+                Last = searchParams.Last,
+                Before = searchParams.Before,
+                IncludeTotal = searchParams.IncludeTotal,
                 WorkoutId = new List<int> { id }
             };
 
             var groups = await exerciseGroupRepository.SearchDetailedAsync(exerciseGroupSearchParams);
-            Response.AddPagination(groups);
             var groupsToReturn = mapper.Map<IEnumerable<ExerciseGroupForReturnDto>>(groups);
 
             return Ok(groupsToReturn);

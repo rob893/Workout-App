@@ -39,7 +39,6 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<IEnumerable<WorkoutInvitationForReturnDto>>> GetWorkoutInvitationsAsync([FromQuery] WorkoutInvitationSearchParams searchParams)
         {
             var invitations = await workoutInvitationRepository.SearchAsync(searchParams);
-            Response.AddPagination(invitations);
             var invitationsForReturn = mapper.Map<IEnumerable<WorkoutInvitationForReturnDto>>(invitations);
 
             return Ok(invitationsForReturn);
@@ -49,7 +48,6 @@ namespace WorkoutApp.API.Controllers
         public async Task<ActionResult<IEnumerable<WorkoutInvitationForReturnDetailedDto>>> GetWorkoutInvitationsDetailedAsync([FromQuery] WorkoutInvitationSearchParams searchParams)
         {
             var invitations = await workoutInvitationRepository.SearchDetailedAsync(searchParams);
-            Response.AddPagination(invitations);
             var invitationsForReturn = mapper.Map<IEnumerable<WorkoutInvitationForReturnDetailedDto>>(invitations);
 
             return Ok(invitationsForReturn);

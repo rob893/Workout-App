@@ -43,7 +43,7 @@ namespace WorkoutApp.API.Helpers
             return new OffsetPagedList<T>(items, totalItems, pageNumber, pageSize);
         }
 
-        public static Task<OffsetPagedList<T>> CreateAsync(IQueryable<T> source, PaginationParams searchParams)
+        public static Task<OffsetPagedList<T>> CreateAsync(IQueryable<T> source, OffsetPaginationParams searchParams)
         {
             return CreateAsync(source, searchParams.PageNumber, searchParams.PageSize);
         }

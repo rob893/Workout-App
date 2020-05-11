@@ -31,7 +31,7 @@ namespace WorkoutApp.API.Helpers
                 .ForMember(dto => dto.Roles, opt =>
                     opt.MapFrom(u => u.UserRoles.Select(ur => ur.Role.Name)));
             CreateMap<UserForRegisterDto, User>();
-            
+
             CreateMap<Role, RoleForReturnDto>();
         }
 
@@ -95,7 +95,7 @@ namespace WorkoutApp.API.Helpers
                 .ForMember(dto => dto.ExerciseCategorys, opts =>
                     opts.MapFrom(ec => ec.ExerciseCategorys.Select(ec => ec.ExerciseCategory)));
             CreateMap<ExerciseForCreationDto, Exercise>();
-            
+
             CreateMap<ExerciseStep, ExerciseStepForReturnDto>();
 
             CreateMap<ExerciseGroup, ExerciseGroupForReturnDto>();

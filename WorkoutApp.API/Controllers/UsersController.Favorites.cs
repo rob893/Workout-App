@@ -21,7 +21,6 @@ namespace WorkoutApp.API.Controllers
             }
 
             var exercises = await userRepository.GetFavoriteExercisesForUserAsync(userId, searchParams);
-            Response.AddPagination(exercises);
             var exercisesForReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
 
             return Ok(exercisesForReturn);
@@ -36,7 +35,6 @@ namespace WorkoutApp.API.Controllers
             }
 
             var exercises = await userRepository.GetFavoriteExercisesForUserDetailedAsync(userId, searchParams);
-            Response.AddPagination(exercises);
             var exercisesForReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
 
             return Ok(exercisesForReturn);
