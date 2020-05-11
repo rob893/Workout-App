@@ -6,4 +6,9 @@ namespace WorkoutApp.API.Models.QueryParams
     {
         public List<int> ExerciseIds { get; set; } = new List<int>();
     }
+
+    public class EquipmentCursorSearchParams : CursorPaginationParams
+    {
+        public List<int> ExerciseIds { get; set; } = new List<int>();
+    }
 }

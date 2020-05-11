@@ -28,13 +28,15 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<EquipmentForReturnDto>> GetEquipmentAsync([FromQuery] EquipmentSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<EquipmentForReturnDto>>> GetEquipmentAsync([FromQuery] EquipmentCursorSearchParams searchParams)
         {
-            var equipment = await equipmentRepository.SearchAsync(searchParams);
-            Response.AddPagination(equipment.PageNumber, equipment.PageSize, equipment.TotalItems, equipment.TotalPages);
+            var equipment = await equipmentRepository.CursorSearchAsync(searchParams);
+            //Response.AddPagination(equipment.PageNumber, equipment.PageSize, equipment.TotalItems, equipment.TotalPages);
             var equipmentToReturn = mapper.Map<IEnumerable<EquipmentForReturnDto>>(equipment);
+            var mappedPaginatedList = new CursorPagedList<EquipmentForReturnDto>(equipmentToReturn, equipment.HasNextPage, equipment.HasPreviousPage, equipment.StartCursor, equipment.EndCursor, equipment.TotalItems);
+            var paginatedResponse = new CursorPaginatedResponse<EquipmentForReturnDto>(mappedPaginatedList);
 
-            return Ok(equipmentToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("detailed")]

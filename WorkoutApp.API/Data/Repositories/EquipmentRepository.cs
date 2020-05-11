@@ -16,7 +16,7 @@ namespace WorkoutApp.API.Data.Repositories
 
         protected override IQueryable<Equipment> AddWhereClauses(IQueryable<Equipment> query, EquipmentSearchParams searchParams)
         {
-            if (searchParams.ExerciseIds != null && searchParams.ExerciseIds.Count > 0)
+            if (searchParams != null && searchParams.ExerciseIds != null && searchParams.ExerciseIds.Count > 0)
             {
                 query = query.Where(equipment => equipment.Exercises.Any(exercise => searchParams.ExerciseIds.Contains(exercise.ExerciseId)));
             }

@@ -27,7 +27,7 @@ namespace WorkoutApp.API.Helpers
             }));
         }
 
-        public static void AddPagination<T>(this HttpResponse response, PagedList<T> pagedList)
+        public static void AddPagination<T>(this HttpResponse response, OffsetPagedList<T> pagedList)
         {
             AddPagination(response, pagedList.PageNumber, pagedList.PageSize, pagedList.TotalItems, pagedList.TotalPages);
         }
@@ -79,6 +79,11 @@ namespace WorkoutApp.API.Helpers
             {
                 throw new ArgumentException($"{str} is not a valid base 64 encoded int32.");
             }
+        }
+
+        public static string ConvertInt32ToBase64(this int i)
+        {
+            return Convert.ToBase64String(BitConverter.GetBytes(i));
         }
     }
 }

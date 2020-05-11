@@ -22,7 +22,7 @@ namespace WorkoutApp.API.Middleware
         {
             var settings = swaggerAuthSettings.Value;
 
-            //Make sure we are hitting the swagger path, and not doing it locally as it just gets annoying :-)
+            // Make sure we are hitting the swagger path
             if (context.Request.Path.StartsWithSegments("/swagger"))
             {
                 if (!settings.Enabled)

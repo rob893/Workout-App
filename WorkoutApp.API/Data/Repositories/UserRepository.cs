@@ -47,11 +47,11 @@ namespace WorkoutApp.API.Data.Repositories
             return result.Succeeded;
         }
 
-        public Task<PagedList<Role>> GetRolesAsync(PaginationParams searchParams)
+        public Task<OffsetPagedList<Role>> GetRolesAsync(PaginationParams searchParams)
         {
             IQueryable<Role> query = context.Roles;
 
-            return PagedList<Role>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return OffsetPagedList<Role>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
         }
 
         public Task<List<Role>> GetRolesAsync()
@@ -59,7 +59,7 @@ namespace WorkoutApp.API.Data.Repositories
             return context.Roles.ToListAsync();
         }
 
-        public Task<PagedList<Exercise>> GetFavoriteExercisesForUserAsync(int userId, ExerciseSearchParams searchParams)
+        public Task<OffsetPagedList<Exercise>> GetFavoriteExercisesForUserAsync(int userId, ExerciseSearchParams searchParams)
         {
             IQueryable<Exercise> query = context.Users
                 .Where(u => u.Id == userId)
@@ -68,7 +68,7 @@ namespace WorkoutApp.API.Data.Repositories
             return exerciseRepository.SearchAsync(query, searchParams);
         }
 
-        public Task<PagedList<Exercise>> GetFavoriteExercisesForUserDetailedAsync(int userId, ExerciseSearchParams searchParams)
+        public Task<OffsetPagedList<Exercise>> GetFavoriteExercisesForUserDetailedAsync(int userId, ExerciseSearchParams searchParams)
         {
             IQueryable<Exercise> query = context.Users
                 .Where(u => u.Id == userId)
@@ -77,7 +77,7 @@ namespace WorkoutApp.API.Data.Repositories
             return exerciseRepository.SearchDetailedAsync(query, searchParams);
         }
 
-        public Task<PagedList<ScheduledWorkout>> GetScheduledWorkoutsForUserAsync(int userId, ScheduledWorkoutSearchParams searchParams)
+        public Task<OffsetPagedList<ScheduledWorkout>> GetScheduledWorkoutsForUserAsync(int userId, ScheduledWorkoutSearchParams searchParams)
         {
             IQueryable<ScheduledWorkout> query = context.ScheduledWorkouts
                 .Where(wo => wo.Attendees.Any(attendee => attendee.UserId == userId));
@@ -85,7 +85,7 @@ namespace WorkoutApp.API.Data.Repositories
             return scheduledWorkoutRepository.SearchAsync(query, searchParams);
         }
 
-        public Task<PagedList<ScheduledWorkout>> GetScheduledWorkoutsForUserDetailedAsync(int userId, ScheduledWorkoutSearchParams searchParams)
+        public Task<OffsetPagedList<ScheduledWorkout>> GetScheduledWorkoutsForUserDetailedAsync(int userId, ScheduledWorkoutSearchParams searchParams)
         {
             IQueryable<ScheduledWorkout> query = context.ScheduledWorkouts
                 .Where(wo => wo.Attendees.Any(attendee => attendee.UserId == userId));
@@ -93,12 +93,12 @@ namespace WorkoutApp.API.Data.Repositories
             return scheduledWorkoutRepository.SearchDetailedAsync(query, searchParams);
         }
 
-        public Task<PagedList<WorkoutCompletionRecord>> GetWorkoutCompletionRecordsForUserAsync(int userId, CompletionRecordSearchParams searchParams)
+        public Task<OffsetPagedList<WorkoutCompletionRecord>> GetWorkoutCompletionRecordsForUserAsync(int userId, CompletionRecordSearchParams searchParams)
         {
             IQueryable<WorkoutCompletionRecord> query = context.WorkoutCompletionRecords
                 .Where(record => record.UserId == userId);
 
-            return PagedList<WorkoutCompletionRecord>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
+            return OffsetPagedList<WorkoutCompletionRecord>.CreateAsync(query, searchParams.PageNumber, searchParams.PageSize);
         }
 
         protected override IQueryable<User> AddDetailedIncludes(IQueryable<User> query)
