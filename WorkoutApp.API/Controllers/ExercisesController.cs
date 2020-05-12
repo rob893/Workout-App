@@ -34,30 +34,21 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetExercisesAsync([FromQuery] ExerciseSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseForReturnDto>>> GetExercisesAsync([FromQuery] ExerciseSearchParams searchParams)
         {
             var exercises = await exerciseRepository.SearchAsync(searchParams);
-            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseForReturnDto>.CreateFrom(exercises, mapper.Map<IEnumerable<ExerciseForReturnDto>>);
 
-            return Ok(exercisesToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> GetExercisesDetailedAsync([FromQuery] ExerciseSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseForReturnDetailedDto>>> GetExercisesDetailedAsync([FromQuery] ExerciseSearchParams searchParams)
         {
             var exercises = await exerciseRepository.SearchDetailedAsync(searchParams);
-            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseForReturnDetailedDto>.CreateFrom(exercises, mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>);
 
-            return Ok(exercisesToReturn);
-        }
-
-        [HttpGet("detailed/random")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> GetRandomExercisesDetailedAsync([FromQuery] RandomExerciseSearchParams searchParams)
-        {
-            var exercises = await exerciseRepository.GetRandomExercisesDetailedAsync(searchParams);
-            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
-
-            return Ok(exercisesToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}", Name = "GetExercise")]
@@ -91,7 +82,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/equipment")]
-        public async Task<ActionResult<IEnumerable<EquipmentForReturnDto>>> GetEquipmentForExerciseAsync(int id, [FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<EquipmentForReturnDto>>> GetEquipmentForExerciseAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var equipmentSearchParams = new EquipmentSearchParams
             {
@@ -104,13 +95,13 @@ namespace WorkoutApp.API.Controllers
             };
 
             var equipment = await equipmentRepository.SearchAsync(equipmentSearchParams);
-            var equipmentToReturn = mapper.Map<IEnumerable<EquipmentForReturnDto>>(equipment);
+            var paginatedResponse = CursorPaginatedResponse<EquipmentForReturnDto>.CreateFrom(equipment, mapper.Map<IEnumerable<EquipmentForReturnDto>>);
 
-            return Ok(equipmentToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}/exerciseCategories")]
-        public async Task<ActionResult<IEnumerable<ExerciseCategoryForReturnDto>>> GetExerciseCategoriesForExerciseAsync(int id, [FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseCategoryForReturnDto>>> GetExerciseCategoriesForExerciseAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var categorySearchParams = new ExerciseCategorySearchParams
             {
@@ -123,9 +114,9 @@ namespace WorkoutApp.API.Controllers
             };
 
             var categories = await exerciseCategoryRepository.SearchAsync(categorySearchParams);
-            var categoriesToReturn = mapper.Map<IEnumerable<ExerciseCategoryForReturnDto>>(categories);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseCategoryForReturnDto>.CreateFrom(categories, mapper.Map<IEnumerable<ExerciseCategoryForReturnDto>>);
 
-            return Ok(categoriesToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpPost]

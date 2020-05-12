@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using WorkoutApp.API.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApp.API.Models.Dtos;
 using WorkoutApp.API.Models.QueryParams;
@@ -11,7 +10,7 @@ namespace WorkoutApp.API.Controllers
     public partial class UsersController : ControllerBase
     {
         [HttpGet("{userId}/workoutInvitations")]
-        public async Task<ActionResult<IEnumerable<WorkoutInvitationForReturnDto>>> GetWorkoutInvitationsForUserAsync(int userId, [FromQuery] CursorPaginationParams searchParams, [FromQuery] string status)
+        public async Task<ActionResult<CursorPaginatedResponse<WorkoutInvitationForReturnDto>>> GetWorkoutInvitationsForUserAsync(int userId, [FromQuery] CursorPaginationParams searchParams, [FromQuery] string status)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -30,13 +29,13 @@ namespace WorkoutApp.API.Controllers
             };
 
             var invitations = await workoutInvitationRepository.SearchAsync(invSearchParams);
-            var invitationsToReturn = mapper.Map<IEnumerable<WorkoutInvitationForReturnDto>>(invitations);
+            var paginatedResponse = CursorPaginatedResponse<WorkoutInvitationForReturnDto>.CreateFrom(invitations, mapper.Map<IEnumerable<WorkoutInvitationForReturnDto>>);
 
-            return Ok(invitationsToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{userId}/workoutInvitations/sent")]
-        public async Task<ActionResult<IEnumerable<WorkoutInvitationForReturnDto>>> GetSentWorkoutInvitationsForUserAsync(int userId, [FromQuery] CursorPaginationParams searchParams, string status)
+        public async Task<ActionResult<CursorPaginatedResponse<WorkoutInvitationForReturnDto>>> GetSentWorkoutInvitationsForUserAsync(int userId, [FromQuery] CursorPaginationParams searchParams, string status)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -55,9 +54,9 @@ namespace WorkoutApp.API.Controllers
             };
 
             var invitations = await workoutInvitationRepository.SearchAsync(invSearchParams);
-            var invitationsToReturn = mapper.Map<IEnumerable<WorkoutInvitationForReturnDto>>(invitations);
+            var paginatedResponse = CursorPaginatedResponse<WorkoutInvitationForReturnDto>.CreateFrom(invitations, mapper.Map<IEnumerable<WorkoutInvitationForReturnDto>>);
 
-            return Ok(invitationsToReturn);
+            return Ok(paginatedResponse);
         }
     }
 }

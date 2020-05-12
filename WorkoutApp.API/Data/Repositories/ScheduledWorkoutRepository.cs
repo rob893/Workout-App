@@ -12,22 +12,22 @@ namespace WorkoutApp.API.Data.Repositories
     {
         public ScheduledWorkoutRepository(DataContext context) : base(context) { }
 
-        public Task<OffsetPagedList<User>> GetScheduledWorkoutAttendeesAsync(int scheduledWorkoutId, OffsetPaginationParams searchParams)
+        public Task<CursorPagedList<User>> GetScheduledWorkoutAttendeesAsync(int scheduledWorkoutId, CursorPaginationParams searchParams)
         {
             IQueryable<User> query = context.ScheduledWorkouts
                 .Where(wo => wo.Id == scheduledWorkoutId)
                 .SelectMany(swo => swo.Attendees.Select(attendee => attendee.User));
 
-            return OffsetPagedList<User>.CreateAsync(query, searchParams);
+            return CursorPagedList<User>.CreateAsync(query, searchParams);
         }
 
-        public Task<OffsetPagedList<ExerciseGroup>> GetScheduledWorkoutAdHocExercisesAsync(int scheduledWorkoutId, OffsetPaginationParams searchParams)
+        public Task<CursorPagedList<ExerciseGroup>> GetScheduledWorkoutAdHocExercisesAsync(int scheduledWorkoutId, CursorPaginationParams searchParams)
         {
             IQueryable<ExerciseGroup> query = context.ExerciseGroups
                 .Where(eg => eg.ScheduledWorkout.Id == scheduledWorkoutId)
                 .Include(eg => eg.Exercise);
 
-            return OffsetPagedList<ExerciseGroup>.CreateAsync(query, searchParams);
+            return CursorPagedList<ExerciseGroup>.CreateAsync(query, searchParams);
         }
 
         protected override IQueryable<ScheduledWorkout> AddDetailedIncludes(IQueryable<ScheduledWorkout> query)

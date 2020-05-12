@@ -1,4 +1,4 @@
-import { Exercise } from '../models/workout-api/Exercise';
+import { Exercise } from '../models/workout-api/exercise';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
 
 export class ExerciseAPI extends WorkoutAppAPI {

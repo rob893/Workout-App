@@ -1,5 +1,5 @@
-import { User } from './User';
-import { Exercise } from './Exercise';
+import { User } from './user';
+import { Exercise } from './exercise';
 
 export interface Workout {
   label: string;

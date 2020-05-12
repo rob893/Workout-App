@@ -63,7 +63,7 @@ namespace WorkoutApp.API
             });
 
             // Add the MySQL database context with connection info set in appsettings.json
-            services.AddDbContext<DataContext>(x => x.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<DataContext>(x => x.UseMySql(Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure()));
 
             // Configure identity
             IdentityBuilder builder = services.AddIdentityCore<User>(opt =>

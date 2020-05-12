@@ -5,9 +5,9 @@ import {
   UserLoginResponse,
   RegisterUserResponse,
   RefreshTokenResponse
-} from '../models/workout-api/User';
+} from '../models/workout-api/user';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
-import { WorkoutInvitation, ScheduledWorkout } from '../models/workout-api/Workout';
+import { WorkoutInvitation, ScheduledWorkout } from '../models/workout-api/workout';
 import { WorkoutInvitationQueryParams } from '../models/workout-api/queryParams';
 import { SchemaWorkoutInvitationPage } from '../models/schema';
 

@@ -13,7 +13,7 @@ namespace WorkoutApp.API.Controllers
     public partial class UsersController : ControllerBase
     {
         [HttpGet("{userId}/favorites/exercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetFavoriteExercisesForUserAsync(int userId, [FromQuery] ExerciseSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseForReturnDto>>> GetFavoriteExercisesForUserAsync(int userId, [FromQuery] ExerciseSearchParams searchParams)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -21,13 +21,13 @@ namespace WorkoutApp.API.Controllers
             }
 
             var exercises = await userRepository.GetFavoriteExercisesForUserAsync(userId, searchParams);
-            var exercisesForReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseForReturnDto>.CreateFrom(exercises, mapper.Map<IEnumerable<ExerciseForReturnDto>>);
 
-            return Ok(exercisesForReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{userId}/favorites/exercises/detailed")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDetailedDto>>> GetFavoriteExercisesForUserDetailedAsync(int userId, [FromQuery] ExerciseSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseForReturnDetailedDto>>> GetFavoriteExercisesForUserDetailedAsync(int userId, [FromQuery] ExerciseSearchParams searchParams)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -35,9 +35,9 @@ namespace WorkoutApp.API.Controllers
             }
 
             var exercises = await userRepository.GetFavoriteExercisesForUserDetailedAsync(userId, searchParams);
-            var exercisesForReturn = mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>(exercises);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseForReturnDetailedDto>.CreateFrom(exercises, mapper.Map<IEnumerable<ExerciseForReturnDetailedDto>>);
 
-            return Ok(exercisesForReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpPost("{userId}/favorites/exercises/{exerciseId}")]

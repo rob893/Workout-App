@@ -32,21 +32,21 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetUsersAsync([FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<UserForReturnDto>>> GetUsersAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var users = await userRepository.SearchAsync(searchParams);
-            var usersToReturn = mapper.Map<IEnumerable<UserForReturnDto>>(users);
+            var paginatedResponse = CursorPaginatedResponse<UserForReturnDto>.CreateFrom(users, mapper.Map<IEnumerable<UserForReturnDto>>);
 
-            return Ok(usersToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<IEnumerable<UserForReturnDetailedDto>>> GetUsersDetailedAsync([FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<UserForReturnDetailedDto>>> GetUsersDetailedAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var users = await userRepository.SearchDetailedAsync(searchParams);
-            var usersToReturn = mapper.Map<IEnumerable<UserForReturnDetailedDto>>(users);
+            var paginatedResponse = CursorPaginatedResponse<UserForReturnDetailedDto>.CreateFrom(users, mapper.Map<IEnumerable<UserForReturnDetailedDto>>);
 
-            return Ok(usersToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}", Name = "GetUserAsync")]
@@ -81,12 +81,12 @@ namespace WorkoutApp.API.Controllers
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("roles")]
-        public async Task<ActionResult<RoleForReturnDto>> GetRolesAsync([FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<RoleForReturnDto>>> GetRolesAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var roles = await userRepository.GetRolesAsync(searchParams);
-            var rolesForReturn = mapper.Map<IEnumerable<RoleForReturnDto>>(roles);
+            var paginatedResponse = CursorPaginatedResponse<RoleForReturnDto>.CreateFrom(roles, mapper.Map<IEnumerable<RoleForReturnDto>>);
 
-            return Ok(rolesForReturn);
+            return Ok(paginatedResponse);
         }
 
         [Authorize(Policy = "RequireAdminRole")]
@@ -170,7 +170,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{userId}/scheduledWorkouts")]
-        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDto>>> GetScheduledWorkoutsForUserAsync(int userId, [FromQuery] ScheduledWorkoutSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ScheduledWorkoutForReturnDto>>> GetScheduledWorkoutsForUserAsync(int userId, [FromQuery] ScheduledWorkoutSearchParams searchParams)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -178,13 +178,13 @@ namespace WorkoutApp.API.Controllers
             }
 
             var workouts = await userRepository.GetScheduledWorkoutsForUserAsync(userId, searchParams);
-            var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDto>>(workouts);
+            var paginatedResponse = CursorPaginatedResponse<ScheduledWorkoutForReturnDto>.CreateFrom(workouts, mapper.Map<IEnumerable<ScheduledWorkoutForReturnDto>>);
 
-            return Ok(workoutsForReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{userId}/scheduledWorkouts/detailed")]
-        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>> GetScheduledWorkoutsForUserDetailedAsync(int userId, [FromQuery] ScheduledWorkoutSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ScheduledWorkoutForReturnDetailedDto>>> GetScheduledWorkoutsForUserDetailedAsync(int userId, [FromQuery] ScheduledWorkoutSearchParams searchParams)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
@@ -192,17 +192,18 @@ namespace WorkoutApp.API.Controllers
             }
 
             var workouts = await userRepository.GetScheduledWorkoutsForUserDetailedAsync(userId, searchParams);
-            var workoutsForReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>(workouts);
+            var paginatedResponse = CursorPaginatedResponse<ScheduledWorkoutForReturnDetailedDto>.CreateFrom(workouts, mapper.Map<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>);
 
-            return Ok(workoutsForReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{userId}/workoutCompletionRecords")]
-        public async Task<ActionResult<IEnumerable<object>>> GetWorkoutCompletionRecordsForUserAsync(int userId, [FromQuery] CompletionRecordSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<WorkoutCompletionRecord>>> GetWorkoutCompletionRecordsForUserAsync(int userId, [FromQuery] CompletionRecordSearchParams searchParams)
         {
             var records = await userRepository.GetWorkoutCompletionRecordsForUserAsync(userId, searchParams);
+            var paginatedResponse = new CursorPaginatedResponse<WorkoutCompletionRecord>(records);
 
-            return Ok(records);
+            return Ok(paginatedResponse);
         }
     }
 }

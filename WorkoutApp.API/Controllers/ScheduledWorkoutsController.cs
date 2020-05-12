@@ -33,21 +33,21 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDto>>> GetScheduledWorkoutsAsync([FromQuery] ScheduledWorkoutSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ScheduledWorkoutForReturnDto>>> GetScheduledWorkoutsAsync([FromQuery] ScheduledWorkoutSearchParams searchParams)
         {
             var workouts = await scheduledWorkoutRepository.SearchAsync(searchParams);
-            var workoutsToReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDto>>(workouts);
+            var paginatedResponse = CursorPaginatedResponse<ScheduledWorkoutForReturnDto>.CreateFrom(workouts, mapper.Map<IEnumerable<ScheduledWorkoutForReturnDto>>);
 
-            return Ok(workoutsToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>> GetScheduledWorkoutsDetailedAsync([FromQuery] ScheduledWorkoutSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ScheduledWorkoutForReturnDetailedDto>>> GetScheduledWorkoutsDetailedAsync([FromQuery] ScheduledWorkoutSearchParams searchParams)
         {
             var workouts = await scheduledWorkoutRepository.SearchDetailedAsync(searchParams);
-            var workoutsToReturn = mapper.Map<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>(workouts);
+            var paginatedResponse = CursorPaginatedResponse<ScheduledWorkoutForReturnDetailedDto>.CreateFrom(workouts, mapper.Map<IEnumerable<ScheduledWorkoutForReturnDetailedDto>>);
 
-            return Ok(workoutsToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}", Name = "GetScheduledWorkout")]
@@ -249,7 +249,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/adHocExercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseGroupForReturnDto>>> GetScheduledWorkoutAdHocExercisesAsync(int id, [FromQuery] OffsetPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseGroupForReturnDto>>> GetScheduledWorkoutAdHocExercisesAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
 
@@ -259,14 +259,13 @@ namespace WorkoutApp.API.Controllers
             }
 
             var exercises = await scheduledWorkoutRepository.GetScheduledWorkoutAdHocExercisesAsync(id, searchParams);
-            Response.AddPagination(exercises);
-            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseGroupForReturnDto>>(exercises);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseGroupForReturnDto>.CreateFrom(exercises, mapper.Map<IEnumerable<ExerciseGroupForReturnDto>>);
 
-            return Ok(exercisesToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}/attendees")]
-        public async Task<ActionResult<IEnumerable<UserForReturnDto>>> GetScheduledWorkoutAttendeesAsync(int id, [FromQuery] OffsetPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<UserForReturnDto>>> GetScheduledWorkoutAttendeesAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var workout = await scheduledWorkoutRepository.GetByIdAsync(id);
 
@@ -276,10 +275,9 @@ namespace WorkoutApp.API.Controllers
             }
 
             var attendees = await scheduledWorkoutRepository.GetScheduledWorkoutAttendeesAsync(id, searchParams);
-            Response.AddPagination(attendees);
-            var attendeesToReturn = mapper.Map<IEnumerable<UserForReturnDto>>(attendees);
+            var paginatedResponse = CursorPaginatedResponse<UserForReturnDto>.CreateFrom(attendees, mapper.Map<IEnumerable<UserForReturnDto>>);
 
-            return Ok(attendeesToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}/attendees/{userId}", Name = "GetScheduledWorkoutAttendee")]

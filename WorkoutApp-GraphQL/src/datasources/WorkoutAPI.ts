@@ -4,8 +4,8 @@ import {
   ScheduledWorkout,
   ScheduledWorkoutDetailed,
   ExerciseGroup
-} from '../models/workout-api/Workout';
-import { User } from '../models/workout-api/User';
+} from '../models/workout-api/workout';
+import { User } from '../models/workout-api/user';
 
 export class WorkoutAPI extends WorkoutAppAPI {
   public getScheduledWorkout(id: number): Promise<ScheduledWorkout | null> {

@@ -28,21 +28,21 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MuscleForReturnDto>>> GetMusclesAsync([FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<MuscleForReturnDto>>> GetMusclesAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var muscles = await muscleRepository.SearchAsync(searchParams);
-            var musclesToReturn = mapper.Map<IEnumerable<MuscleForReturnDto>>(muscles);
+            var paginatedResponse = CursorPaginatedResponse<MuscleForReturnDto>.CreateFrom(muscles, mapper.Map<IEnumerable<MuscleForReturnDto>>);
 
-            return Ok(musclesToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<IEnumerable<MuscleForReturnDetailedDto>>> GetMusclesDetailedAsync([FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<MuscleForReturnDetailedDto>>> GetMusclesDetailedAsync([FromQuery] CursorPaginationParams searchParams)
         {
             var muscles = await muscleRepository.SearchDetailedAsync(searchParams);
-            var musclesToReturn = mapper.Map<IEnumerable<MuscleForReturnDetailedDto>>(muscles);
+            var paginatedResponse = CursorPaginatedResponse<MuscleForReturnDetailedDto>.CreateFrom(muscles, mapper.Map<IEnumerable<MuscleForReturnDetailedDto>>);
 
-            return Ok(musclesToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}", Name = "GetMuscle")]
@@ -76,7 +76,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/primaryExercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetPrimaryExercisesForMuscleAsync(int id, [FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseForReturnDto>>> GetPrimaryExercisesForMuscleAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var exerciseSearchParams = new ExerciseSearchParams
             {
@@ -89,13 +89,13 @@ namespace WorkoutApp.API.Controllers
             };
 
             var exercises = await exerciseRepository.SearchAsync(exerciseSearchParams);
-            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseForReturnDto>.CreateFrom(exercises, mapper.Map<IEnumerable<ExerciseForReturnDto>>);
 
-            return Ok(exercisesToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}/secondaryExercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetSecondaryExercisesForMuscleAsync(int id, [FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseForReturnDto>>> GetSecondaryExercisesForMuscleAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var exerciseSearchParams = new ExerciseSearchParams
             {
@@ -108,9 +108,9 @@ namespace WorkoutApp.API.Controllers
             };
 
             var exercises = await exerciseRepository.SearchAsync(exerciseSearchParams);
-            var exercisesToReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseForReturnDto>.CreateFrom(exercises, mapper.Map<IEnumerable<ExerciseForReturnDto>>);
 
-            return Ok(exercisesToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpPost]
@@ -175,9 +175,9 @@ namespace WorkoutApp.API.Controllers
                 return BadRequest(new ProblemDetailsWithErrors("Could not apply changes.", 400, Request));
             }
 
-            var musclesToReturn = mapper.Map<MuscleForReturnDto>(muscle);
+            var muscleToReturn = mapper.Map<MuscleForReturnDto>(muscle);
 
-            return Ok(musclesToReturn);
+            return Ok(muscleToReturn);
         }
 
         [HttpPut("{id}")]

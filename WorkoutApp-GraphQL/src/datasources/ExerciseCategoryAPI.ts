@@ -1,5 +1,5 @@
 import { WorkoutAppAPI } from './WorkoutAppAPI';
-import { ExerciseCategory, Exercise } from '../models/workout-api/Exercise';
+import { ExerciseCategory, Exercise } from '../models/workout-api/exercise';
 
 export class ExerciseCategoryAPI extends WorkoutAppAPI {
   public getExerciseCategory(id: number): Promise<ExerciseCategory | null> {

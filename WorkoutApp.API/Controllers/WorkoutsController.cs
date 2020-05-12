@@ -30,21 +30,21 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WorkoutForReturnDto>>> GetWorkoutsAsync([FromQuery] WorkoutSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<WorkoutForReturnDto>>> GetWorkoutsAsync([FromQuery] WorkoutSearchParams searchParams)
         {
             var workouts = await workoutRepository.SearchAsync(searchParams);
-            var workoutsToReturn = mapper.Map<IEnumerable<WorkoutForReturnDto>>(workouts);
+            var paginatedResponse = CursorPaginatedResponse<WorkoutForReturnDto>.CreateFrom(workouts, mapper.Map<IEnumerable<WorkoutForReturnDto>>);
 
-            return Ok(workoutsToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<IEnumerable<WorkoutForReturnDetailedDto>>> GetWorkoutsDetailedAsync([FromQuery] WorkoutSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<WorkoutForReturnDetailedDto>>> GetWorkoutsDetailedAsync([FromQuery] WorkoutSearchParams searchParams)
         {
             var workouts = await workoutRepository.SearchDetailedAsync(searchParams);
-            var workoutsToReturn = mapper.Map<IEnumerable<WorkoutForReturnDetailedDto>>(workouts);
+            var paginatedResponse = CursorPaginatedResponse<WorkoutForReturnDetailedDto>.CreateFrom(workouts, mapper.Map<IEnumerable<WorkoutForReturnDetailedDto>>);
 
-            return Ok(workoutsToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}", Name = "GetWorkout")]
@@ -78,7 +78,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/exerciseGroups")]
-        public async Task<ActionResult<IEnumerable<ExerciseGroupForReturnDto>>> GetExerciseGroupsForWorkoutAsync(int id, [FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseGroupForReturnDto>>> GetExerciseGroupsForWorkoutAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var exerciseGroupSearchParams = new ExerciseGroupSearchParams
             {
@@ -91,9 +91,9 @@ namespace WorkoutApp.API.Controllers
             };
 
             var groups = await exerciseGroupRepository.SearchDetailedAsync(exerciseGroupSearchParams);
-            var groupsToReturn = mapper.Map<IEnumerable<ExerciseGroupForReturnDto>>(groups);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseGroupForReturnDto>.CreateFrom(groups, mapper.Map<IEnumerable<ExerciseGroupForReturnDto>>);
 
-            return Ok(groupsToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpPost]

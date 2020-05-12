@@ -36,21 +36,21 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WorkoutInvitationForReturnDto>>> GetWorkoutInvitationsAsync([FromQuery] WorkoutInvitationSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<WorkoutInvitationForReturnDto>>> GetWorkoutInvitationsAsync([FromQuery] WorkoutInvitationSearchParams searchParams)
         {
             var invitations = await workoutInvitationRepository.SearchAsync(searchParams);
-            var invitationsForReturn = mapper.Map<IEnumerable<WorkoutInvitationForReturnDto>>(invitations);
+            var paginatedResponse = CursorPaginatedResponse<WorkoutInvitationForReturnDto>.CreateFrom(invitations, mapper.Map<IEnumerable<WorkoutInvitationForReturnDto>>);
 
-            return Ok(invitationsForReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<IEnumerable<WorkoutInvitationForReturnDetailedDto>>> GetWorkoutInvitationsDetailedAsync([FromQuery] WorkoutInvitationSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<WorkoutInvitationForReturnDetailedDto>>> GetWorkoutInvitationsDetailedAsync([FromQuery] WorkoutInvitationSearchParams searchParams)
         {
             var invitations = await workoutInvitationRepository.SearchDetailedAsync(searchParams);
-            var invitationsForReturn = mapper.Map<IEnumerable<WorkoutInvitationForReturnDetailedDto>>(invitations);
+            var paginatedResponse = CursorPaginatedResponse<WorkoutInvitationForReturnDetailedDto>.CreateFrom(invitations, mapper.Map<IEnumerable<WorkoutInvitationForReturnDetailedDto>>);
 
-            return Ok(invitationsForReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}", Name = "GetWorkoutInvitation")]

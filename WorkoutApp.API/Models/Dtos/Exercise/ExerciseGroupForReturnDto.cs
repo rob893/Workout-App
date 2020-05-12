@@ -1,6 +1,8 @@
+using WorkoutApp.API.Models.Domain;
+
 namespace WorkoutApp.API.Models.Dtos
 {
-    public class ExerciseGroupForReturnDto
+    public class ExerciseGroupForReturnDto : IIdentifiable
     {
         public int Id { get; set; }
         public int ExerciseId { get; set; }

@@ -37,12 +37,12 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("detailed")]
-        public async Task<ActionResult<EquipmentForReturnDetailedDto>> GetEquipmentDetailedAsync([FromQuery] EquipmentSearchParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<EquipmentForReturnDetailedDto>>> GetEquipmentDetailedAsync([FromQuery] EquipmentSearchParams searchParams)
         {
             var equipment = await equipmentRepository.SearchDetailedAsync(searchParams);
-            var equipmentToReturn = mapper.Map<IEnumerable<EquipmentForReturnDetailedDto>>(equipment);
+            var paginatedResponse = CursorPaginatedResponse<EquipmentForReturnDetailedDto>.CreateFrom(equipment, mapper.Map<IEnumerable<EquipmentForReturnDetailedDto>>);
 
-            return Ok(equipmentToReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpGet("{id}", Name = "GetSingleEquipment")]
@@ -76,7 +76,7 @@ namespace WorkoutApp.API.Controllers
         }
 
         [HttpGet("{id}/exercises")]
-        public async Task<ActionResult<IEnumerable<ExerciseForReturnDto>>> GetExercisesForEquipmentAsync(int id, [FromQuery] CursorPaginationParams searchParams)
+        public async Task<ActionResult<CursorPaginatedResponse<ExerciseForReturnDto>>> GetExercisesForEquipmentAsync(int id, [FromQuery] CursorPaginationParams searchParams)
         {
             var exerciseSearchParams = new ExerciseSearchParams
             {
@@ -89,9 +89,9 @@ namespace WorkoutApp.API.Controllers
             };
 
             var exercises = await exerciseRepository.SearchAsync(exerciseSearchParams);
-            var exercisesForReturn = mapper.Map<IEnumerable<ExerciseForReturnDto>>(exercises);
+            var paginatedResponse = CursorPaginatedResponse<ExerciseForReturnDto>.CreateFrom(exercises, mapper.Map<IEnumerable<ExerciseForReturnDto>>);
 
-            return Ok(exercisesForReturn);
+            return Ok(paginatedResponse);
         }
 
         [HttpPost]
