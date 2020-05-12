@@ -6,6 +6,7 @@ import {
   ExerciseGroup
 } from '../models/workout-api/workout';
 import { User } from '../models/workout-api/user';
+import { CursorPaginatedResponse } from '../models/workout-api/common';
 
 export class WorkoutAPI extends WorkoutAppAPI {
   public getScheduledWorkout(id: number): Promise<ScheduledWorkout | null> {
@@ -16,11 +17,11 @@ export class WorkoutAPI extends WorkoutAppAPI {
     return this.get(`scheduledWorkouts/${id}/detailed`);
   }
 
-  public getScheduledWorkoutAttendees(id: number): Promise<User[]> {
+  public getScheduledWorkoutAttendees(id: number): Promise<CursorPaginatedResponse<User>> {
     return this.get(`scheduledWorkouts/${id}/attendees`);
   }
 
-  public getScheduledWorkoutAdHocExercises(id: number): Promise<ExerciseGroup[]> {
+  public getScheduledWorkoutAdHocExercises(id: number): Promise<CursorPaginatedResponse<ExerciseGroup>> {
     return this.get(`scheduledWorkouts/${id}/adHocExercises`);
   }
 
@@ -35,7 +36,7 @@ export class WorkoutAPI extends WorkoutAppAPI {
     return this.patch(`scheduledWorkouts/${id}/startWorkout`);
   }
 
-  public getWorkoutsDetailed(): Promise<WorkoutDetailed[]> {
+  public getWorkoutsDetailed(): Promise<CursorPaginatedResponse<WorkoutDetailed>> {
     return this.get('workouts/detailed');
   }
 

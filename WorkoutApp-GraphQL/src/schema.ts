@@ -9,24 +9,33 @@ export const typeDefs = gql`
     success: Boolean!
   }
 
-  interface PaginatedResponse {
+  interface Node {
+    id: Int!
+  }
+
+  interface Edge {
+    cursor: String!
+  }
+
+  interface CursorPaginatedResponse {
     pageInfo: PageInfo!
+    totalCount: Int
   }
 
   type Query {
     user(id: Int!): User
     "Get the list of users"
-    users: [User]!
+    users(pagination: PaginationInput): UserConnection!
     exercise(id: Int!): Exercise
-    exercises: [Exercise!]!
+    exercises(pagination: PaginationInput): ExerciseConnection!
     exerciseCategory(id: Int!): ExerciseCategory
-    exerciseCategories: [ExerciseCategory!]!
+    exerciseCategories(pagination: PaginationInput): ExerciseCategoryConnection!
     muscle(id: Int!): Muscle
-    muscles: [Muscle!]!
+    muscles(pagination: PaginationInput): MuscleConnection!
     equipment(id: Int!): Equipment
-    allEquipment: [Equipment!]!
+    allEquipment(pagination: PaginationInput): EquipmentConnection!
     workout(id: Int!): Workout
-    workouts: [Workout!]!
+    workouts(pagination: PaginationInput): WorkoutConnection!
     me: User
   }
 
@@ -66,7 +75,7 @@ export const typeDefs = gql`
     scheduledWorkout: ScheduledWorkout!
   }
 
-  type User {
+  type User implements Node {
     id: Int!
     userName: String!
     firstName: String!
@@ -74,14 +83,29 @@ export const typeDefs = gql`
     email: String!
     created(format: String, timeZone: String): DateTime!
       @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
-    scheduledWorkouts: [ScheduledWorkout!]!
-    ownedScheduledWorkouts: [ScheduledWorkout!]!
-    favoriteExercises: [Exercise!]!
-    sentWorkoutInvitations(filter: WorkoutInvitationFilter, pagination: PaginationInput): WorkoutInvitationPage!
-    receivedWorkoutInvitations(filter: WorkoutInvitationFilter): [WorkoutInvitation!]!
+    scheduledWorkouts(pagination: PaginationInput): ScheduledWorkoutConnection!
+    ownedScheduledWorkouts(pagination: PaginationInput): ScheduledWorkoutConnection!
+    favoriteExercises(pagination: PaginationInput): ExerciseConnection!
+    sentWorkoutInvitations(filter: WorkoutInvitationFilter, pagination: PaginationInput): WorkoutInvitationConnection!
+    receivedWorkoutInvitations(
+      filter: WorkoutInvitationFilter
+      pagination: PaginationInput
+    ): WorkoutInvitationConnection!
   }
 
-  type WorkoutInvitation {
+  type UserConnection implements CursorPaginatedResponse {
+    edges: [UserEdge!]!
+    nodes: [User!]!
+    pageInfo: PageInfo!
+    totalCount: Int
+  }
+
+  type UserEdge implements Edge {
+    cursor: String!
+    node: User!
+  }
+
+  type WorkoutInvitation implements Node {
     id: Int!
     inviter: User!
     invitee: User!
@@ -93,12 +117,19 @@ export const typeDefs = gql`
       @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
   }
 
-  type WorkoutInvitationPage implements PaginatedResponse {
+  type WorkoutInvitationConnection implements CursorPaginatedResponse {
+    edges: [WorkoutInvitationEdge!]!
+    nodes: [WorkoutInvitation!]!
     pageInfo: PageInfo!
-    workoutInvitations: [WorkoutInvitation!]!
+    totalCount: Int
   }
 
-  type Workout {
+  type WorkoutInvitationEdge implements Edge {
+    cursor: String!
+    node: WorkoutInvitation!
+  }
+
+  type Workout implements Node {
     id: Int!
     label: String!
     description: String
@@ -109,10 +140,22 @@ export const typeDefs = gql`
     lastModifiedDate(format: String, timeZone: String): DateTime!
       @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
     shareable: Boolean!
-    exerciseGroups: [ExerciseGroup!]!
+    exerciseGroups(pagination: PaginationInput): ExerciseGroupConnection!
   }
 
-  type ExerciseGroup {
+  type WorkoutConnection implements CursorPaginatedResponse {
+    edges: [WorkoutEdge!]!
+    nodes: [Workout!]!
+    pageInfo: PageInfo!
+    totalCount: Int
+  }
+
+  type WorkoutEdge implements Edge {
+    cursor: String!
+    node: Workout!
+  }
+
+  type ExerciseGroup implements Node {
     id: Int!
     exerciseId: Int!
     exercise: Exercise!
@@ -120,7 +163,19 @@ export const typeDefs = gql`
     repetitions: Int!
   }
 
-  type ScheduledWorkout {
+  type ExerciseGroupConnection implements CursorPaginatedResponse {
+    edges: [ExerciseGroupEdge!]!
+    nodes: [ExerciseGroup!]!
+    pageInfo: PageInfo!
+    totalCount: Int
+  }
+
+  type ExerciseGroupEdge implements Edge {
+    cursor: String!
+    node: ExerciseGroup!
+  }
+
+  type ScheduledWorkout implements Node {
     id: Int!
     scheduledByUser: User!
     workout: Workout!
@@ -131,33 +186,62 @@ export const typeDefs = gql`
     scheduledDateTime(format: String, timeZone: String): DateTime!
       @dateFormat(defaultFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", defaultTimeZone: "00:00")
     customWorkout: String
-    adHocExercises: [ExerciseGroup!]!
-    attendees: [User!]!
+    adHocExercises(pagination: PaginationInput): ExerciseGroupConnection!
+    attendees(pagination: PaginationInput): UserConnection!
   }
 
-  type PageInfo {
-    pageNumber: Int!
-    pageSize: Int!
-    totalItems: Int!
-    totalPages: Int!
+  type ScheduledWorkoutConnection implements CursorPaginatedResponse {
+    edges: [ScheduledWorkoutEdge!]!
+    nodes: [ScheduledWorkout!]!
+    pageInfo: PageInfo!
+    totalCount: Int
   }
 
-  type Exercise {
+  type ScheduledWorkoutEdge implements Edge {
+    cursor: String!
+    node: ScheduledWorkout!
+  }
+
+  type Exercise implements Node {
     id: Int!
     name: String!
     primaryMuscle: Muscle
     secondaryMuscle: Muscle
     exerciseSteps: [ExerciseStep!]!
-    equipment: [Equipment!]!
-    exerciseCategorys: [ExerciseCategory!]!
+    equipment(pagination: PaginationInput): EquipmentConnection!
+    exerciseCategorys(pagination: PaginationInput): ExerciseCategoryConnection!
   }
 
-  type Muscle {
+  type ExerciseConnection implements CursorPaginatedResponse {
+    edges: [ExerciseEdge!]!
+    nodes: [Exercise!]!
+    pageInfo: PageInfo!
+    totalCount: Int
+  }
+
+  type ExerciseEdge implements Edge {
+    cursor: String!
+    node: Exercise!
+  }
+
+  type Muscle implements Node {
     id: Int!
     name: String!
     description: String
-    primaryExercises: [Exercise!]!
-    secondaryExercises: [Exercise!]!
+    primaryExercises(pagination: PaginationInput): ExerciseConnection!
+    secondaryExercises(pagination: PaginationInput): ExerciseConnection!
+  }
+
+  type MuscleConnection implements CursorPaginatedResponse {
+    edges: [MuscleEdge!]!
+    nodes: [Muscle!]!
+    pageInfo: PageInfo!
+    totalCount: Int
+  }
+
+  type MuscleEdge implements Edge {
+    cursor: String!
+    node: Muscle!
   }
 
   type ExerciseStep {
@@ -165,16 +249,47 @@ export const typeDefs = gql`
     description: String!
   }
 
-  type Equipment {
+  type Equipment implements Node {
     id: Int!
     name: String!
-    exercises: [Exercise!]!
+    exercises(pagination: PaginationInput): ExerciseConnection!
   }
 
-  type ExerciseCategory {
+  type EquipmentConnection implements CursorPaginatedResponse {
+    edges: [EquipmentEdge!]!
+    nodes: [Equipment!]!
+    pageInfo: PageInfo!
+    totalCount: Int
+  }
+
+  type EquipmentEdge implements Edge {
+    cursor: String!
+    node: Equipment!
+  }
+
+  type ExerciseCategory implements Node {
     id: Int!
     name: String!
-    exercises: [Exercise!]!
+    exercises(pagination: PaginationInput): ExerciseConnection!
+  }
+
+  type ExerciseCategoryConnection implements CursorPaginatedResponse {
+    edges: [ExerciseCategoryEdge!]!
+    nodes: [ExerciseCategory!]!
+    pageInfo: PageInfo!
+    totalCount: Int
+  }
+
+  type ExerciseCategoryEdge implements Edge {
+    cursor: String!
+    node: ExerciseCategory!
+  }
+
+  type PageInfo {
+    startCursor: String!
+    endCursor: String!
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
   }
 
   input RegisterUser {
@@ -207,8 +322,11 @@ export const typeDefs = gql`
   }
 
   input PaginationInput {
-    pageNumber: Int!
-    pageSize: Int!
+    first: Int
+    after: String
+    last: Int
+    before: String
+    includeTotal: Boolean
   }
 
   enum WorkoutInvitationStatus {

@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { User } from './workout-api/user';
-import { Exercise, Muscle, Equipment, ExerciseStep, ExerciseCategory } from './workout-api/exercise';
-import { Workout, WorkoutInvitation, ScheduledWorkout } from './workout-api/workout';
+import { User } from './workout-api/User';
+import { Exercise, Muscle, Equipment, ExerciseStep, ExerciseCategory } from './workout-api/Exercise';
+import { Workout, WorkoutInvitation, ScheduledWorkout } from './workout-api/Workout';
 export type Maybe<T> = T | null;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
@@ -20,25 +20,34 @@ export type SchemaMutationResponse = {
   success: Scalars['Boolean'];
 };
 
-export type SchemaPaginatedResponse = {
+export type SchemaNode = {
+  id: Scalars['Int'];
+};
+
+export type SchemaEdge = {
+  cursor: Scalars['String'];
+};
+
+export type SchemaCursorPaginatedResponse = {
   pageInfo: SchemaPageInfo;
+  totalCount?: Maybe<Scalars['Int']>;
 };
 
 export type SchemaQuery = {
   __typename?: 'Query';
   user?: Maybe<SchemaUser>;
   /** Get the list of users */
-  users: Array<Maybe<SchemaUser>>;
+  users: SchemaUserConnection;
   exercise?: Maybe<SchemaExercise>;
-  exercises: Array<SchemaExercise>;
+  exercises: SchemaExerciseConnection;
   exerciseCategory?: Maybe<SchemaExerciseCategory>;
-  exerciseCategories: Array<SchemaExerciseCategory>;
+  exerciseCategories: SchemaExerciseCategoryConnection;
   muscle?: Maybe<SchemaMuscle>;
-  muscles: Array<SchemaMuscle>;
+  muscles: SchemaMuscleConnection;
   equipment?: Maybe<SchemaEquipment>;
-  allEquipment: Array<SchemaEquipment>;
+  allEquipment: SchemaEquipmentConnection;
   workout?: Maybe<SchemaWorkout>;
-  workouts: Array<SchemaWorkout>;
+  workouts: SchemaWorkoutConnection;
   me?: Maybe<SchemaUser>;
 };
 
@@ -46,24 +55,48 @@ export type SchemaQueryUserArgs = {
   id: Scalars['Int'];
 };
 
+export type SchemaQueryUsersArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
 export type SchemaQueryExerciseArgs = {
   id: Scalars['Int'];
+};
+
+export type SchemaQueryExercisesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
 };
 
 export type SchemaQueryExerciseCategoryArgs = {
   id: Scalars['Int'];
 };
 
+export type SchemaQueryExerciseCategoriesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
 export type SchemaQueryMuscleArgs = {
   id: Scalars['Int'];
+};
+
+export type SchemaQueryMusclesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
 };
 
 export type SchemaQueryEquipmentArgs = {
   id: Scalars['Int'];
 };
 
+export type SchemaQueryAllEquipmentArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
 export type SchemaQueryWorkoutArgs = {
   id: Scalars['Int'];
+};
+
+export type SchemaQueryWorkoutsArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
 };
 
 export type SchemaMutation = {
@@ -128,7 +161,7 @@ export type SchemaStartScheduledWorkoutResponse = SchemaMutationResponse & {
   scheduledWorkout: SchemaScheduledWorkout;
 };
 
-export type SchemaUser = {
+export type SchemaUser = SchemaNode & {
   __typename?: 'User';
   id: Scalars['Int'];
   userName: Scalars['String'];
@@ -136,16 +169,28 @@ export type SchemaUser = {
   lastName: Scalars['String'];
   email: Scalars['String'];
   created: Scalars['DateTime'];
-  scheduledWorkouts: Array<SchemaScheduledWorkout>;
-  ownedScheduledWorkouts: Array<SchemaScheduledWorkout>;
-  favoriteExercises: Array<SchemaExercise>;
-  sentWorkoutInvitations: SchemaWorkoutInvitationPage;
-  receivedWorkoutInvitations: Array<SchemaWorkoutInvitation>;
+  scheduledWorkouts: SchemaScheduledWorkoutConnection;
+  ownedScheduledWorkouts: SchemaScheduledWorkoutConnection;
+  favoriteExercises: SchemaExerciseConnection;
+  sentWorkoutInvitations: SchemaWorkoutInvitationConnection;
+  receivedWorkoutInvitations: SchemaWorkoutInvitationConnection;
 };
 
 export type SchemaUserCreatedArgs = {
   format?: Maybe<Scalars['String']>;
   timeZone?: Maybe<Scalars['String']>;
+};
+
+export type SchemaUserScheduledWorkoutsArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaUserOwnedScheduledWorkoutsArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaUserFavoriteExercisesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
 };
 
 export type SchemaUserSentWorkoutInvitationsArgs = {
@@ -155,9 +200,24 @@ export type SchemaUserSentWorkoutInvitationsArgs = {
 
 export type SchemaUserReceivedWorkoutInvitationsArgs = {
   filter?: Maybe<SchemaWorkoutInvitationFilter>;
+  pagination?: Maybe<SchemaPaginationInput>;
 };
 
-export type SchemaWorkoutInvitation = {
+export type SchemaUserConnection = SchemaCursorPaginatedResponse & {
+  __typename?: 'UserConnection';
+  edges: Array<SchemaUserEdge>;
+  nodes: Array<SchemaUser>;
+  pageInfo: SchemaPageInfo;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SchemaUserEdge = SchemaEdge & {
+  __typename?: 'UserEdge';
+  cursor: Scalars['String'];
+  node: SchemaUser;
+};
+
+export type SchemaWorkoutInvitation = SchemaNode & {
   __typename?: 'WorkoutInvitation';
   id: Scalars['Int'];
   inviter: SchemaUser;
@@ -174,13 +234,21 @@ export type SchemaWorkoutInvitationRespondedAtDateTimeArgs = {
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type SchemaWorkoutInvitationPage = SchemaPaginatedResponse & {
-  __typename?: 'WorkoutInvitationPage';
+export type SchemaWorkoutInvitationConnection = SchemaCursorPaginatedResponse & {
+  __typename?: 'WorkoutInvitationConnection';
+  edges: Array<SchemaWorkoutInvitationEdge>;
+  nodes: Array<SchemaWorkoutInvitation>;
   pageInfo: SchemaPageInfo;
-  workoutInvitations: Array<SchemaWorkoutInvitation>;
+  totalCount?: Maybe<Scalars['Int']>;
 };
 
-export type SchemaWorkout = {
+export type SchemaWorkoutInvitationEdge = SchemaEdge & {
+  __typename?: 'WorkoutInvitationEdge';
+  cursor: Scalars['String'];
+  node: SchemaWorkoutInvitation;
+};
+
+export type SchemaWorkout = SchemaNode & {
   __typename?: 'Workout';
   id: Scalars['Int'];
   label: Scalars['String'];
@@ -190,7 +258,7 @@ export type SchemaWorkout = {
   createdOnDate: Scalars['DateTime'];
   lastModifiedDate: Scalars['DateTime'];
   shareable: Scalars['Boolean'];
-  exerciseGroups: Array<SchemaExerciseGroup>;
+  exerciseGroups: SchemaExerciseGroupConnection;
 };
 
 export type SchemaWorkoutCreatedOnDateArgs = {
@@ -203,7 +271,25 @@ export type SchemaWorkoutLastModifiedDateArgs = {
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type SchemaExerciseGroup = {
+export type SchemaWorkoutExerciseGroupsArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaWorkoutConnection = SchemaCursorPaginatedResponse & {
+  __typename?: 'WorkoutConnection';
+  edges: Array<SchemaWorkoutEdge>;
+  nodes: Array<SchemaWorkout>;
+  pageInfo: SchemaPageInfo;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SchemaWorkoutEdge = SchemaEdge & {
+  __typename?: 'WorkoutEdge';
+  cursor: Scalars['String'];
+  node: SchemaWorkout;
+};
+
+export type SchemaExerciseGroup = SchemaNode & {
   __typename?: 'ExerciseGroup';
   id: Scalars['Int'];
   exerciseId: Scalars['Int'];
@@ -212,7 +298,21 @@ export type SchemaExerciseGroup = {
   repetitions: Scalars['Int'];
 };
 
-export type SchemaScheduledWorkout = {
+export type SchemaExerciseGroupConnection = SchemaCursorPaginatedResponse & {
+  __typename?: 'ExerciseGroupConnection';
+  edges: Array<SchemaExerciseGroupEdge>;
+  nodes: Array<SchemaExerciseGroup>;
+  pageInfo: SchemaPageInfo;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SchemaExerciseGroupEdge = SchemaEdge & {
+  __typename?: 'ExerciseGroupEdge';
+  cursor: Scalars['String'];
+  node: SchemaExerciseGroup;
+};
+
+export type SchemaScheduledWorkout = SchemaNode & {
   __typename?: 'ScheduledWorkout';
   id: Scalars['Int'];
   scheduledByUser: SchemaUser;
@@ -221,8 +321,8 @@ export type SchemaScheduledWorkout = {
   completedDateTime?: Maybe<Scalars['DateTime']>;
   scheduledDateTime: Scalars['DateTime'];
   customWorkout?: Maybe<Scalars['String']>;
-  adHocExercises: Array<SchemaExerciseGroup>;
-  attendees: Array<SchemaUser>;
+  adHocExercises: SchemaExerciseGroupConnection;
+  attendees: SchemaUserConnection;
 };
 
 export type SchemaScheduledWorkoutStartedDateTimeArgs = {
@@ -240,32 +340,90 @@ export type SchemaScheduledWorkoutScheduledDateTimeArgs = {
   timeZone?: Maybe<Scalars['String']>;
 };
 
-export type SchemaPageInfo = {
-  __typename?: 'PageInfo';
-  pageNumber: Scalars['Int'];
-  pageSize: Scalars['Int'];
-  totalItems: Scalars['Int'];
-  totalPages: Scalars['Int'];
+export type SchemaScheduledWorkoutAdHocExercisesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
 };
 
-export type SchemaExercise = {
+export type SchemaScheduledWorkoutAttendeesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaScheduledWorkoutConnection = SchemaCursorPaginatedResponse & {
+  __typename?: 'ScheduledWorkoutConnection';
+  edges: Array<SchemaScheduledWorkoutEdge>;
+  nodes: Array<SchemaScheduledWorkout>;
+  pageInfo: SchemaPageInfo;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SchemaScheduledWorkoutEdge = SchemaEdge & {
+  __typename?: 'ScheduledWorkoutEdge';
+  cursor: Scalars['String'];
+  node: SchemaScheduledWorkout;
+};
+
+export type SchemaExercise = SchemaNode & {
   __typename?: 'Exercise';
   id: Scalars['Int'];
   name: Scalars['String'];
   primaryMuscle?: Maybe<SchemaMuscle>;
   secondaryMuscle?: Maybe<SchemaMuscle>;
   exerciseSteps: Array<SchemaExerciseStep>;
-  equipment: Array<SchemaEquipment>;
-  exerciseCategorys: Array<SchemaExerciseCategory>;
+  equipment: SchemaEquipmentConnection;
+  exerciseCategorys: SchemaExerciseCategoryConnection;
 };
 
-export type SchemaMuscle = {
+export type SchemaExerciseEquipmentArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaExerciseExerciseCategorysArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaExerciseConnection = SchemaCursorPaginatedResponse & {
+  __typename?: 'ExerciseConnection';
+  edges: Array<SchemaExerciseEdge>;
+  nodes: Array<SchemaExercise>;
+  pageInfo: SchemaPageInfo;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SchemaExerciseEdge = SchemaEdge & {
+  __typename?: 'ExerciseEdge';
+  cursor: Scalars['String'];
+  node: SchemaExercise;
+};
+
+export type SchemaMuscle = SchemaNode & {
   __typename?: 'Muscle';
   id: Scalars['Int'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  primaryExercises: Array<SchemaExercise>;
-  secondaryExercises: Array<SchemaExercise>;
+  primaryExercises: SchemaExerciseConnection;
+  secondaryExercises: SchemaExerciseConnection;
+};
+
+export type SchemaMusclePrimaryExercisesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaMuscleSecondaryExercisesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaMuscleConnection = SchemaCursorPaginatedResponse & {
+  __typename?: 'MuscleConnection';
+  edges: Array<SchemaMuscleEdge>;
+  nodes: Array<SchemaMuscle>;
+  pageInfo: SchemaPageInfo;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SchemaMuscleEdge = SchemaEdge & {
+  __typename?: 'MuscleEdge';
+  cursor: Scalars['String'];
+  node: SchemaMuscle;
 };
 
 export type SchemaExerciseStep = {
@@ -274,18 +432,62 @@ export type SchemaExerciseStep = {
   description: Scalars['String'];
 };
 
-export type SchemaEquipment = {
+export type SchemaEquipment = SchemaNode & {
   __typename?: 'Equipment';
   id: Scalars['Int'];
   name: Scalars['String'];
-  exercises: Array<SchemaExercise>;
+  exercises: SchemaExerciseConnection;
 };
 
-export type SchemaExerciseCategory = {
+export type SchemaEquipmentExercisesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaEquipmentConnection = SchemaCursorPaginatedResponse & {
+  __typename?: 'EquipmentConnection';
+  edges: Array<SchemaEquipmentEdge>;
+  nodes: Array<SchemaEquipment>;
+  pageInfo: SchemaPageInfo;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SchemaEquipmentEdge = SchemaEdge & {
+  __typename?: 'EquipmentEdge';
+  cursor: Scalars['String'];
+  node: SchemaEquipment;
+};
+
+export type SchemaExerciseCategory = SchemaNode & {
   __typename?: 'ExerciseCategory';
   id: Scalars['Int'];
   name: Scalars['String'];
-  exercises: Array<SchemaExercise>;
+  exercises: SchemaExerciseConnection;
+};
+
+export type SchemaExerciseCategoryExercisesArgs = {
+  pagination?: Maybe<SchemaPaginationInput>;
+};
+
+export type SchemaExerciseCategoryConnection = SchemaCursorPaginatedResponse & {
+  __typename?: 'ExerciseCategoryConnection';
+  edges: Array<SchemaExerciseCategoryEdge>;
+  nodes: Array<SchemaExerciseCategory>;
+  pageInfo: SchemaPageInfo;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SchemaExerciseCategoryEdge = SchemaEdge & {
+  __typename?: 'ExerciseCategoryEdge';
+  cursor: Scalars['String'];
+  node: SchemaExerciseCategory;
+};
+
+export type SchemaPageInfo = {
+  __typename?: 'PageInfo';
+  startCursor: Scalars['String'];
+  endCursor: Scalars['String'];
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
 };
 
 export type SchemaRegisterUser = {
@@ -318,8 +520,11 @@ export type SchemaWorkoutInvitationFilter = {
 };
 
 export type SchemaPaginationInput = {
-  pageNumber: Scalars['Int'];
-  pageSize: Scalars['Int'];
+  first?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['String']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
+  includeTotal?: Maybe<Scalars['Boolean']>;
 };
 
 export enum SchemaWorkoutInvitationStatus {
@@ -410,9 +615,38 @@ export type SchemaResolversTypes = ResolversObject<{
     | SchemaResolversTypes['UserLoginResponse']
     | SchemaResolversTypes['CreateScheduledWorkoutResponse']
     | SchemaResolversTypes['StartScheduledWorkoutResponse'];
-  PaginatedResponse: SchemaResolversTypes['WorkoutInvitationPage'];
-  Query: ResolverTypeWrapper<{}>;
+  Node:
+    | SchemaResolversTypes['User']
+    | SchemaResolversTypes['WorkoutInvitation']
+    | SchemaResolversTypes['Workout']
+    | SchemaResolversTypes['ExerciseGroup']
+    | SchemaResolversTypes['ScheduledWorkout']
+    | SchemaResolversTypes['Exercise']
+    | SchemaResolversTypes['Muscle']
+    | SchemaResolversTypes['Equipment']
+    | SchemaResolversTypes['ExerciseCategory'];
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Edge:
+    | SchemaResolversTypes['UserEdge']
+    | SchemaResolversTypes['WorkoutInvitationEdge']
+    | SchemaResolversTypes['WorkoutEdge']
+    | SchemaResolversTypes['ExerciseGroupEdge']
+    | SchemaResolversTypes['ScheduledWorkoutEdge']
+    | SchemaResolversTypes['ExerciseEdge']
+    | SchemaResolversTypes['MuscleEdge']
+    | SchemaResolversTypes['EquipmentEdge']
+    | SchemaResolversTypes['ExerciseCategoryEdge'];
+  CursorPaginatedResponse:
+    | SchemaResolversTypes['UserConnection']
+    | SchemaResolversTypes['WorkoutInvitationConnection']
+    | SchemaResolversTypes['WorkoutConnection']
+    | SchemaResolversTypes['ExerciseGroupConnection']
+    | SchemaResolversTypes['ScheduledWorkoutConnection']
+    | SchemaResolversTypes['ExerciseConnection']
+    | SchemaResolversTypes['MuscleConnection']
+    | SchemaResolversTypes['EquipmentConnection']
+    | SchemaResolversTypes['ExerciseCategoryConnection'];
+  Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
   RefreshTokenResponse: ResolverTypeWrapper<SchemaRefreshTokenResponse>;
   RegisterUserResponse: ResolverTypeWrapper<
@@ -432,23 +666,89 @@ export type SchemaResolversTypes = ResolversObject<{
     }
   >;
   User: ResolverTypeWrapper<User>;
-  WorkoutInvitation: ResolverTypeWrapper<WorkoutInvitation>;
-  WorkoutInvitationPage: ResolverTypeWrapper<
-    Omit<SchemaWorkoutInvitationPage, 'workoutInvitations'> & {
-      workoutInvitations: Array<SchemaResolversTypes['WorkoutInvitation']>;
+  UserConnection: ResolverTypeWrapper<
+    Omit<SchemaUserConnection, 'edges' | 'nodes'> & {
+      edges: Array<SchemaResolversTypes['UserEdge']>;
+      nodes: Array<SchemaResolversTypes['User']>;
     }
   >;
+  UserEdge: ResolverTypeWrapper<Omit<SchemaUserEdge, 'node'> & { node: SchemaResolversTypes['User'] }>;
+  WorkoutInvitation: ResolverTypeWrapper<WorkoutInvitation>;
+  WorkoutInvitationConnection: ResolverTypeWrapper<
+    Omit<SchemaWorkoutInvitationConnection, 'edges' | 'nodes'> & {
+      edges: Array<SchemaResolversTypes['WorkoutInvitationEdge']>;
+      nodes: Array<SchemaResolversTypes['WorkoutInvitation']>;
+    }
+  >;
+  WorkoutInvitationEdge: ResolverTypeWrapper<
+    Omit<SchemaWorkoutInvitationEdge, 'node'> & { node: SchemaResolversTypes['WorkoutInvitation'] }
+  >;
   Workout: ResolverTypeWrapper<Workout>;
+  WorkoutConnection: ResolverTypeWrapper<
+    Omit<SchemaWorkoutConnection, 'edges' | 'nodes'> & {
+      edges: Array<SchemaResolversTypes['WorkoutEdge']>;
+      nodes: Array<SchemaResolversTypes['Workout']>;
+    }
+  >;
+  WorkoutEdge: ResolverTypeWrapper<Omit<SchemaWorkoutEdge, 'node'> & { node: SchemaResolversTypes['Workout'] }>;
   ExerciseGroup: ResolverTypeWrapper<
     Omit<SchemaExerciseGroup, 'exercise'> & { exercise: SchemaResolversTypes['Exercise'] }
   >;
+  ExerciseGroupConnection: ResolverTypeWrapper<
+    Omit<SchemaExerciseGroupConnection, 'edges' | 'nodes'> & {
+      edges: Array<SchemaResolversTypes['ExerciseGroupEdge']>;
+      nodes: Array<SchemaResolversTypes['ExerciseGroup']>;
+    }
+  >;
+  ExerciseGroupEdge: ResolverTypeWrapper<
+    Omit<SchemaExerciseGroupEdge, 'node'> & { node: SchemaResolversTypes['ExerciseGroup'] }
+  >;
   ScheduledWorkout: ResolverTypeWrapper<ScheduledWorkout>;
-  PageInfo: ResolverTypeWrapper<SchemaPageInfo>;
+  ScheduledWorkoutConnection: ResolverTypeWrapper<
+    Omit<SchemaScheduledWorkoutConnection, 'edges' | 'nodes'> & {
+      edges: Array<SchemaResolversTypes['ScheduledWorkoutEdge']>;
+      nodes: Array<SchemaResolversTypes['ScheduledWorkout']>;
+    }
+  >;
+  ScheduledWorkoutEdge: ResolverTypeWrapper<
+    Omit<SchemaScheduledWorkoutEdge, 'node'> & { node: SchemaResolversTypes['ScheduledWorkout'] }
+  >;
   Exercise: ResolverTypeWrapper<Exercise>;
+  ExerciseConnection: ResolverTypeWrapper<
+    Omit<SchemaExerciseConnection, 'edges' | 'nodes'> & {
+      edges: Array<SchemaResolversTypes['ExerciseEdge']>;
+      nodes: Array<SchemaResolversTypes['Exercise']>;
+    }
+  >;
+  ExerciseEdge: ResolverTypeWrapper<Omit<SchemaExerciseEdge, 'node'> & { node: SchemaResolversTypes['Exercise'] }>;
   Muscle: ResolverTypeWrapper<Muscle>;
+  MuscleConnection: ResolverTypeWrapper<
+    Omit<SchemaMuscleConnection, 'edges' | 'nodes'> & {
+      edges: Array<SchemaResolversTypes['MuscleEdge']>;
+      nodes: Array<SchemaResolversTypes['Muscle']>;
+    }
+  >;
+  MuscleEdge: ResolverTypeWrapper<Omit<SchemaMuscleEdge, 'node'> & { node: SchemaResolversTypes['Muscle'] }>;
   ExerciseStep: ResolverTypeWrapper<ExerciseStep>;
   Equipment: ResolverTypeWrapper<Equipment>;
+  EquipmentConnection: ResolverTypeWrapper<
+    Omit<SchemaEquipmentConnection, 'edges' | 'nodes'> & {
+      edges: Array<SchemaResolversTypes['EquipmentEdge']>;
+      nodes: Array<SchemaResolversTypes['Equipment']>;
+    }
+  >;
+  EquipmentEdge: ResolverTypeWrapper<Omit<SchemaEquipmentEdge, 'node'> & { node: SchemaResolversTypes['Equipment'] }>;
   ExerciseCategory: ResolverTypeWrapper<ExerciseCategory>;
+  ExerciseCategoryConnection: ResolverTypeWrapper<
+    Omit<SchemaExerciseCategoryConnection, 'edges' | 'nodes'> & {
+      edges: Array<SchemaResolversTypes['ExerciseCategoryEdge']>;
+      nodes: Array<SchemaResolversTypes['ExerciseCategory']>;
+    }
+  >;
+  ExerciseCategoryEdge: ResolverTypeWrapper<
+    Omit<SchemaExerciseCategoryEdge, 'node'> & { node: SchemaResolversTypes['ExerciseCategory'] }
+  >;
+  PageInfo: ResolverTypeWrapper<SchemaPageInfo>;
   RegisterUser: SchemaRegisterUser;
   UserLogin: SchemaUserLogin;
   NewScheduledWorkout: SchemaNewScheduledWorkout;
@@ -469,9 +769,38 @@ export type SchemaResolversParentTypes = ResolversObject<{
     | SchemaResolversParentTypes['UserLoginResponse']
     | SchemaResolversParentTypes['CreateScheduledWorkoutResponse']
     | SchemaResolversParentTypes['StartScheduledWorkoutResponse'];
-  PaginatedResponse: SchemaResolversParentTypes['WorkoutInvitationPage'];
-  Query: {};
+  Node:
+    | SchemaResolversParentTypes['User']
+    | SchemaResolversParentTypes['WorkoutInvitation']
+    | SchemaResolversParentTypes['Workout']
+    | SchemaResolversParentTypes['ExerciseGroup']
+    | SchemaResolversParentTypes['ScheduledWorkout']
+    | SchemaResolversParentTypes['Exercise']
+    | SchemaResolversParentTypes['Muscle']
+    | SchemaResolversParentTypes['Equipment']
+    | SchemaResolversParentTypes['ExerciseCategory'];
   Int: Scalars['Int'];
+  Edge:
+    | SchemaResolversParentTypes['UserEdge']
+    | SchemaResolversParentTypes['WorkoutInvitationEdge']
+    | SchemaResolversParentTypes['WorkoutEdge']
+    | SchemaResolversParentTypes['ExerciseGroupEdge']
+    | SchemaResolversParentTypes['ScheduledWorkoutEdge']
+    | SchemaResolversParentTypes['ExerciseEdge']
+    | SchemaResolversParentTypes['MuscleEdge']
+    | SchemaResolversParentTypes['EquipmentEdge']
+    | SchemaResolversParentTypes['ExerciseCategoryEdge'];
+  CursorPaginatedResponse:
+    | SchemaResolversParentTypes['UserConnection']
+    | SchemaResolversParentTypes['WorkoutInvitationConnection']
+    | SchemaResolversParentTypes['WorkoutConnection']
+    | SchemaResolversParentTypes['ExerciseGroupConnection']
+    | SchemaResolversParentTypes['ScheduledWorkoutConnection']
+    | SchemaResolversParentTypes['ExerciseConnection']
+    | SchemaResolversParentTypes['MuscleConnection']
+    | SchemaResolversParentTypes['EquipmentConnection']
+    | SchemaResolversParentTypes['ExerciseCategoryConnection'];
+  Query: {};
   Mutation: {};
   RefreshTokenResponse: SchemaRefreshTokenResponse;
   RegisterUserResponse: Omit<SchemaRegisterUserResponse, 'user'> & { user: SchemaResolversParentTypes['User'] };
@@ -483,19 +812,67 @@ export type SchemaResolversParentTypes = ResolversObject<{
     scheduledWorkout: SchemaResolversParentTypes['ScheduledWorkout'];
   };
   User: User;
+  UserConnection: Omit<SchemaUserConnection, 'edges' | 'nodes'> & {
+    edges: Array<SchemaResolversParentTypes['UserEdge']>;
+    nodes: Array<SchemaResolversParentTypes['User']>;
+  };
+  UserEdge: Omit<SchemaUserEdge, 'node'> & { node: SchemaResolversParentTypes['User'] };
   WorkoutInvitation: WorkoutInvitation;
-  WorkoutInvitationPage: Omit<SchemaWorkoutInvitationPage, 'workoutInvitations'> & {
-    workoutInvitations: Array<SchemaResolversParentTypes['WorkoutInvitation']>;
+  WorkoutInvitationConnection: Omit<SchemaWorkoutInvitationConnection, 'edges' | 'nodes'> & {
+    edges: Array<SchemaResolversParentTypes['WorkoutInvitationEdge']>;
+    nodes: Array<SchemaResolversParentTypes['WorkoutInvitation']>;
+  };
+  WorkoutInvitationEdge: Omit<SchemaWorkoutInvitationEdge, 'node'> & {
+    node: SchemaResolversParentTypes['WorkoutInvitation'];
   };
   Workout: Workout;
+  WorkoutConnection: Omit<SchemaWorkoutConnection, 'edges' | 'nodes'> & {
+    edges: Array<SchemaResolversParentTypes['WorkoutEdge']>;
+    nodes: Array<SchemaResolversParentTypes['Workout']>;
+  };
+  WorkoutEdge: Omit<SchemaWorkoutEdge, 'node'> & { node: SchemaResolversParentTypes['Workout'] };
   ExerciseGroup: Omit<SchemaExerciseGroup, 'exercise'> & { exercise: SchemaResolversParentTypes['Exercise'] };
+  ExerciseGroupConnection: Omit<SchemaExerciseGroupConnection, 'edges' | 'nodes'> & {
+    edges: Array<SchemaResolversParentTypes['ExerciseGroupEdge']>;
+    nodes: Array<SchemaResolversParentTypes['ExerciseGroup']>;
+  };
+  ExerciseGroupEdge: Omit<SchemaExerciseGroupEdge, 'node'> & { node: SchemaResolversParentTypes['ExerciseGroup'] };
   ScheduledWorkout: ScheduledWorkout;
-  PageInfo: SchemaPageInfo;
+  ScheduledWorkoutConnection: Omit<SchemaScheduledWorkoutConnection, 'edges' | 'nodes'> & {
+    edges: Array<SchemaResolversParentTypes['ScheduledWorkoutEdge']>;
+    nodes: Array<SchemaResolversParentTypes['ScheduledWorkout']>;
+  };
+  ScheduledWorkoutEdge: Omit<SchemaScheduledWorkoutEdge, 'node'> & {
+    node: SchemaResolversParentTypes['ScheduledWorkout'];
+  };
   Exercise: Exercise;
+  ExerciseConnection: Omit<SchemaExerciseConnection, 'edges' | 'nodes'> & {
+    edges: Array<SchemaResolversParentTypes['ExerciseEdge']>;
+    nodes: Array<SchemaResolversParentTypes['Exercise']>;
+  };
+  ExerciseEdge: Omit<SchemaExerciseEdge, 'node'> & { node: SchemaResolversParentTypes['Exercise'] };
   Muscle: Muscle;
+  MuscleConnection: Omit<SchemaMuscleConnection, 'edges' | 'nodes'> & {
+    edges: Array<SchemaResolversParentTypes['MuscleEdge']>;
+    nodes: Array<SchemaResolversParentTypes['Muscle']>;
+  };
+  MuscleEdge: Omit<SchemaMuscleEdge, 'node'> & { node: SchemaResolversParentTypes['Muscle'] };
   ExerciseStep: ExerciseStep;
   Equipment: Equipment;
+  EquipmentConnection: Omit<SchemaEquipmentConnection, 'edges' | 'nodes'> & {
+    edges: Array<SchemaResolversParentTypes['EquipmentEdge']>;
+    nodes: Array<SchemaResolversParentTypes['Equipment']>;
+  };
+  EquipmentEdge: Omit<SchemaEquipmentEdge, 'node'> & { node: SchemaResolversParentTypes['Equipment'] };
   ExerciseCategory: ExerciseCategory;
+  ExerciseCategoryConnection: Omit<SchemaExerciseCategoryConnection, 'edges' | 'nodes'> & {
+    edges: Array<SchemaResolversParentTypes['ExerciseCategoryEdge']>;
+    nodes: Array<SchemaResolversParentTypes['ExerciseCategory']>;
+  };
+  ExerciseCategoryEdge: Omit<SchemaExerciseCategoryEdge, 'node'> & {
+    node: SchemaResolversParentTypes['ExerciseCategory'];
+  };
+  PageInfo: SchemaPageInfo;
   RegisterUser: SchemaRegisterUser;
   UserLogin: SchemaUserLogin;
   NewScheduledWorkout: SchemaNewScheduledWorkout;
@@ -537,12 +914,65 @@ export type SchemaMutationResponseResolvers<
   success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
 }>;
 
-export type SchemaPaginatedResponseResolvers<
+export type SchemaNodeResolvers<
   ContextType = any,
-  ParentType extends SchemaResolversParentTypes['PaginatedResponse'] = SchemaResolversParentTypes['PaginatedResponse']
+  ParentType extends SchemaResolversParentTypes['Node'] = SchemaResolversParentTypes['Node']
 > = ResolversObject<{
-  __resolveType: TypeResolveFn<'WorkoutInvitationPage', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<
+    | 'User'
+    | 'WorkoutInvitation'
+    | 'Workout'
+    | 'ExerciseGroup'
+    | 'ScheduledWorkout'
+    | 'Exercise'
+    | 'Muscle'
+    | 'Equipment'
+    | 'ExerciseCategory',
+    ParentType,
+    ContextType
+  >;
+  id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type SchemaEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['Edge'] = SchemaResolversParentTypes['Edge']
+> = ResolversObject<{
+  __resolveType: TypeResolveFn<
+    | 'UserEdge'
+    | 'WorkoutInvitationEdge'
+    | 'WorkoutEdge'
+    | 'ExerciseGroupEdge'
+    | 'ScheduledWorkoutEdge'
+    | 'ExerciseEdge'
+    | 'MuscleEdge'
+    | 'EquipmentEdge'
+    | 'ExerciseCategoryEdge',
+    ParentType,
+    ContextType
+  >;
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type SchemaCursorPaginatedResponseResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['CursorPaginatedResponse'] = SchemaResolversParentTypes['CursorPaginatedResponse']
+> = ResolversObject<{
+  __resolveType: TypeResolveFn<
+    | 'UserConnection'
+    | 'WorkoutInvitationConnection'
+    | 'WorkoutConnection'
+    | 'ExerciseGroupConnection'
+    | 'ScheduledWorkoutConnection'
+    | 'ExerciseConnection'
+    | 'MuscleConnection'
+    | 'EquipmentConnection'
+    | 'ExerciseCategoryConnection',
+    ParentType,
+    ContextType
+  >;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
 }>;
 
 export type SchemaQueryResolvers<
@@ -555,42 +985,72 @@ export type SchemaQueryResolvers<
     ContextType,
     RequireFields<SchemaQueryUserArgs, 'id'>
   >;
-  users?: Resolver<Array<Maybe<SchemaResolversTypes['User']>>, ParentType, ContextType>;
+  users?: Resolver<
+    SchemaResolversTypes['UserConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryUsersArgs, never>
+  >;
   exercise?: Resolver<
     Maybe<SchemaResolversTypes['Exercise']>,
     ParentType,
     ContextType,
     RequireFields<SchemaQueryExerciseArgs, 'id'>
   >;
-  exercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
+  exercises?: Resolver<
+    SchemaResolversTypes['ExerciseConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryExercisesArgs, never>
+  >;
   exerciseCategory?: Resolver<
     Maybe<SchemaResolversTypes['ExerciseCategory']>,
     ParentType,
     ContextType,
     RequireFields<SchemaQueryExerciseCategoryArgs, 'id'>
   >;
-  exerciseCategories?: Resolver<Array<SchemaResolversTypes['ExerciseCategory']>, ParentType, ContextType>;
+  exerciseCategories?: Resolver<
+    SchemaResolversTypes['ExerciseCategoryConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryExerciseCategoriesArgs, never>
+  >;
   muscle?: Resolver<
     Maybe<SchemaResolversTypes['Muscle']>,
     ParentType,
     ContextType,
     RequireFields<SchemaQueryMuscleArgs, 'id'>
   >;
-  muscles?: Resolver<Array<SchemaResolversTypes['Muscle']>, ParentType, ContextType>;
+  muscles?: Resolver<
+    SchemaResolversTypes['MuscleConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryMusclesArgs, never>
+  >;
   equipment?: Resolver<
     Maybe<SchemaResolversTypes['Equipment']>,
     ParentType,
     ContextType,
     RequireFields<SchemaQueryEquipmentArgs, 'id'>
   >;
-  allEquipment?: Resolver<Array<SchemaResolversTypes['Equipment']>, ParentType, ContextType>;
+  allEquipment?: Resolver<
+    SchemaResolversTypes['EquipmentConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryAllEquipmentArgs, never>
+  >;
   workout?: Resolver<
     Maybe<SchemaResolversTypes['Workout']>,
     ParentType,
     ContextType,
     RequireFields<SchemaQueryWorkoutArgs, 'id'>
   >;
-  workouts?: Resolver<Array<SchemaResolversTypes['Workout']>, ParentType, ContextType>;
+  workouts?: Resolver<
+    SchemaResolversTypes['WorkoutConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaQueryWorkoutsArgs, never>
+  >;
   me?: Resolver<Maybe<SchemaResolversTypes['User']>, ParentType, ContextType>;
 }>;
 
@@ -693,21 +1153,56 @@ export type SchemaUserResolvers<
     ContextType,
     RequireFields<SchemaUserCreatedArgs, never>
   >;
-  scheduledWorkouts?: Resolver<Array<SchemaResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
-  ownedScheduledWorkouts?: Resolver<Array<SchemaResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
-  favoriteExercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
+  scheduledWorkouts?: Resolver<
+    SchemaResolversTypes['ScheduledWorkoutConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaUserScheduledWorkoutsArgs, never>
+  >;
+  ownedScheduledWorkouts?: Resolver<
+    SchemaResolversTypes['ScheduledWorkoutConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaUserOwnedScheduledWorkoutsArgs, never>
+  >;
+  favoriteExercises?: Resolver<
+    SchemaResolversTypes['ExerciseConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaUserFavoriteExercisesArgs, never>
+  >;
   sentWorkoutInvitations?: Resolver<
-    SchemaResolversTypes['WorkoutInvitationPage'],
+    SchemaResolversTypes['WorkoutInvitationConnection'],
     ParentType,
     ContextType,
     RequireFields<SchemaUserSentWorkoutInvitationsArgs, never>
   >;
   receivedWorkoutInvitations?: Resolver<
-    Array<SchemaResolversTypes['WorkoutInvitation']>,
+    SchemaResolversTypes['WorkoutInvitationConnection'],
     ParentType,
     ContextType,
     RequireFields<SchemaUserReceivedWorkoutInvitationsArgs, never>
   >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaUserConnectionResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['UserConnection'] = SchemaResolversParentTypes['UserConnection']
+> = ResolversObject<{
+  edges?: Resolver<Array<SchemaResolversTypes['UserEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<SchemaResolversTypes['User']>, ParentType, ContextType>;
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaUserEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['UserEdge'] = SchemaResolversParentTypes['UserEdge']
+> = ResolversObject<{
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -731,12 +1226,23 @@ export type SchemaWorkoutInvitationResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type SchemaWorkoutInvitationPageResolvers<
+export type SchemaWorkoutInvitationConnectionResolvers<
   ContextType = any,
-  ParentType extends SchemaResolversParentTypes['WorkoutInvitationPage'] = SchemaResolversParentTypes['WorkoutInvitationPage']
+  ParentType extends SchemaResolversParentTypes['WorkoutInvitationConnection'] = SchemaResolversParentTypes['WorkoutInvitationConnection']
 > = ResolversObject<{
+  edges?: Resolver<Array<SchemaResolversTypes['WorkoutInvitationEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<SchemaResolversTypes['WorkoutInvitation']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
-  workoutInvitations?: Resolver<Array<SchemaResolversTypes['WorkoutInvitation']>, ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaWorkoutInvitationEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['WorkoutInvitationEdge'] = SchemaResolversParentTypes['WorkoutInvitationEdge']
+> = ResolversObject<{
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<SchemaResolversTypes['WorkoutInvitation'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -762,7 +1268,32 @@ export type SchemaWorkoutResolvers<
     RequireFields<SchemaWorkoutLastModifiedDateArgs, never>
   >;
   shareable?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
-  exerciseGroups?: Resolver<Array<SchemaResolversTypes['ExerciseGroup']>, ParentType, ContextType>;
+  exerciseGroups?: Resolver<
+    SchemaResolversTypes['ExerciseGroupConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaWorkoutExerciseGroupsArgs, never>
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaWorkoutConnectionResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['WorkoutConnection'] = SchemaResolversParentTypes['WorkoutConnection']
+> = ResolversObject<{
+  edges?: Resolver<Array<SchemaResolversTypes['WorkoutEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<SchemaResolversTypes['Workout']>, ParentType, ContextType>;
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaWorkoutEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['WorkoutEdge'] = SchemaResolversParentTypes['WorkoutEdge']
+> = ResolversObject<{
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<SchemaResolversTypes['Workout'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -775,6 +1306,26 @@ export type SchemaExerciseGroupResolvers<
   exercise?: Resolver<SchemaResolversTypes['Exercise'], ParentType, ContextType>;
   sets?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
   repetitions?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaExerciseGroupConnectionResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['ExerciseGroupConnection'] = SchemaResolversParentTypes['ExerciseGroupConnection']
+> = ResolversObject<{
+  edges?: Resolver<Array<SchemaResolversTypes['ExerciseGroupEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<SchemaResolversTypes['ExerciseGroup']>, ParentType, ContextType>;
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaExerciseGroupEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['ExerciseGroupEdge'] = SchemaResolversParentTypes['ExerciseGroupEdge']
+> = ResolversObject<{
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<SchemaResolversTypes['ExerciseGroup'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -804,19 +1355,38 @@ export type SchemaScheduledWorkoutResolvers<
     RequireFields<SchemaScheduledWorkoutScheduledDateTimeArgs, never>
   >;
   customWorkout?: Resolver<Maybe<SchemaResolversTypes['String']>, ParentType, ContextType>;
-  adHocExercises?: Resolver<Array<SchemaResolversTypes['ExerciseGroup']>, ParentType, ContextType>;
-  attendees?: Resolver<Array<SchemaResolversTypes['User']>, ParentType, ContextType>;
+  adHocExercises?: Resolver<
+    SchemaResolversTypes['ExerciseGroupConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaScheduledWorkoutAdHocExercisesArgs, never>
+  >;
+  attendees?: Resolver<
+    SchemaResolversTypes['UserConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaScheduledWorkoutAttendeesArgs, never>
+  >;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type SchemaPageInfoResolvers<
+export type SchemaScheduledWorkoutConnectionResolvers<
   ContextType = any,
-  ParentType extends SchemaResolversParentTypes['PageInfo'] = SchemaResolversParentTypes['PageInfo']
+  ParentType extends SchemaResolversParentTypes['ScheduledWorkoutConnection'] = SchemaResolversParentTypes['ScheduledWorkoutConnection']
 > = ResolversObject<{
-  pageNumber?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
-  pageSize?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
-  totalItems?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
-  totalPages?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
+  edges?: Resolver<Array<SchemaResolversTypes['ScheduledWorkoutEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<SchemaResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaScheduledWorkoutEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['ScheduledWorkoutEdge'] = SchemaResolversParentTypes['ScheduledWorkoutEdge']
+> = ResolversObject<{
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<SchemaResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -829,8 +1399,38 @@ export type SchemaExerciseResolvers<
   primaryMuscle?: Resolver<Maybe<SchemaResolversTypes['Muscle']>, ParentType, ContextType>;
   secondaryMuscle?: Resolver<Maybe<SchemaResolversTypes['Muscle']>, ParentType, ContextType>;
   exerciseSteps?: Resolver<Array<SchemaResolversTypes['ExerciseStep']>, ParentType, ContextType>;
-  equipment?: Resolver<Array<SchemaResolversTypes['Equipment']>, ParentType, ContextType>;
-  exerciseCategorys?: Resolver<Array<SchemaResolversTypes['ExerciseCategory']>, ParentType, ContextType>;
+  equipment?: Resolver<
+    SchemaResolversTypes['EquipmentConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaExerciseEquipmentArgs, never>
+  >;
+  exerciseCategorys?: Resolver<
+    SchemaResolversTypes['ExerciseCategoryConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaExerciseExerciseCategorysArgs, never>
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaExerciseConnectionResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['ExerciseConnection'] = SchemaResolversParentTypes['ExerciseConnection']
+> = ResolversObject<{
+  edges?: Resolver<Array<SchemaResolversTypes['ExerciseEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaExerciseEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['ExerciseEdge'] = SchemaResolversParentTypes['ExerciseEdge']
+> = ResolversObject<{
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<SchemaResolversTypes['Exercise'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -841,8 +1441,38 @@ export type SchemaMuscleResolvers<
   id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<SchemaResolversTypes['String']>, ParentType, ContextType>;
-  primaryExercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
-  secondaryExercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
+  primaryExercises?: Resolver<
+    SchemaResolversTypes['ExerciseConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaMusclePrimaryExercisesArgs, never>
+  >;
+  secondaryExercises?: Resolver<
+    SchemaResolversTypes['ExerciseConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaMuscleSecondaryExercisesArgs, never>
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaMuscleConnectionResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['MuscleConnection'] = SchemaResolversParentTypes['MuscleConnection']
+> = ResolversObject<{
+  edges?: Resolver<Array<SchemaResolversTypes['MuscleEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<SchemaResolversTypes['Muscle']>, ParentType, ContextType>;
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaMuscleEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['MuscleEdge'] = SchemaResolversParentTypes['MuscleEdge']
+> = ResolversObject<{
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<SchemaResolversTypes['Muscle'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -861,7 +1491,32 @@ export type SchemaEquipmentResolvers<
 > = ResolversObject<{
   id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
-  exercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
+  exercises?: Resolver<
+    SchemaResolversTypes['ExerciseConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaEquipmentExercisesArgs, never>
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaEquipmentConnectionResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['EquipmentConnection'] = SchemaResolversParentTypes['EquipmentConnection']
+> = ResolversObject<{
+  edges?: Resolver<Array<SchemaResolversTypes['EquipmentEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<SchemaResolversTypes['Equipment']>, ParentType, ContextType>;
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaEquipmentEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['EquipmentEdge'] = SchemaResolversParentTypes['EquipmentEdge']
+> = ResolversObject<{
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<SchemaResolversTypes['Equipment'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -871,14 +1526,52 @@ export type SchemaExerciseCategoryResolvers<
 > = ResolversObject<{
   id?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
-  exercises?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
+  exercises?: Resolver<
+    SchemaResolversTypes['ExerciseConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaExerciseCategoryExercisesArgs, never>
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaExerciseCategoryConnectionResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['ExerciseCategoryConnection'] = SchemaResolversParentTypes['ExerciseCategoryConnection']
+> = ResolversObject<{
+  edges?: Resolver<Array<SchemaResolversTypes['ExerciseCategoryEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<SchemaResolversTypes['ExerciseCategory']>, ParentType, ContextType>;
+  pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaExerciseCategoryEdgeResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['ExerciseCategoryEdge'] = SchemaResolversParentTypes['ExerciseCategoryEdge']
+> = ResolversObject<{
+  cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<SchemaResolversTypes['ExerciseCategory'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type SchemaPageInfoResolvers<
+  ContextType = any,
+  ParentType extends SchemaResolversParentTypes['PageInfo'] = SchemaResolversParentTypes['PageInfo']
+> = ResolversObject<{
+  startCursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  endCursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
+  hasNextPage?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
+  hasPreviousPage?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaResolvers<ContextType = any> = ResolversObject<{
   DateTime?: GraphQLScalarType;
   MutationResponse?: SchemaMutationResponseResolvers;
-  PaginatedResponse?: SchemaPaginatedResponseResolvers;
+  Node?: SchemaNodeResolvers;
+  Edge?: SchemaEdgeResolvers;
+  CursorPaginatedResponse?: SchemaCursorPaginatedResponseResolvers;
   Query?: SchemaQueryResolvers<ContextType>;
   Mutation?: SchemaMutationResolvers<ContextType>;
   RefreshTokenResponse?: SchemaRefreshTokenResponseResolvers<ContextType>;
@@ -887,17 +1580,34 @@ export type SchemaResolvers<ContextType = any> = ResolversObject<{
   CreateScheduledWorkoutResponse?: SchemaCreateScheduledWorkoutResponseResolvers<ContextType>;
   StartScheduledWorkoutResponse?: SchemaStartScheduledWorkoutResponseResolvers<ContextType>;
   User?: SchemaUserResolvers<ContextType>;
+  UserConnection?: SchemaUserConnectionResolvers<ContextType>;
+  UserEdge?: SchemaUserEdgeResolvers<ContextType>;
   WorkoutInvitation?: SchemaWorkoutInvitationResolvers<ContextType>;
-  WorkoutInvitationPage?: SchemaWorkoutInvitationPageResolvers<ContextType>;
+  WorkoutInvitationConnection?: SchemaWorkoutInvitationConnectionResolvers<ContextType>;
+  WorkoutInvitationEdge?: SchemaWorkoutInvitationEdgeResolvers<ContextType>;
   Workout?: SchemaWorkoutResolvers<ContextType>;
+  WorkoutConnection?: SchemaWorkoutConnectionResolvers<ContextType>;
+  WorkoutEdge?: SchemaWorkoutEdgeResolvers<ContextType>;
   ExerciseGroup?: SchemaExerciseGroupResolvers<ContextType>;
+  ExerciseGroupConnection?: SchemaExerciseGroupConnectionResolvers<ContextType>;
+  ExerciseGroupEdge?: SchemaExerciseGroupEdgeResolvers<ContextType>;
   ScheduledWorkout?: SchemaScheduledWorkoutResolvers<ContextType>;
-  PageInfo?: SchemaPageInfoResolvers<ContextType>;
+  ScheduledWorkoutConnection?: SchemaScheduledWorkoutConnectionResolvers<ContextType>;
+  ScheduledWorkoutEdge?: SchemaScheduledWorkoutEdgeResolvers<ContextType>;
   Exercise?: SchemaExerciseResolvers<ContextType>;
+  ExerciseConnection?: SchemaExerciseConnectionResolvers<ContextType>;
+  ExerciseEdge?: SchemaExerciseEdgeResolvers<ContextType>;
   Muscle?: SchemaMuscleResolvers<ContextType>;
+  MuscleConnection?: SchemaMuscleConnectionResolvers<ContextType>;
+  MuscleEdge?: SchemaMuscleEdgeResolvers<ContextType>;
   ExerciseStep?: SchemaExerciseStepResolvers<ContextType>;
   Equipment?: SchemaEquipmentResolvers<ContextType>;
+  EquipmentConnection?: SchemaEquipmentConnectionResolvers<ContextType>;
+  EquipmentEdge?: SchemaEquipmentEdgeResolvers<ContextType>;
   ExerciseCategory?: SchemaExerciseCategoryResolvers<ContextType>;
+  ExerciseCategoryConnection?: SchemaExerciseCategoryConnectionResolvers<ContextType>;
+  ExerciseCategoryEdge?: SchemaExerciseCategoryEdgeResolvers<ContextType>;
+  PageInfo?: SchemaPageInfoResolvers<ContextType>;
 }>;
 
 export type SchemaDirectiveResolvers<ContextType = any> = ResolversObject<{

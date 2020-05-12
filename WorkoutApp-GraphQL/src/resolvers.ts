@@ -148,12 +148,10 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
   },
   ExerciseGroup: {
     async exercise({ exercise: { id } }, _args, { dataSources: { exerciseAPI } }) {
-      const exercises = await exerciseAPI.getExercises();
-
-      const exercise = exercises.find(ex => ex.id === id);
+      const exercise = await exerciseAPI.getExerciseById(id);
 
       if (!exercise) {
-        throw new Error('No exercise found for exercise group');
+        throw new Error(`No exercise found with id ${id}`);
       }
 
       return exercise;

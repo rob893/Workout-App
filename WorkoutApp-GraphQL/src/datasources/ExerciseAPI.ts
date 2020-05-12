@@ -1,8 +1,9 @@
 import { Exercise } from '../models/workout-api/exercise';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
+import { CursorPaginatedResponse } from '../models/workout-api/common';
 
 export class ExerciseAPI extends WorkoutAppAPI {
-  public getExercises(): Promise<Exercise[]> {
+  public getExercises(): Promise<CursorPaginatedResponse<Exercise>> {
     return this.get('exercises');
   }
 

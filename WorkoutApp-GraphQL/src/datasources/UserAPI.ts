@@ -9,15 +9,15 @@ import {
 import { WorkoutAppAPI } from './WorkoutAppAPI';
 import { WorkoutInvitation, ScheduledWorkout } from '../models/workout-api/workout';
 import { WorkoutInvitationQueryParams } from '../models/workout-api/queryParams';
-import { SchemaWorkoutInvitationPage } from '../models/schema';
+import { CursorPaginatedResponse } from '../models/workout-api/common';
 
 export class UserAPI extends WorkoutAppAPI {
-  public getAllUsers(): Promise<User[]> {
-    return this.get<User[]>('users');
+  public getAllUsers(): Promise<CursorPaginatedResponse<User>> {
+    return this.get('users');
   }
 
   public async getUserById(id: number): Promise<User | null> {
-    const user = await this.get<User>(`users/${id}`);
+    const user = await this.get(`users/${id}`);
 
     if (!user) {
       return null;
@@ -26,44 +26,31 @@ export class UserAPI extends WorkoutAppAPI {
     return user;
   }
 
-  public async getSentWorkoutInvitationsForUser(
+  public getSentWorkoutInvitationsForUser(
     id: number,
     queryParams: WorkoutInvitationQueryParams = {}
-  ): Promise<any> {
+  ): Promise<CursorPaginatedResponse<WorkoutInvitation>> {
     const query = WorkoutAppAPI.buildQuery(queryParams);
-    const requestUrl = `users/${id}/workoutInvitations/sent?${query}`;
-    const workoutInvitations = await this.get<WorkoutInvitation[]>(requestUrl);
-    const reqres = this.requestMap.get(`${this.baseURL}/${requestUrl}`);
-    let pageInfo: any = {};
-    if (reqres) {
-      pageInfo.pageNumber = reqres.response.headers.get('X-Pagination-PageNumber');
-      pageInfo.pageSize = reqres.response.headers.get('X-Pagination-PageSize');
-      pageInfo.totalItems = reqres.response.headers.get('X-Pagination-TotalItems');
-      pageInfo.totalPages = reqres.response.headers.get('X-Pagination-TotalPages');
-    }
-    return {
-      workoutInvitations,
-      pageInfo
-    };
+    return this.get(`users/${id}/workoutInvitations/sent?${query}`);
   }
 
   public getReceivedWorkoutInvitationsForUser(
     id: number,
     queryParams: WorkoutInvitationQueryParams = {}
-  ): Promise<WorkoutInvitation[]> {
+  ): Promise<CursorPaginatedResponse<WorkoutInvitation>> {
     const query = WorkoutAppAPI.buildQuery(queryParams);
-    return this.get<WorkoutInvitation[]>(`users/${id}/workoutInvitations?${query}`);
+    return this.get(`users/${id}/workoutInvitations?${query}`);
   }
 
   public registerUser(userToCreate: UserToRegister): Promise<RegisterUserResponse> {
-    return this.post<User>('auth/register', { ...userToCreate });
+    return this.post('auth/register', { ...userToCreate });
   }
 
   public login(userLogin: UserLogin): Promise<UserLoginResponse> {
-    return this.post<UserLoginResponse>('auth/login', { ...userLogin });
+    return this.post('auth/login', { ...userLogin });
   }
 
-  public getScheduledWorkoutsForUser(userId: number): Promise<ScheduledWorkout[]> {
+  public getScheduledWorkoutsForUser(userId: number): Promise<CursorPaginatedResponse<ScheduledWorkout>> {
     return this.get(`users/${userId}/scheduledWorkouts`);
   }
 

@@ -5,11 +5,18 @@ import { WorkoutAppContext } from '../models/WorkoutAppContext';
 import { Indexable } from '../models/common';
 
 export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
-  protected requestMap = new Map<string, { request: Request; response: Response }>();
+  protected readonly nullReturnRules: ((error: any) => boolean)[] = [];
 
   public constructor() {
     super();
     this.baseURL = process.env.WORKOUT_APP_API_URL || 'http://localhost:5002';
+    this.nullReturnRules.push(error => {
+      if (error?.extensions?.response?.status === 404) {
+        return true;
+      }
+
+      return false;
+    });
   }
 
   protected willSendRequest(request: RequestOptions): void {
@@ -30,13 +37,14 @@ export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
       throw new AuthenticationError('token-expired');
     }
 
-    if (response.status === 404) {
-      return null as any;
+    try {
+      return super.didReceiveResponse<TResult>(response, request);
+    } catch (error) {
+      if (this.nullReturnRules.some(rule => rule(error))) {
+        return null as any;
+      }
+      throw error;
     }
-
-    this.requestMap.set(request.url, { request, response });
-
-    return super.didReceiveResponse<TResult>(response, request);
   }
 
   protected static buildQuery<TParams extends Indexable<string | number | boolean | null | undefined> = any>(

@@ -1,4 +1,4 @@
-import { WorkoutAppAPIError } from '../models/workout-api/WorkoutAppAPIError';
+import { WorkoutAppAPIError } from '../models/workout-api/common';
 
 export class TypeGuards {
   public static isWorkoutAppAPIError(error: any): error is WorkoutAppAPIError {
