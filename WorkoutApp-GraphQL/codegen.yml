@@ -6,15 +6,15 @@ generates:
       useIndexSignature: true
       # defaultMapper: DeepPartial<{T}>
       mappers:
-        User: ./workout-api/User#User
-        Exercise: ./workout-api/Exercise#Exercise
-        Muscle: ./workout-api/Exercise#Muscle
-        Equipment: ./workout-api/Exercise#Equipment
-        ExerciseStep: ./workout-api/Exercise#ExerciseStep
-        ExerciseCategory: ./workout-api/Exercise#ExerciseCategory
-        Workout: ./workout-api/Workout#Workout
-        WorkoutInvitation: ./workout-api/Workout#WorkoutInvitation
-        ScheduledWorkout: ./workout-api/Workout#ScheduledWorkout
+        User: ./workout-api/user#User
+        Exercise: ./workout-api/exercise#Exercise
+        Muscle: ./workout-api/exercise#Muscle
+        Equipment: ./workout-api/exercise#Equipment
+        ExerciseStep: ./workout-api/exercise#ExerciseStep
+        ExerciseCategory: ./workout-api/exercise#ExerciseCategory
+        Workout: ./workout-api/workout#Workout
+        WorkoutInvitation: ./workout-api/workout#WorkoutInvitation
+        ScheduledWorkout: ./workout-api/workout#ScheduledWorkout
     plugins:
       - typescript
       - typescript-resolvers

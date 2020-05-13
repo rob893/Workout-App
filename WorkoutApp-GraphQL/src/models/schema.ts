@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { User } from './workout-api/User';
-import { Exercise, Muscle, Equipment, ExerciseStep, ExerciseCategory } from './workout-api/Exercise';
-import { Workout, WorkoutInvitation, ScheduledWorkout } from './workout-api/Workout';
+import { User } from './workout-api/user';
+import { Exercise, Muscle, Equipment, ExerciseStep, ExerciseCategory } from './workout-api/exercise';
+import { Workout, WorkoutInvitation, ScheduledWorkout } from './workout-api/workout';
 export type Maybe<T> = T | null;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
