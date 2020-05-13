@@ -56,12 +56,18 @@ namespace WorkoutApp.API.Data.Repositories
 
         public Task<TEntity> GetByIdAsync(int id)
         {
-            return context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
+            IQueryable<TEntity> query = context.Set<TEntity>();
+
+            query = AddIncludes(query);
+
+            return query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public Task<TEntity> GetByIdAsync(int id, params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
+
+            query = AddIncludes(query);
             query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
 
             return query.FirstOrDefaultAsync(e => e.Id == id);
@@ -80,6 +86,7 @@ namespace WorkoutApp.API.Data.Repositories
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
 
+            query = AddIncludes(query);
             query = AddWhereClauses(query, searchParams);
 
             return CursorPagedList<TEntity>.CreateAsync(query, searchParams);
@@ -87,6 +94,7 @@ namespace WorkoutApp.API.Data.Repositories
 
         public Task<CursorPagedList<TEntity>> SearchAsync(IQueryable<TEntity> query, RSearchParams searchParams)
         {
+            query = AddIncludes(query);
             query = AddWhereClauses(query, searchParams);
 
             return CursorPagedList<TEntity>.CreateAsync(query, searchParams);
@@ -96,6 +104,7 @@ namespace WorkoutApp.API.Data.Repositories
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
 
+            query = AddIncludes(query);
             query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
             query = AddWhereClauses(query, searchParams);
 
@@ -126,6 +135,11 @@ namespace WorkoutApp.API.Data.Repositories
         }
 
         protected virtual void BeforeDelete(TEntity entity) { }
+
+        protected virtual IQueryable<TEntity> AddIncludes(IQueryable<TEntity> query)
+        {
+            return query;
+        }
 
         protected abstract IQueryable<TEntity> AddDetailedIncludes(IQueryable<TEntity> query);
     }

@@ -19,6 +19,18 @@ export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
     });
   }
 
+  protected static buildQuery<TParams extends Indexable<string | number | boolean | null | undefined> = any>(
+    queryParams: TParams
+  ): string {
+    Object.keys(queryParams).forEach(key => {
+      if (queryParams[key] === undefined) {
+        delete queryParams[key];
+      }
+    });
+
+    return querystring.stringify(queryParams);
+  }
+
   protected willSendRequest(request: RequestOptions): void {
     if (this.context.token) {
       request.headers.set('authorization', this.context.token);
@@ -46,17 +58,5 @@ export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
 
       throw error;
     }
-  }
-
-  protected static buildQuery<TParams extends Indexable<string | number | boolean | null | undefined> = any>(
-    queryParams: TParams
-  ): string {
-    Object.keys(queryParams).forEach(key => {
-      if (queryParams[key] === undefined) {
-        delete queryParams[key];
-      }
-    });
-
-    return querystring.stringify(queryParams);
   }
 }

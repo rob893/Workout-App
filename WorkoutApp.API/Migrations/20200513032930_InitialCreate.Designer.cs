@@ -9,14 +9,14 @@ using WorkoutApp.API.Data;
 namespace WorkoutApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200329055735_InitialCreate")]
+    [Migration("20200513032930_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.2")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -3,7 +3,7 @@ import { defaultFieldResolver, GraphQLField } from 'graphql';
 import { format as fnsFormat, utcToZonedTime } from 'date-fns-tz';
 
 export class DateFormatDirective extends SchemaDirectiveVisitor {
-  public visitFieldDefinition(field: GraphQLField<any, any>) {
+  public visitFieldDefinition(field: GraphQLField<any, any>): void {
     const { resolve = defaultFieldResolver } = field;
     const { defaultFormat, defaultTimeZone } = this.args;
 

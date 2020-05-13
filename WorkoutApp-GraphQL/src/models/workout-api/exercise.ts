@@ -5,6 +5,9 @@ export interface Exercise {
   id: number;
   url: string;
   detailedUrl: string;
+  exerciseSteps: ExerciseStep[];
+  primaryMuscleId: number | null;
+  secondaryMuscleId: number | null;
 }
 
 export interface ExerciseDetailed {

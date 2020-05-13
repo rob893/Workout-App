@@ -10,6 +10,8 @@ namespace WorkoutApp.API.Models.Domain
         [MaxLength(255)]
         public string Name { get; set; }
         public string Description { get; set; }
+        public int? PrimaryMuscleId { get; set; }
+        public int? SecondaryMuscleId { get; set; }
         public Muscle PrimaryMuscle { get; set; }
         public Muscle SecondaryMuscle { get; set; }
         public List<UserFavoriteExercise> FavoritedBy { get; set; }

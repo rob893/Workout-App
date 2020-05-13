@@ -152,6 +152,20 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     },
     exerciseCategorys({ id }, _args, { dataSources: { exerciseAPI } }) {
       return exerciseAPI.getExerciseCategoriesForExercise(id);
+    },
+    primaryMuscle({ primaryMuscleId }, _args, { dataSources: { muscleAPI } }) {
+      if (!primaryMuscleId) {
+        return null;
+      }
+
+      return muscleAPI.getMuscleById(primaryMuscleId);
+    },
+    secondaryMuscle({ secondaryMuscleId }, _args, { dataSources: { muscleAPI } }) {
+      if (!secondaryMuscleId) {
+        return null;
+      }
+
+      return muscleAPI.getMuscleById(secondaryMuscleId);
     }
   },
   ExerciseGroup: {

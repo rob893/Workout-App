@@ -45,8 +45,8 @@ async function start(): Promise<void> {
     },
     typeDefs,
     resolvers,
-    onHealthCheck: async () => {
-      return true;
+    onHealthCheck: () => {
+      return Promise.resolve(true);
     },
     formatError: error => {
       if (error.extensions && error.originalError) {

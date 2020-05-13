@@ -29,6 +29,11 @@ namespace WorkoutApp.API.Data.Repositories
             return exercises.Shuffle().Take(searchParams.NumExercises.Value);
         }
 
+        protected override IQueryable<Exercise> AddIncludes(IQueryable<Exercise> query)
+        {
+            return query.Include(e => e.ExerciseSteps);
+        }
+
         protected override IQueryable<Exercise> AddDetailedIncludes(IQueryable<Exercise> query)
         {
             return query
