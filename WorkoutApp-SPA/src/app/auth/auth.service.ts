@@ -9,6 +9,7 @@ import { TokenClaims } from '../shared/models/token-claims.model';
 import { LoginResponse } from './models/login-response.model';
 import { UserCredentials } from './models/user-credentials.model';
 import { RegisterUser } from './models/register-user.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class AuthService {
   private readonly apollo: Apollo;
   private readonly jwtHelper: JwtHelperService;
 
-  public constructor(apollo: Apollo, jwtHelper: JwtHelperService) {
+  public constructor(apollo: Apollo, jwtHelper: JwtHelperService, private readonly http: HttpClient) {
     this.apollo = apollo;
     this.jwtHelper = jwtHelper;
   }
@@ -117,6 +118,10 @@ export class AuthService {
           return user;
         })
       );
+  }
+
+  public test(): Observable<any> {
+    return this.http.get('http://localhost:5002/equipment');
   }
 
   public logout(): void {

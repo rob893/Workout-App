@@ -13,5 +13,6 @@ export class WelcomeComponent implements OnInit {
 
   test() {
     this.authService.getUser(3).subscribe(res => console.log(res));
+    // this.authService.test().subscribe(res => console.log(res));
   }
 }

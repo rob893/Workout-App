@@ -24,7 +24,7 @@ async function start(): Promise<void> {
 
   const server = new ApolloServer({
     context: ({ req, res }) => {
-      const token = (req.headers && req.headers.authorization) || '';
+      const token = req.headers.authorization || '';
       let claims;
 
       try {
@@ -61,12 +61,12 @@ async function start(): Promise<void> {
         }
       }
 
-      if (!debugEnabled) {
-        for (const key in error.extensions) {
-          if (!enabledErrorExtensions.has(key)) {
+      if (!debugEnabled && error.extensions) {
+        Object.keys(error.extensions).forEach(key => {
+          if (!enabledErrorExtensions.has(key) && error.extensions) {
             delete error.extensions[key];
           }
-        }
+        });
       }
 
       return error;
@@ -80,7 +80,10 @@ async function start(): Promise<void> {
       equipmentAPI: new EquipmentAPI(),
       workoutAPI: new WorkoutAPI(),
       exerciseCategoryAPI: new ExerciseCategoryAPI()
-    })
+    }),
+    cors: {
+      origin: process.env.CORS_ALLOWED_ORIGINS ? process.env.CORS_ALLOWED_ORIGINS.split(',') : '*'
+    }
   });
 
   const serverInfo = await server.listen();

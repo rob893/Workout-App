@@ -164,7 +164,12 @@ namespace WorkoutApp.API
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors(header => header.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders(new string[] { "X-Token-Expired" }));
+            app.UseCors(header =>
+                header.WithOrigins(Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>())
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithExposedHeaders(new string[] { "X-Token-Expired" })
+            );
             app.UseGlobalExceptionHandler();
             app.UseHsts();
 
