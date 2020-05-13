@@ -5,7 +5,7 @@ import { WorkoutAppContext } from '../models/WorkoutAppContext';
 import { Indexable } from '../models/common';
 
 export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
-  protected readonly nullReturnRules: ((error: any) => boolean)[] = [];
+  protected readonly nullReturnRules: ((error: any, context: WorkoutAppContext) => boolean)[] = [];
 
   public constructor() {
     super();
@@ -40,9 +40,10 @@ export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
     try {
       return super.didReceiveResponse<TResult>(response, request);
     } catch (error) {
-      if (this.nullReturnRules.some(rule => rule(error))) {
+      if (this.nullReturnRules.some(rule => rule(error, this.context))) {
         return null as any;
       }
+
       throw error;
     }
   }

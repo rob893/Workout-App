@@ -146,6 +146,14 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       return userAPI.getReceivedWorkoutInvitationsForUser(id, filter || {});
     }
   },
+  Exercise: {
+    equipment({ id }, _args, { dataSources: { exerciseAPI } }) {
+      return exerciseAPI.getEquipmentForExercise(id);
+    },
+    exerciseCategorys({ id }, _args, { dataSources: { exerciseAPI } }) {
+      return exerciseAPI.getExerciseCategoriesForExercise(id);
+    }
+  },
   ExerciseGroup: {
     async exercise({ exercise: { id } }, _args, { dataSources: { exerciseAPI } }) {
       const exercise = await exerciseAPI.getExerciseById(id);
@@ -237,6 +245,21 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     }
   },
   MutationResponse: {
+    __resolveType() {
+      return null;
+    }
+  },
+  Node: {
+    __resolveType() {
+      return null;
+    }
+  },
+  Edge: {
+    __resolveType() {
+      return null;
+    }
+  },
+  CursorPaginatedResponse: {
     __resolveType() {
       return null;
     }
