@@ -103,16 +103,24 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       };
     },
 
-    async login(_root, { userCredentials }, { dataSources: { userAPI } }) {
+    async login(_root, { userCredentials }, context) {
+      const {
+        dataSources: { userAPI }
+      } = context;
       const res = await userAPI.login(userCredentials);
+      context.token = `Bearer ${res.token}`;
       return {
         success: true,
         ...res
       };
     },
 
-    async refreshToken(_root, { input }, { dataSources: { userAPI } }) {
+    async refreshToken(_root, { input }, context) {
+      const {
+        dataSources: { userAPI }
+      } = context;
       const res = await userAPI.refreshToken(input);
+      context.token = `Bearer ${res.token}`;
       return {
         success: true,
         ...res

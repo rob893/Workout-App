@@ -1,7 +1,27 @@
 <section class="signup-form">
   <form fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px" #f="ngForm" (ngSubmit)="onSubmit(f)">
     <mat-form-field>
-      <input type="email" matInput placeholder="Your email" ngModel name="email" email required #emailInput="ngModel" />
+      <input type="text" matInput placeholder="Username" ngModel name="username" required #usernameInput="ngModel" />
+      <mat-error *ngIf="usernameInput.hasError('required')">Field must not be empty.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input
+        type="text"
+        matInput
+        placeholder="First Name"
+        ngModel
+        name="firstName"
+        required
+        #firstNameInput="ngModel"
+      />
+      <mat-error *ngIf="firstNameInput.hasError('required')">Field must not be empty.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="text" matInput placeholder="Last Name" ngModel name="lastName" required #lastNameInput="ngModel" />
+      <mat-error *ngIf="lastNameInput.hasError('required')">Field must not be empty.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="email" matInput placeholder="Email" ngModel name="email" email required #emailInput="ngModel" />
       <mat-error *ngIf="emailInput.hasError('required')">Field must not be empty.</mat-error>
       <mat-error *ngIf="!emailInput.hasError('required')">Email is invalid.</mat-error>
     </mat-form-field>
@@ -9,7 +29,7 @@
       <input
         type="password"
         matInput
-        placeholder="Your password"
+        placeholder="Password"
         ngModel
         name="password"
         required
@@ -22,7 +42,7 @@
     <mat-form-field>
       <input
         matInput
-        placeholder="Your Birthdate"
+        placeholder="Birthdate"
         [matDatepicker]="picker"
         [max]="maxDate"
         ngModel

@@ -10,7 +10,11 @@ import { AuthService } from '../auth.service';
 export class SignupComponent implements OnInit {
   public maxDate: Date;
 
-  public constructor(private readonly authService: AuthService) {}
+  private readonly authService: AuthService;
+
+  public constructor(authService: AuthService) {
+    this.authService = authService;
+  }
 
   public ngOnInit(): void {
     this.maxDate = new Date();
@@ -18,9 +22,17 @@ export class SignupComponent implements OnInit {
   }
 
   public onSubmit(form: NgForm): void {
-    // this.authService.registerUser({
-    //     email: form.value.email,
-    //     password: form.value.password
-    // });
+    this.authService
+      .registerUser({
+        username: form.value.username,
+        firstName: form.value.firstName,
+        lastName: form.value.lastName,
+        email: form.value.email,
+        password: form.value.password
+      })
+      .subscribe(
+        response => console.log(response),
+        error => console.error(error)
+      );
   }
 }

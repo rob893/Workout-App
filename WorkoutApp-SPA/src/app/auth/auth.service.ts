@@ -79,7 +79,7 @@ export class AuthService {
       );
   }
 
-  public register(userToRegister: RegisterUser): Observable<User> {
+  public registerUser(userToRegister: RegisterUser): Observable<User> {
     return this.apollo
       .mutate<{ registerUser: { user: User } }, { user: RegisterUser }>({
         mutation: registerUser,
