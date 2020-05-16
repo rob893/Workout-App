@@ -10,7 +10,7 @@ import jwtDecode from 'jwt-decode';
 import { WorkoutAPI } from './datasources/WorkoutAPI';
 import { TypeGuards } from './helpers/TypeGuards';
 import { DateFormatDirective } from './helpers/DateFormatDirective';
-import { JwtClaims } from './models/WorkoutAppContext';
+import { JwtClaims } from './models/common';
 import { ExerciseCategoryAPI } from './datasources/ExerciseCategoryAPI';
 
 async function start(): Promise<void> {

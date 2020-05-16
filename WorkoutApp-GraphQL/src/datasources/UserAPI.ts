@@ -8,22 +8,17 @@ import {
 } from '../models/workout-api/user';
 import { WorkoutAppAPI } from './WorkoutAppAPI';
 import { WorkoutInvitation, ScheduledWorkout } from '../models/workout-api/workout';
-import { WorkoutInvitationQueryParams } from '../models/workout-api/queryParams';
+import { WorkoutInvitationQueryParams, CursorPagination } from '../models/workout-api/queryParams';
 import { CursorPaginatedResponse } from '../models/workout-api/common';
 
 export class UserAPI extends WorkoutAppAPI {
-  public getAllUsers(): Promise<CursorPaginatedResponse<User>> {
-    return this.get('users');
+  public getAllUsers(queryParams: CursorPagination): Promise<CursorPaginatedResponse<User>> {
+    const query = WorkoutAppAPI.buildQuery(queryParams);
+    return this.get(`users?${query}`);
   }
 
-  public async getUserById(id: number): Promise<User | null> {
-    const user = await this.get(`users/${id}`);
-
-    if (!user) {
-      return null;
-    }
-
-    return user;
+  public getUserById(id: number): Promise<User | null> {
+    return this.get(`users/${id}`);
   }
 
   public getSentWorkoutInvitationsForUser(
@@ -50,8 +45,12 @@ export class UserAPI extends WorkoutAppAPI {
     return this.post('auth/login', { ...userLogin });
   }
 
-  public getScheduledWorkoutsForUser(userId: number): Promise<CursorPaginatedResponse<ScheduledWorkout>> {
-    return this.get(`users/${userId}/scheduledWorkouts`);
+  public getScheduledWorkoutsForUser(
+    userId: number,
+    queryParams: CursorPagination
+  ): Promise<CursorPaginatedResponse<ScheduledWorkout>> {
+    const query = WorkoutAppAPI.buildQuery(queryParams);
+    return this.get(`users/${userId}/scheduledWorkouts?${query}`);
   }
 
   public refreshToken(refreshTokenInput: {

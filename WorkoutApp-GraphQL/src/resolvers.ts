@@ -1,4 +1,4 @@
-import { WorkoutAppContext } from './models/WorkoutAppContext';
+import { WorkoutAppContext } from './models/common';
 import { GraphQLScalarType, Kind } from 'graphql';
 import { SchemaResolvers } from './models/schema';
 
@@ -36,16 +36,18 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     }
   }),
   Query: {
-    users(_root, _args, { dataSources: { userAPI } }) {
-      return userAPI.getAllUsers();
+    users(_root, { pagination }, { dataSources: { userAPI } }) {
+      const queryParams = { ...pagination };
+      return userAPI.getAllUsers(queryParams);
     },
 
     user(_root, { id }, { dataSources: { userAPI } }) {
       return userAPI.getUserById(id);
     },
 
-    exercises(_root, _args, { dataSources: { exerciseAPI } }) {
-      return exerciseAPI.getExercises();
+    exercises(_root, { pagination }, { dataSources: { exerciseAPI } }) {
+      const queryParams = { ...pagination };
+      return exerciseAPI.getExercises(queryParams);
     },
 
     exercise(_root, { id }, { dataSources: { exerciseAPI } }) {
@@ -56,28 +58,32 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       return exerciseCategoryAPI.getExerciseCategory(id);
     },
 
-    exerciseCategories(_root, _args, { dataSources: { exerciseCategoryAPI } }) {
-      return exerciseCategoryAPI.getExerciseCategories();
+    exerciseCategories(_root, { pagination }, { dataSources: { exerciseCategoryAPI } }) {
+      const queryParams = { ...pagination };
+      return exerciseCategoryAPI.getExerciseCategories(queryParams);
     },
 
-    muscles(_root, _args, { dataSources: { muscleAPI } }) {
-      return muscleAPI.getMuscles();
+    muscles(_root, { pagination }, { dataSources: { muscleAPI } }) {
+      const queryParams = { ...pagination };
+      return muscleAPI.getMuscles(queryParams);
     },
 
     muscle(_root, { id }, { dataSources: { muscleAPI } }) {
       return muscleAPI.getMuscleById(id);
     },
 
-    allEquipment(_root, _args, { dataSources: { equipmentAPI } }) {
-      return equipmentAPI.getAllEquipment();
+    allEquipment(_root, { pagination }, { dataSources: { equipmentAPI } }) {
+      const queryParams = { ...pagination };
+      return equipmentAPI.getAllEquipment(queryParams);
     },
 
     equipment(_root, { id }, { dataSources: { equipmentAPI } }) {
       return equipmentAPI.getEquipmentById(id);
     },
 
-    workouts(_root, _args, { dataSources: { workoutAPI } }) {
-      return workoutAPI.getWorkoutsDetailed();
+    workouts(_root, { pagination }, { dataSources: { workoutAPI } }) {
+      const queryParams = { ...pagination };
+      return workoutAPI.getWorkoutsDetailed(queryParams);
     },
 
     workout(_root, { id }, { dataSources: { workoutAPI } }) {
@@ -130,8 +136,9 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     }
   },
   User: {
-    scheduledWorkouts({ id }, _args, { dataSources: { userAPI } }) {
-      return userAPI.getScheduledWorkoutsForUser(id);
+    scheduledWorkouts({ id }, { pagination }, { dataSources: { userAPI } }) {
+      const queryParams = { ...pagination };
+      return userAPI.getScheduledWorkoutsForUser(id, queryParams);
     },
 
     sentWorkoutInvitations({ id }, { filter, pagination }, { dataSources: { userAPI } }) {
@@ -147,11 +154,13 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     }
   },
   Exercise: {
-    equipment({ id }, _args, { dataSources: { exerciseAPI } }) {
-      return exerciseAPI.getEquipmentForExercise(id);
+    equipment({ id }, { pagination }, { dataSources: { exerciseAPI } }) {
+      const queryParams = { ...pagination };
+      return exerciseAPI.getEquipmentForExercise(id, queryParams);
     },
-    exerciseCategorys({ id }, _args, { dataSources: { exerciseAPI } }) {
-      return exerciseAPI.getExerciseCategoriesForExercise(id);
+    exerciseCategorys({ id }, { pagination }, { dataSources: { exerciseAPI } }) {
+      const queryParams = { ...pagination };
+      return exerciseAPI.getExerciseCategoriesForExercise(id, queryParams);
     },
     primaryMuscle({ primaryMuscleId }, _args, { dataSources: { muscleAPI } }) {
       if (!primaryMuscleId) {
@@ -180,22 +189,26 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
     }
   },
   Muscle: {
-    primaryExercises({ id }, _args, { dataSources: { muscleAPI } }) {
-      return muscleAPI.getPrimaryExercisesForMuscle(id);
+    primaryExercises({ id }, { pagination }, { dataSources: { muscleAPI } }) {
+      const queryParams = { ...pagination };
+      return muscleAPI.getPrimaryExercisesForMuscle(id, queryParams);
     },
 
-    secondaryExercises({ id }, _args, { dataSources: { muscleAPI } }) {
-      return muscleAPI.getSecondaryExercisesForMuscle(id);
+    secondaryExercises({ id }, { pagination }, { dataSources: { muscleAPI } }) {
+      const queryParams = { ...pagination };
+      return muscleAPI.getSecondaryExercisesForMuscle(id, queryParams);
     }
   },
   Equipment: {
-    exercises({ id }, _args, { dataSources: { equipmentAPI } }) {
-      return equipmentAPI.getExercisesForEquipment(id);
+    exercises({ id }, { pagination }, { dataSources: { equipmentAPI } }) {
+      const queryParams = { ...pagination };
+      return equipmentAPI.getExercisesForEquipment(id, queryParams);
     }
   },
   ExerciseCategory: {
-    exercises({ id }, _args, { dataSources: { exerciseCategoryAPI } }) {
-      return exerciseCategoryAPI.getExercisesForExerciseCategory(id);
+    exercises({ id }, { pagination }, { dataSources: { exerciseCategoryAPI } }) {
+      const queryParams = { ...pagination };
+      return exerciseCategoryAPI.getExercisesForExerciseCategory(id, queryParams);
     }
   },
   WorkoutInvitation: {
@@ -240,8 +253,9 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       return workout;
     },
 
-    attendees({ id }, _args, { dataSources: { workoutAPI } }) {
-      return workoutAPI.getScheduledWorkoutAttendees(id);
+    attendees({ id }, { pagination }, { dataSources: { workoutAPI } }) {
+      const queryParams = { ...pagination };
+      return workoutAPI.getScheduledWorkoutAttendees(id, queryParams);
     },
 
     async scheduledByUser({ scheduledByUserId }, _args, { dataSources: { userAPI } }) {
@@ -254,8 +268,9 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       return scheduledBy;
     },
 
-    adHocExercises({ id }, _args, { dataSources: { workoutAPI } }) {
-      return workoutAPI.getScheduledWorkoutAdHocExercises(id);
+    adHocExercises({ id }, { pagination }, { dataSources: { workoutAPI } }) {
+      const queryParams = { ...pagination };
+      return workoutAPI.getScheduledWorkoutAdHocExercises(id, queryParams);
     }
   },
   MutationResponse: {

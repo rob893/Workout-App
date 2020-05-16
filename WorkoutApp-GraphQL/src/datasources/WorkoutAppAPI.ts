@@ -1,34 +1,60 @@
 import querystring from 'querystring';
 import { RESTDataSource, RequestOptions, Response, Request } from 'apollo-datasource-rest';
 import { AuthenticationError } from 'apollo-server';
-import { WorkoutAppContext } from '../models/WorkoutAppContext';
-import { Indexable } from '../models/common';
+import { WorkoutAppContext } from '../models/common';
+import { Indexable, Primitive } from '../models/common';
 
 export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
-  protected readonly nullReturnRules: ((error: any, context: WorkoutAppContext) => boolean)[] = [];
+  private readonly nullReturnRules: ((error: any, context: WorkoutAppContext) => boolean)[] = [];
 
   public constructor() {
     super();
     this.baseURL = process.env.WORKOUT_APP_API_URL || 'http://localhost:5002';
-    this.nullReturnRules.push(error => {
-      if (error?.extensions?.response?.status === 404) {
-        return true;
-      }
-
-      return false;
-    });
+    this.addNullReturnRules(
+      error => typeof error?.extensions?.response?.status === 'number' && error.extensions.response.status === 404
+    );
   }
 
-  protected static buildQuery<TParams extends Indexable<string | number | boolean | null | undefined> = any>(
-    queryParams: TParams
-  ): string {
+  protected static buildQuery<
+    TParams extends Indexable<Primitive | string[] | number[] | boolean[] | null | undefined>
+  >(queryParams: TParams): string {
+    // Remove all values which could cause a 'foo=&' situation
     Object.keys(queryParams).forEach(key => {
-      if (queryParams[key] === undefined) {
+      if (Array.isArray(queryParams[key])) {
+        if ((queryParams[key] as any[]).length === 0) {
+          delete queryParams[key];
+        } else {
+          (queryParams[key] as any[]) = (queryParams[key] as any[]).filter(WorkoutAppAPI.isValidQueryParam);
+        }
+      } else if (!WorkoutAppAPI.isValidQueryParam(queryParams[key])) {
         delete queryParams[key];
       }
     });
 
     return querystring.stringify(queryParams);
+  }
+
+  /**
+   * Valid as defined here: https://nodejs.org/docs/latest-v12.x/api/querystring.html
+   */
+  private static isValidQueryParam(param: any): boolean {
+    return (
+      (typeof param === 'string' && param !== '') ||
+      (typeof param === 'number' && !Number.isNaN(param)) ||
+      typeof param === 'boolean'
+    );
+  }
+
+  protected addNullReturnRules(
+    rules:
+      | ((error: any, context: WorkoutAppContext) => boolean)
+      | ((error: any, context: WorkoutAppContext) => boolean)[]
+  ): void {
+    if (Array.isArray(rules)) {
+      rules.forEach(rule => this.addNullReturnRules(rule));
+    } else {
+      this.nullReturnRules.push(rules);
+    }
   }
 
   protected willSendRequest(request: RequestOptions): void {
@@ -50,7 +76,7 @@ export abstract class WorkoutAppAPI extends RESTDataSource<WorkoutAppContext> {
     }
 
     try {
-      return super.didReceiveResponse<TResult>(response, request);
+      return await super.didReceiveResponse<TResult>(response, request);
     } catch (error) {
       if (this.nullReturnRules.some(rule => rule(error, this.context))) {
         return null as any;
