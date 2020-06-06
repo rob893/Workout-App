@@ -24,7 +24,7 @@
   "dependencies": {
     "apollo-datasource": "^0.7.0",
     "apollo-datasource-rest": "^0.9.0",
-    "apollo-server": "^2.13.1",
+    "apollo-server": "^2.14.2",
     "date-fns": "^2.13.0",
     "date-fns-tz": "^1.0.10",
     "dotenv": "^8.2.0",
