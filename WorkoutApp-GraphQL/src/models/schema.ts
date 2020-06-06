@@ -538,11 +538,18 @@ export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
+export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string;
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
 
+export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
+  selectionSet: string;
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+export type StitchingResolver<TResult, TParent, TContext, TArgs> =
+  | LegacyStitchingResolver<TResult, TParent, TContext, TArgs>
+  | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
   | StitchingResolver<TResult, TParent, TContext, TArgs>;
@@ -592,7 +599,7 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type isTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -1097,7 +1104,7 @@ export type SchemaRefreshTokenResponseResolvers<
   success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
   token?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   refreshToken?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaRegisterUserResponseResolvers<
@@ -1106,7 +1113,7 @@ export type SchemaRegisterUserResponseResolvers<
 > = ResolversObject<{
   success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
   user?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaUserLoginResponseResolvers<
@@ -1117,7 +1124,7 @@ export type SchemaUserLoginResponseResolvers<
   token?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   refreshToken?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaCreateScheduledWorkoutResponseResolvers<
@@ -1126,7 +1133,7 @@ export type SchemaCreateScheduledWorkoutResponseResolvers<
 > = ResolversObject<{
   success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
   scheduledWorkout?: Resolver<SchemaResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaStartScheduledWorkoutResponseResolvers<
@@ -1135,7 +1142,7 @@ export type SchemaStartScheduledWorkoutResponseResolvers<
 > = ResolversObject<{
   success?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
   scheduledWorkout?: Resolver<SchemaResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaUserResolvers<
@@ -1183,7 +1190,7 @@ export type SchemaUserResolvers<
     ContextType,
     RequireFields<SchemaUserReceivedWorkoutInvitationsArgs, never>
   >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaUserConnectionResolvers<
@@ -1194,7 +1201,7 @@ export type SchemaUserConnectionResolvers<
   nodes?: Resolver<Array<SchemaResolversTypes['User']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaUserEdgeResolvers<
@@ -1203,7 +1210,7 @@ export type SchemaUserEdgeResolvers<
 > = ResolversObject<{
   cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<SchemaResolversTypes['User'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaWorkoutInvitationResolvers<
@@ -1223,7 +1230,7 @@ export type SchemaWorkoutInvitationResolvers<
     ContextType,
     RequireFields<SchemaWorkoutInvitationRespondedAtDateTimeArgs, never>
   >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaWorkoutInvitationConnectionResolvers<
@@ -1234,7 +1241,7 @@ export type SchemaWorkoutInvitationConnectionResolvers<
   nodes?: Resolver<Array<SchemaResolversTypes['WorkoutInvitation']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaWorkoutInvitationEdgeResolvers<
@@ -1243,7 +1250,7 @@ export type SchemaWorkoutInvitationEdgeResolvers<
 > = ResolversObject<{
   cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<SchemaResolversTypes['WorkoutInvitation'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaWorkoutResolvers<
@@ -1274,7 +1281,7 @@ export type SchemaWorkoutResolvers<
     ContextType,
     RequireFields<SchemaWorkoutExerciseGroupsArgs, never>
   >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaWorkoutConnectionResolvers<
@@ -1285,7 +1292,7 @@ export type SchemaWorkoutConnectionResolvers<
   nodes?: Resolver<Array<SchemaResolversTypes['Workout']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaWorkoutEdgeResolvers<
@@ -1294,7 +1301,7 @@ export type SchemaWorkoutEdgeResolvers<
 > = ResolversObject<{
   cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<SchemaResolversTypes['Workout'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseGroupResolvers<
@@ -1306,7 +1313,7 @@ export type SchemaExerciseGroupResolvers<
   exercise?: Resolver<SchemaResolversTypes['Exercise'], ParentType, ContextType>;
   sets?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
   repetitions?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseGroupConnectionResolvers<
@@ -1317,7 +1324,7 @@ export type SchemaExerciseGroupConnectionResolvers<
   nodes?: Resolver<Array<SchemaResolversTypes['ExerciseGroup']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseGroupEdgeResolvers<
@@ -1326,7 +1333,7 @@ export type SchemaExerciseGroupEdgeResolvers<
 > = ResolversObject<{
   cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<SchemaResolversTypes['ExerciseGroup'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaScheduledWorkoutResolvers<
@@ -1367,7 +1374,7 @@ export type SchemaScheduledWorkoutResolvers<
     ContextType,
     RequireFields<SchemaScheduledWorkoutAttendeesArgs, never>
   >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaScheduledWorkoutConnectionResolvers<
@@ -1378,7 +1385,7 @@ export type SchemaScheduledWorkoutConnectionResolvers<
   nodes?: Resolver<Array<SchemaResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaScheduledWorkoutEdgeResolvers<
@@ -1387,7 +1394,7 @@ export type SchemaScheduledWorkoutEdgeResolvers<
 > = ResolversObject<{
   cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<SchemaResolversTypes['ScheduledWorkout'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseResolvers<
@@ -1411,7 +1418,7 @@ export type SchemaExerciseResolvers<
     ContextType,
     RequireFields<SchemaExerciseExerciseCategorysArgs, never>
   >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseConnectionResolvers<
@@ -1422,7 +1429,7 @@ export type SchemaExerciseConnectionResolvers<
   nodes?: Resolver<Array<SchemaResolversTypes['Exercise']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseEdgeResolvers<
@@ -1431,7 +1438,7 @@ export type SchemaExerciseEdgeResolvers<
 > = ResolversObject<{
   cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<SchemaResolversTypes['Exercise'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaMuscleResolvers<
@@ -1453,7 +1460,7 @@ export type SchemaMuscleResolvers<
     ContextType,
     RequireFields<SchemaMuscleSecondaryExercisesArgs, never>
   >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaMuscleConnectionResolvers<
@@ -1464,7 +1471,7 @@ export type SchemaMuscleConnectionResolvers<
   nodes?: Resolver<Array<SchemaResolversTypes['Muscle']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaMuscleEdgeResolvers<
@@ -1473,7 +1480,7 @@ export type SchemaMuscleEdgeResolvers<
 > = ResolversObject<{
   cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<SchemaResolversTypes['Muscle'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseStepResolvers<
@@ -1482,7 +1489,7 @@ export type SchemaExerciseStepResolvers<
 > = ResolversObject<{
   exerciseStepNumber?: Resolver<SchemaResolversTypes['Int'], ParentType, ContextType>;
   description?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaEquipmentResolvers<
@@ -1497,7 +1504,7 @@ export type SchemaEquipmentResolvers<
     ContextType,
     RequireFields<SchemaEquipmentExercisesArgs, never>
   >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaEquipmentConnectionResolvers<
@@ -1508,7 +1515,7 @@ export type SchemaEquipmentConnectionResolvers<
   nodes?: Resolver<Array<SchemaResolversTypes['Equipment']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaEquipmentEdgeResolvers<
@@ -1517,7 +1524,7 @@ export type SchemaEquipmentEdgeResolvers<
 > = ResolversObject<{
   cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<SchemaResolversTypes['Equipment'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseCategoryResolvers<
@@ -1532,7 +1539,7 @@ export type SchemaExerciseCategoryResolvers<
     ContextType,
     RequireFields<SchemaExerciseCategoryExercisesArgs, never>
   >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseCategoryConnectionResolvers<
@@ -1543,7 +1550,7 @@ export type SchemaExerciseCategoryConnectionResolvers<
   nodes?: Resolver<Array<SchemaResolversTypes['ExerciseCategory']>, ParentType, ContextType>;
   pageInfo?: Resolver<SchemaResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<Maybe<SchemaResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaExerciseCategoryEdgeResolvers<
@@ -1552,7 +1559,7 @@ export type SchemaExerciseCategoryEdgeResolvers<
 > = ResolversObject<{
   cursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<SchemaResolversTypes['ExerciseCategory'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaPageInfoResolvers<
@@ -1563,7 +1570,7 @@ export type SchemaPageInfoResolvers<
   endCursor?: Resolver<SchemaResolversTypes['String'], ParentType, ContextType>;
   hasNextPage?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
   hasPreviousPage?: Resolver<SchemaResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type SchemaResolvers<ContextType = any> = ResolversObject<{
