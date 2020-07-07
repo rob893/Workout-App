@@ -219,6 +219,12 @@ export const resolvers: SchemaResolvers<WorkoutAppContext> = {
       return exerciseCategoryAPI.getExercisesForExerciseCategory(id, queryParams);
     }
   },
+  Workout: {
+    exerciseGroups({ id }, { pagination }, { dataSources: { workoutAPI } }) {
+      const queryParams = { ...pagination };
+      return workoutAPI.getWorkoutExerciseGroups(id, queryParams);
+    }
+  },
   WorkoutInvitation: {
     async invitee({ inviteeId }, _args, { dataSources: { userAPI } }) {
       const invitee = await userAPI.getUserById(inviteeId);

@@ -3,6 +3,7 @@ import { User } from './workout-api/user';
 import { Exercise, Muscle, Equipment, ExerciseStep, ExerciseCategory } from './workout-api/exercise';
 import { Workout, WorkoutInvitation, ScheduledWorkout } from './workout-api/workout';
 export type Maybe<T> = T | null;
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
   { [P in K]-?: NonNullable<T[P]> };
@@ -613,8 +614,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type SchemaResolversTypes = ResolversObject<{
-  String: ResolverTypeWrapper<Scalars['String']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   MutationResponse:
     | SchemaResolversTypes['RefreshTokenResponse']
@@ -622,6 +621,7 @@ export type SchemaResolversTypes = ResolversObject<{
     | SchemaResolversTypes['UserLoginResponse']
     | SchemaResolversTypes['CreateScheduledWorkoutResponse']
     | SchemaResolversTypes['StartScheduledWorkoutResponse'];
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Node:
     | SchemaResolversTypes['User']
     | SchemaResolversTypes['WorkoutInvitation']
@@ -643,6 +643,7 @@ export type SchemaResolversTypes = ResolversObject<{
     | SchemaResolversTypes['MuscleEdge']
     | SchemaResolversTypes['EquipmentEdge']
     | SchemaResolversTypes['ExerciseCategoryEdge'];
+  String: ResolverTypeWrapper<Scalars['String']>;
   CursorPaginatedResponse:
     | SchemaResolversTypes['UserConnection']
     | SchemaResolversTypes['WorkoutInvitationConnection']
@@ -767,8 +768,6 @@ export type SchemaResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type SchemaResolversParentTypes = ResolversObject<{
-  String: Scalars['String'];
-  Boolean: Scalars['Boolean'];
   DateTime: Scalars['DateTime'];
   MutationResponse:
     | SchemaResolversParentTypes['RefreshTokenResponse']
@@ -776,6 +775,7 @@ export type SchemaResolversParentTypes = ResolversObject<{
     | SchemaResolversParentTypes['UserLoginResponse']
     | SchemaResolversParentTypes['CreateScheduledWorkoutResponse']
     | SchemaResolversParentTypes['StartScheduledWorkoutResponse'];
+  Boolean: Scalars['Boolean'];
   Node:
     | SchemaResolversParentTypes['User']
     | SchemaResolversParentTypes['WorkoutInvitation']
@@ -797,6 +797,7 @@ export type SchemaResolversParentTypes = ResolversObject<{
     | SchemaResolversParentTypes['MuscleEdge']
     | SchemaResolversParentTypes['EquipmentEdge']
     | SchemaResolversParentTypes['ExerciseCategoryEdge'];
+  String: Scalars['String'];
   CursorPaginatedResponse:
     | SchemaResolversParentTypes['UserConnection']
     | SchemaResolversParentTypes['WorkoutInvitationConnection']
@@ -886,7 +887,6 @@ export type SchemaResolversParentTypes = ResolversObject<{
   RefreshTokenInput: SchemaRefreshTokenInput;
   WorkoutInvitationFilter: SchemaWorkoutInvitationFilter;
   PaginationInput: SchemaPaginationInput;
-  WorkoutInvitationStatus: SchemaWorkoutInvitationStatus;
 }>;
 
 export type SchemaDateFormatDirectiveArgs = {

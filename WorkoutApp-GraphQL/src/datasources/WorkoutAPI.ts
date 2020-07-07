@@ -45,6 +45,14 @@ export class WorkoutAPI extends WorkoutAppAPI {
     return this.patch(`scheduledWorkouts/${id}/startWorkout`);
   }
 
+  public getWorkoutExerciseGroups(
+    id: number,
+    queryParams: CursorPagination
+  ): Promise<CursorPaginatedResponse<ExerciseGroup>> {
+    const query = WorkoutAppAPI.buildQuery(queryParams);
+    return this.get(`workouts/${id}/exerciseGroups?${query}`);
+  }
+
   public getWorkoutsDetailed(queryParams: CursorPagination): Promise<CursorPaginatedResponse<WorkoutDetailed>> {
     const query = WorkoutAppAPI.buildQuery(queryParams);
     return this.get(`workouts/detailed?${query}`);
