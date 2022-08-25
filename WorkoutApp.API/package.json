@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "start": "dotnet watch run",
+    "test": "dotnet test",
+    "update-dependencies": "dotnet outdated -u",
+    "outdated": "dotnet outdated",
+    "clean-dist": "rm -rf WorkoutApp.API/dist",
+    "build": "npm run clean-dist-api && dotnet publish -c=Debug -o dist",
+    "build-prod": "npm run clean-dist && dotnet publish -c=Release -o dist",
+    "download-secrets": "scp root@rwherber.com:/var/www/html/APIs/SettingsFiles/WorkoutApp/appsettings.json ./",
+    "upload-secrets": "scp ./appsettings.json root@rwherber.com:/var/www/html/APIs/SettingsFiles/WorkoutApp",
+    "view-logs-digital-ocean": "ssh root@rwherber.com \"sudo journalctl -fu WorkoutAppAPI.service\"",
+    "clean-digital-ocean": "ssh root@rwherber.com \"rm -rf /var/www/html/APIs/WorkoutApp/*\"",
+    "copy-dist-to-digital-ocean": "scp -r ./dist/* root@rwherber.com:/var/www/html/APIs/WorkoutApp",
+    "copy-service-file-to-digital-ocean": "scp ./CI/WorkoutAppAPI.service root@rwherber.com:/etc/systemd/system",
+    "restart-digital-ocean-service": "ssh root@rwherber.com \"sudo systemctl stop WorkoutAppAPI.service; sudo systemctl enable WorkoutAppAPI.service; sudo systemctl start WorkoutAppAPI.service; sudo systemctl daemon-reload\"",
+    "deploy-to-digital-ocean": "npm run build-prod && npm run clean-digital-ocean && npm run copy-dist-to-digital-ocean && npm run copy-service-file-to-digital-ocean && npm run restart-digital-ocean-service"
+  }
+}
